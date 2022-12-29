@@ -6,11 +6,25 @@ class App:
         pyxel.init(120, 160, title="Pysel Base")
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource.pyxres")
+        #playerのx座標初期化
+        self.x = 0
+        #playerの移動方向flag
+        self.isRight = True
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
 	#更新関数
     def update(self):
+        #playerの移動方向判定
+        if self.x <= 0:
+            self.isRight = True
+        elif self.x >= 104:
+            self.isRight = False
+	    #playerの往復移動
+        if self.isRight == True:
+            self.x = (self.x + 1)
+        elif self.isRight == False:
+            self.x = (self.x - 1)
         pass
 
 	#描画関数
@@ -18,7 +32,7 @@ class App:
         #画面クリア 0は黒
         pyxel.cls(0)
         #editorデータ描画(player)
-        pyxel.blt(0, 0, 0, 0, 0, 16, 16, 0)
+        pyxel.blt(self.x, 144, 0, 0, 0, 16, 16, 0)
             #描画座標(左上のX座標)
             #描画座標(左上のY座標)
             #画像番号
