@@ -16,6 +16,9 @@ class App:
         self.isRight = True
         #playerの停止flag
         self.isStop = False
+        #(仮)enemyの初期位置
+        self.enemy_x = 40
+        self.enemy_y = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #実行開始 更新関数 描画関数
@@ -41,6 +44,8 @@ class App:
     def update_play_scene(self):
 		#playerの更新処理
         self.update_player()
+        #enemyの更新処理
+        self.update_enemy()
 
 
     #ゲームオーバー画面処理用update
@@ -77,6 +82,10 @@ class App:
                 self.x = (self.x - 1)
         pass
 
+    def update_enemy(self):
+        #enemyが下に移動するだけ
+        self.enemy_y = (self.enemy_y + 1) % pyxel.height
+
 	#描画関数
     def draw(self):
         #画面クリア 0は黒
@@ -98,6 +107,8 @@ class App:
     def draw_play_scene(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, 144, 0, 0, 0, 16, 16, 0)
+        #editorデータ描画(enemy)
+        pyxel.blt(self.enemy_x, self.enemy_y, 0, 16, 0, 16, 16, 0)
             #描画座標(左上のX座標)
             #描画座標(左上のY座標)
             #画像番号
