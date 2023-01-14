@@ -22,6 +22,8 @@ class App:
         #(仮)bulletの初期位置
         self.bullet_x = 40
         self.bullet_y = 150
+        #(仮)shot flag
+        self.isShot = True
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #実行開始 更新関数 描画関数
@@ -93,9 +95,15 @@ class App:
 
 	#bullet処理
     def update_bullet(self):
-        #bulletが上に移動するだけ
-        self.bullet_y = (self.bullet_y - 1) % pyxel.height
-
+        if self.isShot == True:
+            #bulletが上に移動するだけ
+            self.bullet_y = (self.bullet_y - 1) % pyxel.height
+        #bullet画面外判定
+        if self.bullet_y <= 0:
+            self.isShot = False
+        #(仮)時間でisShot = Trueにする
+        if pyxel.frame_count % 16 == 0:
+            self.isShot = True
 
 	#描画関数
     def draw(self):
@@ -121,7 +129,9 @@ class App:
         #editorデータ描画(enemy)
         pyxel.blt(self.enemy_x, self.enemy_y, 0, 16, 0, 16, 16, 0)
         #editorデータ描画(bullet)
-        pyxel.blt(self.bullet_x, self.bullet_y, 0, 32, 0, 16, 16, 0)
+        if self.isShot == True:
+            pyxel.blt(self.bullet_x, self.bullet_y, 0, 32, 0, 16, 16, 0)
+
             #描画座標(左上のX座標)
             #描画座標(左上のY座標)
             #画像番号
