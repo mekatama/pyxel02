@@ -19,6 +19,9 @@ class App:
         #(仮)enemyの初期位置
         self.enemy_x = 40
         self.enemy_y = 0
+        #(仮)bulletの初期位置
+        self.bullet_x = 40
+        self.bullet_y = 150
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #実行開始 更新関数 描画関数
@@ -46,7 +49,8 @@ class App:
         self.update_player()
         #enemyの更新処理
         self.update_enemy()
-
+        #enemyの更新処理
+        self.update_bullet()
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -82,9 +86,16 @@ class App:
                 self.x = (self.x - 1)
         pass
 
+	#enemy処理
     def update_enemy(self):
         #enemyが下に移動するだけ
         self.enemy_y = (self.enemy_y + 1) % pyxel.height
+
+	#bullet処理
+    def update_bullet(self):
+        #bulletが上に移動するだけ
+        self.bullet_y = (self.bullet_y - 1) % pyxel.height
+
 
 	#描画関数
     def draw(self):
@@ -109,6 +120,8 @@ class App:
         pyxel.blt(self.x, 144, 0, 0, 0, 16, 16, 0)
         #editorデータ描画(enemy)
         pyxel.blt(self.enemy_x, self.enemy_y, 0, 16, 0, 16, 16, 0)
+        #editorデータ描画(bullet)
+        pyxel.blt(self.bullet_x, self.bullet_y, 0, 32, 0, 16, 16, 0)
             #描画座標(左上のX座標)
             #描画座標(左上のY座標)
             #画像番号
