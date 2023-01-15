@@ -22,8 +22,9 @@ class App:
         #(仮)bulletの初期位置
         self.bullet_x = 40
         self.bullet_y = 150
-        #(仮)shot flag
-        self.isShot = True
+        #(仮)bullet用flag
+        self.isShot = False
+        self.isOut = True
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #実行開始 更新関数 描画関数
@@ -95,15 +96,19 @@ class App:
 
 	#bullet処理
     def update_bullet(self):
+        #(仮)時間と画面外でisShot = Trueにする
+        if pyxel.frame_count % 16 == 0 and self.isOut == True:
+            self.isShot = True
+            self.isOut = False
+            #発射時のx座標はplayerの座標から
+            self.bullet_x = self.x
+        #bullet発射
         if self.isShot == True:
             #bulletが上に移動するだけ
             self.bullet_y = (self.bullet_y - 1) % pyxel.height
         #bullet画面外判定
         if self.bullet_y <= 0:
-            self.isShot = False
-        #(仮)時間でisShot = Trueにする
-        if pyxel.frame_count % 16 == 0:
-            self.isShot = True
+            self.isOut = True
 
 	#描画関数
     def draw(self):
