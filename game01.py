@@ -6,6 +6,21 @@ SCENE_TITLE = 0	    #タイトル画面
 SCENE_PLAY = 1	    #ゲーム画面
 SCENE_GAMEOVER = 2  #ゲームオーバー画面
 
+class Enemy:
+    def __init__(self):
+        #(仮)enemyの初期位置
+        self.x = 40
+        self.y = 0
+
+    def update(self):
+        #enemyが下に移動するだけ
+        self.y = (self.y + 1) % pyxel.height
+
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 16, 0, 16, 16, 0)
+
+        pass
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
@@ -18,21 +33,22 @@ class App:
         self.isRight = True
         #playerの停止flag
         self.isStop = False
-        #(仮)enemyの初期位置
-        self.enemy_x = 40
-        self.enemy_y = 0
         #(仮)bulletの初期位置
         self.bullet_x = 40
         self.bullet_y = 150
         #(仮)bullet用flag
         self.isShot = False
         self.isOut = True
+
+        #Enemys生成(クラス対応)
+        self.enemys = Enemy()
+
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
-	#更新関数
+    #更新関数
     def update(self):
         #処理の画面分岐
         if self.scene == SCENE_TITLE:
@@ -52,8 +68,8 @@ class App:
     def update_play_scene(self):
 		#playerの更新処理
         self.update_player()
-        #enemyの更新処理
-        self.update_enemy()
+        #enemyの更新処理(クラス対応)
+        self.enemys.update()
         #enemyの更新処理
         self.update_bullet()
 
@@ -90,11 +106,6 @@ class App:
             elif self.isRight == False:
                 self.x = (self.x - 1)
         pass
-
-	#enemy処理
-    def update_enemy(self):
-        #enemyが下に移動するだけ
-        self.enemy_y = (self.enemy_y + 1) % pyxel.height
 
 	#bullet処理
     def update_bullet(self):
@@ -133,8 +144,8 @@ class App:
     def draw_play_scene(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, 144, 0, 0, 0, 16, 16, 0)
-        #editorデータ描画(enemy)
-        pyxel.blt(self.enemy_x, self.enemy_y, 0, 16, 0, 16, 16, 0)
+        #enemy描画(クラス対応)
+        self.enemys.draw()
         #editorデータ描画(bullet)
         if self.isShot == True:
             pyxel.blt(self.bullet_x, self.bullet_y, 0, 32, 0, 16, 16, 0)
