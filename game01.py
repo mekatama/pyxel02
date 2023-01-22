@@ -1,4 +1,6 @@
 import pyxel
+#ランダム使用
+from random import randint
 #画面遷移用の変数
 SCENE_TITLE = 0	    #タイトル画面
 SCENE_PLAY = 1	    #ゲーム画面
