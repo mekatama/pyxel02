@@ -21,6 +21,36 @@ class Enemy:
 
         pass
 
+class Bullet:
+    def __init__(self):
+        #(仮)bulletの初期位置
+        self.x = 40
+        self.y = 150
+        #(仮)bullet用flag
+        self.isShot = False
+        self.isOut = True
+
+    def update(self):
+#        #(仮)時間と画面外でisShot = Trueにする
+#        if pyxel.frame_count % 16 == 0 and self.isOut == True:
+#            self.isShot = True
+#            self.isOut = False
+#            #発射時のx座標はplayerの座標から
+#            self.x = self.x
+#        #bullet発射
+#        if self.isShot == True:
+            #bulletが上に移動するだけ
+            self.y = (self.y - 1) % pyxel.height
+        #bullet画面外判定
+#        if self.bullet_y <= 0:
+#            self.isOut = True
+
+    def draw(self):
+#        if self.isShot == True:
+        pyxel.blt(self.x, self.y, 0, 32, 0, 16, 16, 0)
+
+        pass
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
@@ -33,15 +63,11 @@ class App:
         self.isRight = True
         #playerの停止flag
         self.isStop = False
-        #(仮)bulletの初期位置
-        self.bullet_x = 40
-        self.bullet_y = 150
-        #(仮)bullet用flag
-        self.isShot = False
-        self.isOut = True
 
-        #Enemys生成(クラス対応)
+        #Enemy生成(クラス対応)
         self.enemys = Enemy()
+        #Bullet生成(クラス対応)
+        self.bullets = Bullet()
 
         #画面遷移の初期化
         self.scene = SCENE_TITLE
@@ -68,10 +94,10 @@ class App:
     def update_play_scene(self):
 		#playerの更新処理
         self.update_player()
-        #enemyの更新処理(クラス対応)
+        #Enemyの更新処理(クラス対応)
         self.enemys.update()
-        #enemyの更新処理
-        self.update_bullet()
+        #Bulletの更新処理(クラス対応)
+        self.bullets.update()
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -147,8 +173,7 @@ class App:
         #enemy描画(クラス対応)
         self.enemys.draw()
         #editorデータ描画(bullet)
-        if self.isShot == True:
-            pyxel.blt(self.bullet_x, self.bullet_y, 0, 32, 0, 16, 16, 0)
+        self.bullets.draw()
 
             #描画座標(左上のX座標)
             #描画座標(左上のY座標)
