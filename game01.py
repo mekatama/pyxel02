@@ -6,6 +6,46 @@ SCENE_TITLE = 0	    #タイトル画面
 SCENE_PLAY = 1	    #ゲーム画面
 SCENE_GAMEOVER = 2  #ゲームオーバー画面
 
+class Player:
+    def __init__(self):
+        #playerのx座標初期化
+        self.x = 0
+        #playerの移動方向flag
+        self.isRight = True
+        #playerの停止flag
+        self.isStop = False
+
+    def update(self):
+        # key入力
+		# (画面遷移用の仮入力)
+        if pyxel.btnr(pyxel.KEY_RETURN):
+            #ENTERでゲームオーバー画面に遷移
+            self.scene = SCENE_GAMEOVER
+        #key入力(player停止)
+        if pyxel.btn(pyxel.KEY_A):
+            #押したら
+            self.isStop = True
+        elif pyxel.btnr(pyxel.KEY_A):
+            #離したら
+            self.isStop = False
+
+        #playerの移動方向判定
+        if self.x <= 0:
+            self.isRight = True
+        elif self.x >= 104:
+            self.isRight = False
+	    #playerの往復移動
+        if self.isStop == False:
+            if self.isRight == True:
+                self.x = (self.x + 1)
+            elif self.isRight == False:
+                self.x = (self.x - 1)
+
+    def draw(self):
+        pyxel.blt(self.x, 144, 0, 0, 0, 16, 16, 0)
+
+    pass
+
 class Enemy:
     def __init__(self):
         #(仮)enemyの初期位置
@@ -57,13 +97,9 @@ class App:
         pyxel.init(120, 160, title="Pysel Base")
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource.pyxres")
-        #playerのx座標初期化
-        self.x = 0
-        #playerの移動方向flag
-        self.isRight = True
-        #playerの停止flag
-        self.isStop = False
 
+        #Player生成(クラス対応)
+        self.players = Player()
         #Enemy生成(クラス対応)
         self.enemys = Enemy()
         #Bullet生成(クラス対応)
@@ -92,11 +128,9 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
-		#playerの更新処理
-        self.update_player()
-        #Enemyの更新処理(クラス対応)
+		#更新処理(クラス対応)
+        self.players.update()
         self.enemys.update()
-        #Bulletの更新処理(クラス対応)
         self.bullets.update()
 
     #ゲームオーバー画面処理用update
@@ -104,50 +138,6 @@ class App:
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
             self.scene = SCENE_TITLE
-
-	#player処理
-    def update_player(self):
-        # key入力
-		# (画面遷移用の仮入力)
-        if pyxel.btnr(pyxel.KEY_RETURN):
-            #ENTERでゲームオーバー画面に遷移
-            self.scene = SCENE_GAMEOVER
-        #key入力(player停止)
-        if pyxel.btn(pyxel.KEY_A):
-            #押したら
-            self.isStop = True
-        elif pyxel.btnr(pyxel.KEY_A):
-            #離したら
-            self.isStop = False
-
-        #playerの移動方向判定
-        if self.x <= 0:
-            self.isRight = True
-        elif self.x >= 104:
-            self.isRight = False
-	    #playerの往復移動
-        if self.isStop == False:
-            if self.isRight == True:
-                self.x = (self.x + 1)
-            elif self.isRight == False:
-                self.x = (self.x - 1)
-        pass
-
-	#bullet処理
-    def update_bullet(self):
-        #(仮)時間と画面外でisShot = Trueにする
-        if pyxel.frame_count % 16 == 0 and self.isOut == True:
-            self.isShot = True
-            self.isOut = False
-            #発射時のx座標はplayerの座標から
-            self.bullet_x = self.x
-        #bullet発射
-        if self.isShot == True:
-            #bulletが上に移動するだけ
-            self.bullet_y = (self.bullet_y - 1) % pyxel.height
-        #bullet画面外判定
-        if self.bullet_y <= 0:
-            self.isOut = True
 
 	#描画関数
     def draw(self):
@@ -168,11 +158,9 @@ class App:
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
-        #editorデータ描画(player)
-        pyxel.blt(self.x, 144, 0, 0, 0, 16, 16, 0)
-        #enemy描画(クラス対応)
+        #描画(クラス対応)
+        self.players.draw()
         self.enemys.draw()
-        #editorデータ描画(bullet)
         self.bullets.draw()
 
             #描画座標(左上のX座標)
