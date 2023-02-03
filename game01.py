@@ -71,23 +71,23 @@ class Bullet:
         self.isOut = True
 
     def update(self):
-#        #(仮)時間と画面外でisShot = Trueにする
-#        if pyxel.frame_count % 16 == 0 and self.isOut == True:
-#            self.isShot = True
-#            self.isOut = False
+        #(仮)時間と画面外でisShot = Trueにする
+        if pyxel.frame_count % 16 == 0 and self.isOut == True:
+            self.isShot = True
+            self.isOut = False
 #            #発射時のx座標はplayerの座標から
 #            self.x = self.x
-#        #bullet発射
-#        if self.isShot == True:
+        #bullet発射
+        if self.isShot == True:
             #bulletが上に移動するだけ
             self.y = (self.y - 1) % pyxel.height
         #bullet画面外判定
-#        if self.bullet_y <= 0:
-#            self.isOut = True
+        if self.y <= 0:
+            self.isOut = True
 
     def draw(self):
-#        if self.isShot == True:
-        pyxel.blt(self.x, self.y, 0, 32, 0, 16, 16, 0)
+        if self.isShot == True:
+            pyxel.blt(self.x, self.y, 0, 32, 0, 16, 16, 0)
 
         pass
 
@@ -98,11 +98,9 @@ class App:
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource.pyxres")
 
-        #Player生成(クラス対応)
+        #生成(クラス対応)
         self.players = Player()
-        #Enemy生成(クラス対応)
         self.enemys = Enemy()
-        #Bullet生成(クラス対応)
         self.bullets = Bullet()
 
         #画面遷移の初期化
