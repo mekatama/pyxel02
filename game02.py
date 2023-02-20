@@ -1,5 +1,6 @@
 import pyxel
-from random import randint  #ランダム使用
+import random   #ランダム使用
+#from random import randint  #ランダム使用
 #定数
 WINDOW_H = 160
 WINDOW_W = 120
@@ -51,7 +52,6 @@ class Bullet:
     def __init__(self):
         self.pos = Vec2(0, 0)
         self.size = 2
-        self.speed = 3
         self.color = 10 #colorは0～15
     def update(self, x, y, size, color):
         self.pos.x = x
@@ -72,7 +72,6 @@ class App:
         self.bullets = []
         self.enemies = []
         #flag
-        self.EnemyFlag = 1
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -87,11 +86,12 @@ class App:
 
         #■ Enemy ========================================================
         #敵の仮配置
-        if self.EnemyFlag == 1: #ここで敵を配置
+        #一定時間でenemyをspawn
+        if pyxel.frame_count % 16 == 0:
             new_enemy = Enemy()
-            new_enemy.update(WINDOW_W/2, WINDOW_H/2 + 30)
+            new_enemy.update(random.randint(0, 104), WINDOW_H/2)
+#            new_enemy.update(WINDOW_W/2, WINDOW_H/2 + 30)
             self.enemies.append(new_enemy)
-            self.EnemyFlag = 0  #配置終了
 
         #EnemyとPlayの当たり判定
         enemy_count = len(self.enemies)
@@ -133,10 +133,12 @@ class App:
         bullet_count = len(self.bullets)
         #bulletsの個数分ループする
         for i in range(bullet_count):
+            print(i)
             if 0 < self.bullets[i].pos.y and self.bullets[i].pos.y < WINDOW_H:  #画面内判定
+                print(i)
                 #bullets更新
                 self.bullets[i].update( self.bullets[i].pos.x,
-                                        self.bullets[i].pos.y - self.bullets[i].speed,
+                                        self.bullets[i].pos.y - 5,
                                         self.bullets[i].size, self.bullets[i].color)
                 #enemyとbulletの当たり判定
                 enemy_count = len(self.enemies) #リスト要素数を取得
