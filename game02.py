@@ -119,8 +119,8 @@ class App:
                 print("hit!!")
 
         #■ bullet ========================================================
-        #key入力
-        if pyxel.btnp(pyxel.KEY_S):
+        #一定時間で射撃
+        if pyxel.frame_count % 16 == 0:
             #bulletインスタンス生成
             new_bullet = Bullet()
             #bulletクラス更新
@@ -131,7 +131,7 @@ class App:
             self.bullets.append(new_bullet)
         #リスト要素数を取得
         bullet_count = len(self.bullets)
-        #bulletsの数分ループする
+        #bulletsの個数分ループする
         for i in range(bullet_count):
             if 0 < self.bullets[i].pos.y and self.bullets[i].pos.y < WINDOW_H:  #画面内判定
                 #bullets更新
