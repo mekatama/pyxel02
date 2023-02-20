@@ -88,8 +88,8 @@ class App:
             new_enemy = enemy()
             new_enemy.update(WINDOW_W/2, WINDOW_H/2 + 30, self.mPlayer.vec)
             self.enemies.append(new_enemy)
-
             self.EnemyFlag = 0
+
         #enemyとplayの当たり判定
         enemy_count = len(self.enemies)
         for i in range(enemy_count):
@@ -114,7 +114,6 @@ class App:
                 (self.mPlayer.pos.y + 16    > self.enemies[i].pos.y)):
                 #GameOver判定
                 self.GameOverFlag = 1
-
         #■ bullet ========================================================
         if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT): #左クリック
             #bulletインスタンス生成
