@@ -90,9 +90,18 @@ class App:
         #一定時間でenemyをspawn
         if pyxel.frame_count % 16 == 0:
             new_enemy = Enemy()
-            new_enemy.update(random.randint(0, 104), WINDOW_H/2)
-#            new_enemy.update(WINDOW_W/2, WINDOW_H/2 + 30)
+            new_enemy.update(random.randint(0, 104), 0)
+#            new_enemy.update(random.randint(0, 104), WINDOW_H/2)
             self.enemies.append(new_enemy)
+        #enemy下に移動
+        #リスト要素数を取得
+        enemy_count = len(self.enemies)
+        #enemiesの個数分ループする
+        for i in range(enemy_count):
+            if 0 < self.enemies[i].pos.y and self.enemies[i].pos.y < WINDOW_H:  #画面内判定
+                #enemies更新
+                self.enemies[i].update( self.enemies[i].pos.x,
+                                        self.enemies[i].pos.y + 5)
 
         #EnemyとPlayの当たり判定
         enemy_count = len(self.enemies)
