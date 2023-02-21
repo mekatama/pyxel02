@@ -71,7 +71,8 @@ class App:
         #インスタンス入れる用リスト
         self.bullets = []
         self.enemies = []
-        #flag
+        #score
+        self.score = 0
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -133,9 +134,7 @@ class App:
         bullet_count = len(self.bullets)
         #bulletsの個数分ループする
         for i in range(bullet_count):
-            print(i)
             if 0 < self.bullets[i].pos.y and self.bullets[i].pos.y < WINDOW_H:  #画面内判定
-                print(i)
                 #bullets更新
                 self.bullets[i].update( self.bullets[i].pos.x,
                                         self.bullets[i].pos.y - 5,
@@ -151,6 +150,8 @@ class App:
                         #消す
                         del self.enemies[j]
                         del self.bullets[i]
+                        #score加算
+                        self.score += 10
                         break
             else:   #画面外判定
                 del self.bullets[i] #削除
@@ -159,6 +160,8 @@ class App:
 	#描画
     def draw(self):
         pyxel.cls(0)    #画面クリア 0は黒
+        #score表示(f文字列的な)
+        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
 
         # player ===============================================================
         #editorデータ描画(player)
