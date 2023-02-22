@@ -35,6 +35,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.hp = 3
         self.is_alive = True
         self.isRight = True #playerの移動方向flag
         self.isStop = False #playerの停止flag
@@ -131,7 +132,7 @@ class App:
         if pyxel.frame_count % 16 == 0:
             #Enemyの種類判定
             enemy_img = pyxel.rndi(1, 3)
-            #Enemy生成
+            #Enemy生成(種類ランダム)
             if enemy_img == 1:
                 Enemy(pyxel.rndi(0, pyxel.width - 16), 0, 1, 1)
             elif enemy_img == 2:
@@ -161,7 +162,10 @@ class App:
                 self.player.y       < enemy.y + 16):
                 #Hit時の処理
                 enemy.is_alive = False
-                self.scene = SCENE_GAMEOVER
+                self.player.hp -= 1
+                #player残りHP判定
+                if self.player.hp == 0:
+                    self.scene = SCENE_GAMEOVER
         #Player制御
         self.player.update()
         #list実行
