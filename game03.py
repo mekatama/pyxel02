@@ -81,9 +81,10 @@ class Bullet:
         pyxel.circ(self.x, self.y, self.size, self.color)
 
 class Enemy:
-    def __init__(self, x, y):
+    def __init__(self, x, y, hp):
         self.x = x
         self.y = y
+        self.hp = hp
         self.is_alive = True
         enemies.append(self)
     def update(self):
@@ -125,9 +126,10 @@ class App:
 
     #ゲームプレイ画面
     def update_play_scene(self):
-        if pyxel.frame_count % 16 == 0:                  #一定時間判定
+        #一定時間判定
+        if pyxel.frame_count % 16 == 0:
             #Enemy生成
-            Enemy(pyxel.rndi(0, pyxel.width - 16), 0)
+            Enemy(pyxel.rndi(0, pyxel.width - 16), 0, 2)
 
         #EnemyとBulletの当たり判定
         for enemy in enemies:
@@ -137,9 +139,12 @@ class App:
                     enemy.y + 16    > bullet.y and
                     enemy.y         < bullet.y + 2):
                     #Hit時の処理
-                    enemy.is_alive = False
+                    enemy.hp -= 1
                     bullet.is_alive = False
-                    self.score += 10
+                    #残りHP判定
+                    if enemy.hp == 0:
+                        enemy.is_alive = False
+                        self.score += 10
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
             if (self.player.x + 16  > enemy.x and
@@ -158,8 +163,6 @@ class App:
         cleanup_list(enemies)
         cleanup_list(bullets)
 
-
-
     #Gameover画面制御
     def update_gameover_scene(self):
         update_list(bullets)
@@ -171,6 +174,8 @@ class App:
             self.scene = SCENE_PLAY
             self.player.x = pyxel.width / 2     #初期位置
             self.player.y = pyxel.height - 20   #初期位置
+            self.player.isRight = True          #flag初期化
+            self.player.isStop = False          #flag初期化
             self.score = 0
             enemies.clear()                     #list全要素削除
             bullets.clear()                     #list全要素削除
