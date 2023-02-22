@@ -56,11 +56,11 @@ class Player:
             elif self.isRight == False:
                 self.x = (self.x - 5)
 
-        if pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
+        #一定時間で自動射撃
+        if pyxel.frame_count % 16 == 0:
             #弾生成
-            Bullet(
-                self.x + 8, self.y - 8
-            )
+            Bullet(self.x + 8, self.y - 8)
+
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 0, 0, 16, 16, 0)
