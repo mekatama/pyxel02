@@ -81,10 +81,11 @@ class Bullet:
         pyxel.circ(self.x, self.y, self.size, self.color)
 
 class Enemy:
-    def __init__(self, x, y, hp):
+    def __init__(self, x, y, hp, img):
         self.x = x
         self.y = y
         self.hp = hp
+        self.img = img          #表示画像指定
         self.is_alive = True
         enemies.append(self)
     def update(self):
@@ -92,7 +93,7 @@ class Enemy:
         if self.y > pyxel.height - 1:   #画面外判定
             self.is_alive = False       #画面外なら消去
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 16, 0, 16, 16, 0)
+        pyxel.blt(self.x, self.y, 0, 16 * self.img, 0, 16, 16, 0)
 
 #ゲーム管理
 class App:
@@ -128,8 +129,15 @@ class App:
     def update_play_scene(self):
         #一定時間判定
         if pyxel.frame_count % 16 == 0:
+            #Enemyの種類判定
+            enemy_img = pyxel.rndi(1, 3)
             #Enemy生成
-            Enemy(pyxel.rndi(0, pyxel.width - 16), 0, 2)
+            if enemy_img == 1:
+                Enemy(pyxel.rndi(0, pyxel.width - 16), 0, 1, 1)
+            elif enemy_img == 2:
+                Enemy(pyxel.rndi(0, pyxel.width - 16), 0, 2, 2)
+            elif enemy_img == 3:
+                Enemy(pyxel.rndi(0, pyxel.width - 16), 0, 3, 3)
 
         #EnemyとBulletの当たり判定
         for enemy in enemies:
