@@ -36,21 +36,25 @@ class Player:
         self.x = x
         self.y = y
         self.is_alive = True
+        self.isRight = True #playerの移動方向flag
+        self.isStop = False #playerの停止flag
     def update(self):
-        #key入力で移動
-        if pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT):
-            self.x -= PLAYER_SPEED
-        if pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT):
-            self.x += PLAYER_SPEED
-        if pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP):
-            self.y -= PLAYER_SPEED
-        if pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN):
-            self.y += PLAYER_SPEED
-        #移動制限
-        self.x = max(self.x, 0)                 #画面左端
-        self.x = min(self.x, pyxel.width - 16)  #画面右端
-        self.y = max(self.y, 0)                 #画面上端
-        self.y = min(self.y, pyxel.height - 16) #画面下端
+        #key入力(player停止)
+        if pyxel.btn(pyxel.KEY_A):
+            self.isStop = True  #押したら
+        elif pyxel.btnr(pyxel.KEY_A):
+            self.isStop = False #離したら
+        #playerの移動方向判定
+        if self.x <= 0:
+            self.isRight = True     #右移動
+        elif self.x >= 104:
+            self.isRight = False    #左移動
+	    #playerの往復移動
+        if self.isStop == False:
+            if self.isRight == True:
+                self.x = (self.x + 5)
+            elif self.isRight == False:
+                self.x = (self.x - 5)
 
         if pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
             #弾生成
