@@ -213,6 +213,7 @@ class App:
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
+        pyxel.text(self.player.x, 134, f"HP:{self.player.hp:1}", 13)
 
     def draw_gameover_scene(self):
         draw_list(bullets)
