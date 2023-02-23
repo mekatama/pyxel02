@@ -130,8 +130,13 @@ class App:
     def update_play_scene(self):
         #一定時間判定
         if pyxel.frame_count % 16 == 0:
-            #Enemyの種類判定
-            enemy_img = pyxel.rndi(1, 3)
+            #ScoreでEnemyの種類判定
+            if self.score <= 100:
+                enemy_img = 1
+            elif self.score > 100 and self.score <= 200:
+                enemy_img = pyxel.rndi(1, 2)
+            elif self.score > 200:
+                enemy_img = pyxel.rndi(1, 3)
             #Enemy生成(種類ランダム)
             if enemy_img == 1:
                 Enemy(pyxel.rndi(0, pyxel.width - 16), 0, 1, 1)
@@ -151,7 +156,7 @@ class App:
                     enemy.hp -= 1
                     bullet.is_alive = False
                     #残りHP判定
-                    if enemy.hp == 0:
+                    if enemy.hp <= 0:
                         enemy.is_alive = False
                         self.score += 10
         #EnemyとPlayerの当たり判定
@@ -164,7 +169,7 @@ class App:
                 enemy.is_alive = False
                 self.player.hp -= 1
                 #player残りHP判定
-                if self.player.hp == 0:
+                if self.player.hp <= 0:
                     self.scene = SCENE_GAMEOVER
         #Player制御
         self.player.update()
