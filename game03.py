@@ -193,6 +193,7 @@ class App:
             self.player.y = pyxel.height - 20   #初期位置
             self.player.isRight = True          #flag初期化
             self.player.isStop = False          #flag初期化
+            self.player.hp = 3                  #HP初期化
             self.score = 0
             enemies.clear()                     #list全要素削除
             bullets.clear()                     #list全要素削除
