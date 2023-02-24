@@ -35,18 +35,21 @@ class Player:
         self.x = x
         self.y = y
         self.hp = 3
-        self.isRight = True #playerの方向flag
+        self.isAtk = True   #playerの攻撃flag
         self.is_alive = True
     def update(self):
         #key入力(攻撃)
-        if pyxel.btnp(pyxel.KEY_D):
-            self.isRight = True
+        if pyxel.btnp(pyxel.KEY_D) and (self.isAtk == True):
             #弾生成
-#            Bullet(self.x + 8, self.y - 8)
-        if pyxel.btnp(pyxel.KEY_A):
-            self.isRight = False
+            Bullet(self.x + 24, self.y + 8)
+            self.isAtk = False
+        if pyxel.btnp(pyxel.KEY_A) and (self.isAtk == True):
             #弾生成
-#            Bullet(self.x + 8, self.y - 8)
+            Bullet(self.x - 8, self.y + 8)
+            self.isAtk = False
+        #一定時間攻撃不可判定
+        if pyxel.frame_count % 16 == 0 and (self.isAtk == False):
+            self.isAtk = True
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 0, 0, 16, 16, 0)
@@ -60,7 +63,9 @@ class Bullet:
         self.is_alive = True
         bullets.append(self)
     def update(self):
-        self.y -= BULLET_SPEED      #弾移動
+        self.y -= BULLET_SPEED          #弾移動
+        if pyxel.frame_count % 16 == 0: #一定時間表示
+            self.is_alive = False       #消去
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
 
