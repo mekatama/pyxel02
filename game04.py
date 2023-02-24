@@ -114,7 +114,35 @@ class App:
 
     #ゲームプレイ画面
     def update_play_scene(self):
-
+        #一定時間でenemy出現判定
+        if pyxel.frame_count % 60 == 0:
+            Enemy(-16, 100, 1, 1)
+        #EnemyとBulletの当たり判定
+        for enemy in enemies:
+            for bullet in bullets:
+                if (enemy.x + 16    > bullet.x and
+                    enemy.x         < bullet.x + 2 and
+                    enemy.y + 16    > bullet.y and
+                    enemy.y         < bullet.y + 2):
+                    #Hit時の処理
+                    enemy.hp -= 1
+                    bullet.is_alive = False
+                    #残りHP判定
+                    if enemy.hp <= 0:
+                        enemy.is_alive = False
+                        self.score += 10
+        #EnemyとPlayerの当たり判定
+        for enemy in enemies:
+            if (self.player.x + 16  > enemy.x and
+                self.player.x       < enemy.x + 16 and
+                self.player.y + 16  > enemy.y and
+                self.player.y       < enemy.y + 16):
+                #Hit時の処理
+                enemy.is_alive = False
+                self.player.hp -= 1
+                #player残りHP判定
+                if self.player.hp <= 0:
+                    self.scene = SCENE_GAMEOVER
 
         #Player制御
         self.player.update()
@@ -163,12 +191,12 @@ class App:
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
-        pyxel.text(self.player.x, 134, f"HP:{self.player.hp:1}", 13)
+        pyxel.text(self.player.x, 90, f"HP:{self.player.hp:1}", 13)
 
     def draw_gameover_scene(self):
         draw_list(bullets)
         draw_list(enemies)
-        pyxel.text(43, 66, "GAME OVER", 8)
-        pyxel.text(31, 126, "- PRESS ENTER -", 13)
+        pyxel.text(43, 30, "GAME OVER", 8)
+        pyxel.text(31, 60, "- PRESS ENTER -", 13)
 
 App()
