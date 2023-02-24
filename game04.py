@@ -37,22 +37,25 @@ class Player:
         self.hp = 3
         self.isAtk = True   #playerの攻撃flag
         self.is_alive = True
+        self.isDir = 1      #playerの向き(右1 左-1)
     def update(self):
         #key入力(攻撃)
         if pyxel.btnp(pyxel.KEY_D) and (self.isAtk == True):
             #弾生成
             Bullet(self.x + 24, self.y + 8)
             self.isAtk = False
+            self.isDir = 1
         if pyxel.btnp(pyxel.KEY_A) and (self.isAtk == True):
             #弾生成
             Bullet(self.x - 8, self.y + 8)
             self.isAtk = False
+            self.isDir = -1
         #一定時間攻撃不可判定
         if pyxel.frame_count % 16 == 0 and (self.isAtk == False):
             self.isAtk = True
     def draw(self):
         #editorデータ描画(player)
-        pyxel.blt(self.x, self.y, 0, 0, 0, 16, 16, 0)
+        pyxel.blt(self.x, self.y, 0, 0, 0, 16 * self.isDir, 16, 0)
 
 class Bullet:
     def __init__(self, x, y):
@@ -174,6 +177,7 @@ class App:
             self.player.x = pyxel.width / 2     #初期位置
             self.player.y = pyxel.height - 20   #初期位置
             self.player.isRight = True          #flag初期化
+            self.player.isDir = 1               #flag初期化
             self.player.hp = 3                  #HP初期化
             self.score = 0
             enemies.clear()                     #list全要素削除
