@@ -11,6 +11,7 @@ BULLET_SPEED = 0
 ENEMY_SPEED = 1.5
 #list用意
 enemies = []
+enemiesUI = []
 bullets = []
 #関数(List実行)
 def update_list(list):
@@ -77,21 +78,34 @@ class Bullet:
         pyxel.circ(self.x, self.y, self.size, self.color)
 
 class Enemy:
-    def __init__(self, x, y, hp, img, dir):
+    def __init__(self, x, y, hp, img, dir, speed):
         self.x = x
         self.y = y
         self.hp = hp
         self.img = img          #表示画像指定
-        self.is_Right = dir     #移動方向flag
+        self.is_Right = dir     #移動方向flag(右:1 左:-1)
+        self.addSpeed = speed   #追加speed
         self.is_alive = True
         enemies.append(self)
     def update(self):
-        if self.is_Right == 0:
-            self.x += ENEMY_SPEED           #右移動
-        elif self.is_Right == 1:
-            self.x -= ENEMY_SPEED           #左移動
+        if self.is_Right == 1:
+            self.x += (ENEMY_SPEED + self.addSpeed)           #右移動
+        elif self.is_Right == -1:
+            self.x -= (ENEMY_SPEED + self.addSpeed)           #左移動
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 16 * self.img, 0, 16, 16, 0)
+        pyxel.blt(self.x, self.y, 0, 16 * self.img, 0, 16 * self.is_Right, 16, 0)
+
+class EnemyUI:
+    def __init__(self, x, y, score):
+        self.x = x
+        self.y = y
+        self.score = score
+        enemiesUI.append(self)
+    def update(self):
+        if pyxel.frame_count % 16 == 0: #一定時間表示
+            self.y -= 1
+    def draw(self):
+        pyxel.text(self.x, self.y, f"+{self.score:2}", 13)
 
 #ゲーム管理
 class App:
@@ -129,10 +143,18 @@ class App:
         enemy_spawn = pyxel.rndi(0, 1)
         #一定時間でenemy出現判定
         if pyxel.frame_count % 60 == 0:
+            #ScoreでEnemyのspeed変化
+            if self.score <= 100:
+                enemy_addSpeed = 0
+            elif self.score > 100 and self.score <= 200:
+                enemy_addSpeed = 2
+            elif self.score > 200:
+                enemy_addSpeed = 3
+            #enemy生成
             if enemy_spawn == 0:
-                Enemy(-16, 100, 1, 1, 0)
+                Enemy(-16, 100, 1, 1, 1, enemy_addSpeed)
             elif enemy_spawn == 1: 
-                Enemy(176, 100, 1, 1, 1)
+                Enemy(176, 100, 1, 1, -1, enemy_addSpeed)
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
