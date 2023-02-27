@@ -41,9 +41,9 @@ class Player:
         self.isStop = False #playerの停止flag
     def update(self):
         #key入力(player停止)
-        if pyxel.btnp(pyxel.KEY_A) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
+        if pyxel.btnp(pyxel.KEY_A) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_X):
             self.isStop = True  #押したら
-        elif pyxel.btnr(pyxel.KEY_A)  or pyxel.btnr(pyxel.GAMEPAD1_BUTTON_A):
+        elif pyxel.btnr(pyxel.KEY_A)  or pyxel.btnr(pyxel.GAMEPAD1_BUTTON_X):
             self.isStop = False #離したら
         #playerの移動方向判定
         if self.x <= 0:
