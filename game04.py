@@ -100,10 +100,15 @@ class EnemyUI:
         self.x = x
         self.y = y
         self.score = score
+        self.count = 0
+        self.is_alive = True
         enemiesUI.append(self)
     def update(self):
-        if pyxel.frame_count % 16 == 0: #一定時間表示
+        self.count += 1
+        if self.count < 10:
             self.y -= 1
+        elif self.count >= 10:
+            self.is_alive = False
     def draw(self):
         pyxel.text(self.x, self.y, f"+{self.score:2}", 13)
 
@@ -169,6 +174,9 @@ class App:
                     if enemy.hp <= 0:
                         enemy.is_alive = False
                         self.score += 10
+                        enemiesUI.append(
+                            EnemyUI(enemy.x, enemy.y, 10)
+                        )
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
             if (self.player.x + 16  > enemy.x and
@@ -187,16 +195,20 @@ class App:
         #list実行
         update_list(bullets)
         update_list(enemies)
+        update_list(enemiesUI)
         #list更新
         cleanup_list(enemies)
         cleanup_list(bullets)
+        cleanup_list(enemiesUI)
 
     #Gameover画面制御
     def update_gameover_scene(self):
         update_list(bullets)
         update_list(enemies)
+        update_list(enemiesUI)
         cleanup_list(enemies)
         cleanup_list(bullets)
+        cleanup_list(enemiesUI)
         #ボタン入力で再play
         if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_X):
             self.scene = SCENE_PLAY
@@ -209,6 +221,7 @@ class App:
             self.score = 0
             enemies.clear()                     #list全要素削除
             bullets.clear()                     #list全要素削除
+            enemiesUI.clear()                     #list全要素削除
 
     def draw(self):
         pyxel.cls(0)    #画面クリア 0は黒
@@ -231,11 +244,13 @@ class App:
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
+        draw_list(enemiesUI)
         pyxel.text(self.player.x, 90, f"HP:{self.player.hp:1}", 13)
 
     def draw_gameover_scene(self):
         draw_list(bullets)
         draw_list(enemies)
+        draw_list(enemiesUI)
         pyxel.text(43, 30, "GAME OVER", 8)
         pyxel.text(31, 60, "- PRESS ENTER -", 13)
 
