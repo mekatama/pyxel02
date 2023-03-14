@@ -61,7 +61,10 @@ class Player:
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 0, self.isMotion * 16, 16 * self.isDir, 16, 0)
+        #当たり判定
+        pyxel.rectb(self.x + 4, self.y, 8, 16, 10)
 
+#■Bullet
 class Bullet:
     def __init__(self, x, y):
         self.x = x
@@ -94,6 +97,8 @@ class Enemy:
             self.x -= (ENEMY_SPEED + self.addSpeed)           #左移動
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16 * self.img, 0, 16 * self.is_Right, 16, 0)
+        #当たり判定
+        pyxel.rectb(self.x + 2, self.y,12, 16, 10)
 
 class EnemyUI:
     def __init__(self, x, y, score):
@@ -179,8 +184,8 @@ class App:
                         )
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
-            if (self.player.x + 16  > enemy.x and
-                self.player.x       < enemy.x + 16 and
+            if (self.player.x + 12  > enemy.x + 2 and
+                self.player.x + 4   < enemy.x + 14 and
                 self.player.y + 16  > enemy.y and
                 self.player.y       < enemy.y + 16):
                 #Hit時の処理
