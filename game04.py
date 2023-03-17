@@ -126,6 +126,7 @@ class App:
         pyxel.load("my_resource.pyxres")
         self.scene = SCENE_TITLE
         self.score = 0
+        self.enemy_addSpeed = 0
         #インスタンス生成
         self.player = Player(pyxel.width / 2, pyxel.height - 20)
         #実行開始 更新関数 描画関数
@@ -151,20 +152,22 @@ class App:
     def update_play_scene(self):
         #spawn位置
         enemy_spawn = pyxel.rndi(0, 1)
+        #spawn間隔係数
+        enemy_spawnspeed = 60 - (self.enemy_addSpeed * 15)
         #一定時間でenemy出現判定
-        if pyxel.frame_count % 60 == 0:
+        if pyxel.frame_count % enemy_spawnspeed == 0:
             #ScoreでEnemyのspeed変化
             if self.score <= 100:
-                enemy_addSpeed = 0
+                self.enemy_addSpeed = 0
             elif self.score > 100 and self.score <= 200:
-                enemy_addSpeed = 2
+                self.enemy_addSpeed = 2
             elif self.score > 200:
-                enemy_addSpeed = 3
+                self.enemy_addSpeed = 3
             #enemy生成
             if enemy_spawn == 0:
-                Enemy(-16, 100, 1, 1, 1, enemy_addSpeed)
+                Enemy(-16, 100, 1, 1, 1, self.enemy_addSpeed)
             elif enemy_spawn == 1: 
-                Enemy(176, 100, 1, 1, -1, enemy_addSpeed)
+                Enemy(176, 100, 1, 1, -1, self.enemy_addSpeed)
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
