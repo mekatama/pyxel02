@@ -80,6 +80,7 @@ class Bullet:
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
 
+#■Enemy
 class Enemy:
     def __init__(self, x, y, hp, img, dir, speed):
         self.x = x
@@ -88,15 +89,25 @@ class Enemy:
         self.img = img          #表示画像指定
         self.is_Right = dir     #移動方向flag(右:1 左:-1)
         self.addSpeed = speed   #追加speed
+        self.aniCount = 0       #アニメ用カウント
+        self.motion = 0         #アニメ切り替え用
         self.is_alive = True
         enemies.append(self)
     def update(self):
+        self.aniCount += 1
+        #アニメ切り替え
+        if self.aniCount % 8 == 0: #一定時間表示
+            if self.motion == 0:
+                self.motion = 1
+            elif self.motion == 1:
+                self.motion = 0
+        #移動
         if self.is_Right == 1:
             self.x += (ENEMY_SPEED + self.addSpeed)           #右移動
         elif self.is_Right == -1:
             self.x -= (ENEMY_SPEED + self.addSpeed)           #左移動
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 16 * self.img, 0, 16 * self.is_Right, 16, 0)
+        pyxel.blt(self.x, self.y, 0, 16 * self.img, 16 * self.motion, 16 * self.is_Right, 16, 0)
         #当たり判定
         pyxel.rectb(self.x + 2, self.y,12, 16, 10)
 
