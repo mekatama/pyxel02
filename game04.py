@@ -289,7 +289,9 @@ class App:
 
     def draw_title_scene(self):
         pyxel.text(35, 66, "Pyxel Shooter", pyxel.frame_count % 16)
-        pyxel.text(31, 126, "- PRESS ENTER -", 13)
+        pyxel.text(31, 74, "- PRESS ENTER -", 13)
+        pyxel.text(31, 82, "D key : Right Punch", 13)
+        pyxel.text(31, 90, "A key : Left Punch", 13)
 
     def draw_play_scene(self):
         self.player.draw()
