@@ -13,6 +13,7 @@ ENEMY_SPEED = 1.5
 enemies = []
 enemiesUI = []
 bullets = []
+blasts = []
 #関数(List実行)
 def update_list(list):
     for elem in list:
@@ -111,6 +112,7 @@ class Enemy:
         #当たり判定
         pyxel.rectb(self.x + 2, self.y,12, 16, 10)
 
+#■Enemy_UI
 class EnemyUI:
     def __init__(self, x, y, score):
         self.x = x
@@ -127,6 +129,24 @@ class EnemyUI:
             self.is_alive = False
     def draw(self):
         pyxel.text(self.x, self.y, f"+{self.score:2}", 13)
+
+#■Blust
+class Blast:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.count = 0
+        self.motion = 0         #アニメ切り替え用
+        self.is_alive = True
+        blasts.append(self)
+    def update(self):
+        self.count += 1
+        if self.count >= 5 and self.count < 10:
+            self.motion = 1
+        elif self.count >= 10:
+            self.is_alive = False
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 0, 32 + (16 * self.motion), 16, 16, 0)
 
 #ゲーム管理
 class App:
@@ -196,6 +216,10 @@ class App:
                         enemiesUI.append(
                             EnemyUI(enemy.x, enemy.y, 10)
                         )
+                        blasts.append(
+                            Blast(enemy.x, enemy.y)
+                        )
+
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
             if (self.player.x + 12  > enemy.x + 2 and
@@ -207,6 +231,9 @@ class App:
                 self.player.hp -= 1
                 #player残りHP判定
                 if self.player.hp <= 0:
+                    blasts.append(
+                        Blast(enemy.x, enemy.y)
+                    )
                     self.scene = SCENE_GAMEOVER
 
         #Player制御
@@ -215,19 +242,23 @@ class App:
         update_list(bullets)
         update_list(enemies)
         update_list(enemiesUI)
+        update_list(blasts)
         #list更新
         cleanup_list(enemies)
         cleanup_list(bullets)
         cleanup_list(enemiesUI)
+        cleanup_list(blasts)
 
     #Gameover画面制御
     def update_gameover_scene(self):
         update_list(bullets)
         update_list(enemies)
         update_list(enemiesUI)
+        update_list(blasts)
         cleanup_list(enemies)
         cleanup_list(bullets)
         cleanup_list(enemiesUI)
+        cleanup_list(blasts)
         #ボタン入力で再play
         if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_X):
             self.scene = SCENE_PLAY
@@ -240,7 +271,8 @@ class App:
             self.score = 0
             enemies.clear()                     #list全要素削除
             bullets.clear()                     #list全要素削除
-            enemiesUI.clear()                     #list全要素削除
+            enemiesUI.clear()                   #list全要素削除
+            blasts.clear()                      #list全要素削除
 
     def draw(self):
         pyxel.cls(0)    #画面クリア 0は黒
@@ -264,13 +296,14 @@ class App:
         draw_list(bullets)
         draw_list(enemies)
         draw_list(enemiesUI)
+        draw_list(blasts)
         pyxel.text(self.player.x, 90, f"HP:{self.player.hp:1}", 13)
 
     def draw_gameover_scene(self):
         draw_list(bullets)
         draw_list(enemies)
         draw_list(enemiesUI)
+        draw_list(blasts)
         pyxel.text(43, 30, "GAME OVER", 8)
         pyxel.text(31, 60, "- PRESS ENTER -", 13)
-
 App()
