@@ -294,13 +294,14 @@ class App:
         pyxel.text(31, 90, "A key : Left Punch", 13)
 
     def draw_play_scene(self):
+        pyxel.bltm(0, 0, 0, 0, 0, 160, 120)
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
         draw_list(enemiesUI)
         draw_list(blasts)
         pyxel.text(self.player.x, 90, f"HP:{self.player.hp:1}", 13)
-
+    
     def draw_gameover_scene(self):
         draw_list(bullets)
         draw_list(enemies)
