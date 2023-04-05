@@ -177,6 +177,7 @@ class App:
     #タイトル画面制御
     def update_title_scene(self):
         if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_X):
+            pyxel.playm(0, loop = True)    #BGM再生
             self.scene = SCENE_PLAY
 
     #ゲームプレイ画面
@@ -188,11 +189,11 @@ class App:
         #一定時間でenemy出現判定
         if pyxel.frame_count % enemy_spawnspeed == 0:
             #ScoreでEnemyのspeed変化
-            if self.score <= 100:
+            if self.score <= 50:
                 self.enemy_addSpeed = 0
-            elif self.score > 100 and self.score <= 200:
+            elif self.score > 50 and self.score <= 100:
                 self.enemy_addSpeed = 2
-            elif self.score > 200:
+            elif self.score > 100:
                 self.enemy_addSpeed = 3
             #enemy生成
             if enemy_spawn == 0:
@@ -213,6 +214,7 @@ class App:
                     if enemy.hp <= 0:
                         enemy.is_alive = False
                         self.score += 10
+                        pyxel.play(1, 0, loop=False)    #SE再生
                         enemiesUI.append(
                             EnemyUI(enemy.x, enemy.y, 10)
                         )
@@ -229,11 +231,13 @@ class App:
                 #Hit時の処理
                 enemy.is_alive = False
                 self.player.hp -= 1
+                pyxel.play(1, 1, loop=False)    #SE再生
                 #player残りHP判定
                 if self.player.hp <= 0:
                     blasts.append(
                         Blast(enemy.x, enemy.y)
                     )
+                    pyxel.stop(0)
                     self.scene = SCENE_GAMEOVER
 
         #Player制御
@@ -261,6 +265,7 @@ class App:
         cleanup_list(blasts)
         #ボタン入力で再play
         if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_X):
+            pyxel.playm(0, loop = True)    #BGM再生
             self.scene = SCENE_PLAY
             self.player.x = pyxel.width / 2     #初期位置
             self.player.y = pyxel.height - 20   #初期位置
