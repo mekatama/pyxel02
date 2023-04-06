@@ -1,54 +1,63 @@
 import pyxel
 
-# ゲーム画面のサイズを設定
+# ゲームウィンドウの大きさを定義
 WINDOW_WIDTH = 160
 WINDOW_HEIGHT = 120
 
-class Game:
+class Bullet:
+    def __init__(self, x, y, speed):
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.direction = [0, 0]
+        # マウスの位置を取得
+        self.mouse_x = pyxel.mouse_x
+        self.mouse_y = pyxel.mouse_y
+
+    def update(self):
+
+        # 弾の移動方向を計算
+        dx = self.mouse_x - self.x
+        dy = self.mouse_y - self.y
+        length = (dx**2 + dy**2)**0.5
+        if length > 0:
+            self.direction[0] = dx / length
+            self.direction[1] = dy / length
+
+        # 弾を移動させる
+        self.x += self.direction[0] * self.speed
+        self.y += self.direction[1] * self.speed
+
+    def draw(self):
+        pyxel.circ(self.x, self.y, 2, 8)
+
+class App:
     def __init__(self):
-        # Pyxelを初期化
-        pyxel.init(WINDOW_WIDTH, WINDOW_HEIGHT, title="Shoot the Cursor")
+        pyxel.init(WINDOW_WIDTH, WINDOW_HEIGHT, title="Pyxel Bullet Example")
+        self.bullets = []
 
-        # 弾の速度を設定
-        self.bullet_speed = 5
-
-        # グラフィックを読み込む
-        pyxel.load("my_resource.pyxres")
-
-        # カーソルの初期位置を設定
-        self.cursor_x = WINDOW_WIDTH // 2
-        self.cursor_y = WINDOW_HEIGHT // 2
-
-        # 弾の初期位置を設定
-        self.bullet_x = -1
-        self.bullet_y = -1
+        # マウスカーソルを非表示にする
+        pyxel.mouse(True)
 
         pyxel.run(self.update, self.draw)
 
     def update(self):
-        # カーソルの位置を更新
-        self.cursor_x = pyxel.mouse_x
-        self.cursor_y = pyxel.mouse_y
-
-        # スペースキーが押されたら弾を発射
+        # スペースキーが押されたら新しい弾を発射する
         if pyxel.btnp(pyxel.KEY_SPACE):
-            self.bullet_x = self.cursor_x
-            self.bullet_y = self.cursor_y
+            x = WINDOW_WIDTH // 2
+            y = WINDOW_HEIGHT // 2
+            speed = 2
+            self.bullets.append(Bullet(x, y, speed))
 
-        # 弾の位置を更新
-        if self.bullet_y >= 0:
-            self.bullet_y -= self.bullet_speed
+        # すべての弾を更新する
+        for bullet in self.bullets:
+            bullet.update()
 
     def draw(self):
-        # 画面をクリア
         pyxel.cls(0)
 
-        # カーソルを描画
-        pyxel.blt(self.cursor_x, self.cursor_y, 0, 0, 0, 8, 8, 0)
+        # すべての弾を描画する
+        for bullet in self.bullets:
+            bullet.draw()
 
-        # 弾を描画
-        if self.bullet_y >= 0:
-            pyxel.blt(self.bullet_x, self.bullet_y, 0, 8, 0, 8, 8, 0)
-
-# ゲームを開始
-Game()
+App()
