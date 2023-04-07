@@ -70,7 +70,6 @@ class Bullet:
             self.direction[0] = dx / length
             self.direction[1] = dy / length
         bullets.append(self)
-
     def update(self):
         self.count += 1
         # 弾を移動させる
@@ -78,9 +77,35 @@ class Bullet:
         self.y += self.direction[1] * self.speed
         if self.count >= 50: #一定時間表示
             self.is_alive = False       #消去
-
     def draw(self):
         pyxel.circ(self.x, self.y, 2, 8)
+
+#■Enemy
+class Enemy:
+    def __init__(self, x, y, hp, img, speed):
+        self.x = x
+        self.y = y
+        self.hp = hp
+        self.img = img          #表示画像指定
+        self.addSpeed = speed   #追加speed
+        self.direction = [0, 0]
+        self.is_alive = True
+        # 敵の移動方向を計算
+        dx = WINDOW_W / 2 - self.x
+        dy = WINDOW_H / 2 - self.y
+        length = (dx**2 + dy**2)**0.5
+        if length > 0:
+            self.direction[0] = dx / length
+            self.direction[1] = dy / length
+        enemies.append(self)
+    def update(self):
+        #移動
+        self.x += self.direction[0] * self.addSpeed
+        self.y += self.direction[1] * self.addSpeed
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 16, 0, 16, 16, 0)
+        #当たり判定
+        pyxel.rectb(self.x + 2, self.y,12, 16, 10)
 
 class App:
     def __init__(self):
@@ -116,28 +141,31 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
+        #一定時間でenemy出現判定
+        if pyxel.frame_count % 60 == 0:
+            #enemy生成
+            Enemy(100, 20, 1, 1, 1)
         #Player制御
         self.player.update()
-        # スペースキーが押されたら新しい弾を発射する
-#        if pyxel.btnp(pyxel.KEY_SPACE):
-#            x = WINDOW_W // 2
-#            y = WINDOW_H // 2
-#            speed = BULLET_SPEED
-#            Bullet(x, y, speed)
 
         #list実行
         update_list(bullets)
+        update_list(enemies)
         #list更新
         cleanup_list(bullets)
+        cleanup_list(enemies)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
         update_list(bullets)
+        update_list(enemies)
         cleanup_list(bullets)
+        cleanup_list(enemies)
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
             self.scene = SCENE_TITLE
             bullets.clear()                     #list全要素削除
+            enemies.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -162,12 +190,15 @@ class App:
         self.player.draw()
 
         draw_list(bullets)
+        draw_list(enemies)
 
         #text表示(x座標、y座標、文字列、color)
         pyxel.text(5, 4, "test", 7)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
+        draw_list(bullets)
+        draw_list(enemies)
         pyxel.text(55, 40, "GAME OVER", 7)
         pyxel.text(50, 80, "- PRESS ENTER -", 7)
 App()
