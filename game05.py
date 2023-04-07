@@ -7,6 +7,7 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 #定数
 WINDOW_H = 128
 WINDOW_W = 128
+PLAYER_HP = 1
 BULLET_SPEED = 2
 ENEMY_SPEED = 1.5
 #list用意
@@ -38,7 +39,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.hp = 3
+        self.hp = PLAYER_HP
         self.is_alive = True
     def update(self):
         # スペースキーが押されたら新しい弾を発射する
@@ -174,6 +175,7 @@ class App:
     def update_title_scene(self):
         #ENTERでゲーム画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
+            pyxel.playm(0, loop = True)    #BGM再生
             self.scene = SCENE_PLAY
 
     #ゲーム画面処理用update
@@ -203,6 +205,23 @@ class App:
                         blasts.append(
                             Blast(enemy.x, enemy.y)
                         )
+        #EnemyとPlayerの当たり判定
+        for enemy in enemies:
+            if (self.player.x + 16  > enemy.x and
+                self.player.x       < enemy.x + 16 and
+                self.player.y + 16  > enemy.y and
+                self.player.y       < enemy.y + 16):
+                #Hit時の処理
+                enemy.is_alive = False
+                self.player.hp -= 1
+                pyxel.play(1, 1, loop=False)    #SE再生
+                #player残りHP判定
+                if self.player.hp <= 0:
+                    blasts.append(
+                        Blast(enemy.x, enemy.y)
+                    )
+                    pyxel.stop(0)
+                    self.scene = SCENE_GAMEOVER
         #Player制御
         self.player.update()
 
@@ -229,6 +248,9 @@ class App:
         cleanup_list(blasts)
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
+#            pyxel.playm(0, loop = True)         #BGM再生
+            self.player.hp = PLAYER_HP          #HP初期化
+            self.score = 0
             self.scene = SCENE_TITLE
             bullets.clear()                     #list全要素削除
             enemies.clear()                     #list全要素削除
