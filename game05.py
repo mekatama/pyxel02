@@ -107,12 +107,49 @@ class Enemy:
         #当たり判定
         pyxel.rectb(self.x + 2, self.y,12, 16, 10)
 
+#■Enemy_UI
+class EnemyUI:
+    def __init__(self, x, y, score):
+        self.x = x
+        self.y = y
+        self.score = score
+        self.count = 0
+        self.is_alive = True
+        enemiesUI.append(self)
+    def update(self):
+        self.count += 1
+        if self.count < 10:
+            self.y -= 1
+        elif self.count >= 10:
+            self.is_alive = False
+    def draw(self):
+        pyxel.text(self.x, self.y, f"+{self.score:2}", 13)
+
+#■Blust
+class Blast:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.count = 0
+        self.motion = 0         #アニメ切り替え用
+        self.is_alive = True
+        blasts.append(self)
+    def update(self):
+        self.count += 1
+        if self.count >= 5 and self.count < 10:
+            self.motion = 1
+        elif self.count >= 10:
+            self.is_alive = False
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 0, 32 + (16 * self.motion), 16, 16, 0)
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
         pyxel.init(WINDOW_W, WINDOW_H, title="Pysel Base")
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource.pyxres")
+        self.score = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         # マウスカーソル表示
@@ -145,33 +182,63 @@ class App:
         if pyxel.frame_count % 60 == 0:
             #enemy生成
             Enemy(100, 20, 1, 1, 1)
+        #EnemyとBulletの当たり判定
+        for enemy in enemies:
+            for bullet in bullets:
+                if (enemy.x + 16    > bullet.x and
+                    enemy.x         < bullet.x + 2 and
+                    enemy.y + 16    > bullet.y and
+                    enemy.y         < bullet.y + 2):
+                    #Hit時の処理
+                    enemy.hp -= 1
+                    bullet.is_alive = False
+                    #残りHP判定
+                    if enemy.hp <= 0:
+                        enemy.is_alive = False
+                        self.score += 10
+                        pyxel.play(1, 0, loop=False)    #SE再生
+                        enemiesUI.append(
+                            EnemyUI(enemy.x, enemy.y, 10)
+                        )
+                        blasts.append(
+                            Blast(enemy.x, enemy.y)
+                        )
         #Player制御
         self.player.update()
 
         #list実行
         update_list(bullets)
         update_list(enemies)
+        update_list(enemiesUI)
+        update_list(blasts)
         #list更新
         cleanup_list(bullets)
         cleanup_list(enemies)
+        cleanup_list(enemiesUI)
+        cleanup_list(blasts)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
         update_list(bullets)
         update_list(enemies)
+        update_list(enemiesUI)
+        update_list(blasts)
         cleanup_list(bullets)
         cleanup_list(enemies)
+        cleanup_list(enemiesUI)
+        cleanup_list(blasts)
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
             self.scene = SCENE_TITLE
             bullets.clear()                     #list全要素削除
             enemies.clear()                     #list全要素削除
+            enemiesUI.clear()                   #list全要素削除
+            blasts.clear()                      #list全要素削除
 
 	#描画関数
     def draw(self):
         #画面クリア 0は黒
         pyxel.cls(0)
-
         #描画の画面分岐
         if self.scene == SCENE_TITLE:
             self.draw_title_scene()
@@ -179,6 +246,9 @@ class App:
             self.draw_play_scene()
         elif self.scene == SCENE_GAMEOVER:
             self.draw_gameover_scene()
+
+        #score表示(f文字列的な)
+        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
 
     #タイトル画面描画用update
     def draw_title_scene(self):
@@ -188,17 +258,17 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         self.player.draw()
-
         draw_list(bullets)
         draw_list(enemies)
-
-        #text表示(x座標、y座標、文字列、color)
-        pyxel.text(5, 4, "test", 7)
+        draw_list(enemiesUI)
+        draw_list(blasts)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
         draw_list(bullets)
         draw_list(enemies)
+        draw_list(enemiesUI)
+        draw_list(blasts)
         pyxel.text(55, 40, "GAME OVER", 7)
         pyxel.text(50, 80, "- PRESS ENTER -", 7)
 App()
