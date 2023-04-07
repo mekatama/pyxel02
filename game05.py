@@ -8,8 +8,12 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 WINDOW_H = 128
 WINDOW_W = 128
 BULLET_SPEED = 2
+ENEMY_SPEED = 1.5
 #list用意
+enemies = []
+enemiesUI = []
 bullets = []
+blasts = []
 
 #関数(List実行)
 def update_list(list):
@@ -28,6 +32,23 @@ def cleanup_list(list):
             list.pop(i)         #要素削除
         else:                   #生存の場合
             i += 1              #スルー
+
+#■Player
+class Player:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.hp = 3
+        self.is_alive = True
+    def update(self):
+        # スペースキーが押されたら新しい弾を発射する
+        if pyxel.btnp(pyxel.KEY_SPACE):
+            Bullet(WINDOW_W // 2, WINDOW_H // 2, BULLET_SPEED)
+    def draw(self):
+        #editorデータ描画(player)
+        pyxel.blt(self.x, self.y, 0, 0, 0, 16, 16, 0)
+        #当たり判定
+        pyxel.rectb(self.x, self.y, 16, 16, 10)
 
 #■Bullet
 class Bullet:
@@ -71,6 +92,8 @@ class App:
         self.scene = SCENE_TITLE
         # マウスカーソル表示
         pyxel.mouse(True)
+        #Playerインスタンス生成
+        self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -93,14 +116,14 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
-		#playerの更新処理
-#        self.update_player()
+        #Player制御
+        self.player.update()
         # スペースキーが押されたら新しい弾を発射する
-        if pyxel.btnp(pyxel.KEY_SPACE):
-            x = WINDOW_W // 2
-            y = WINDOW_H // 2
-            speed = BULLET_SPEED
-            Bullet(x, y, speed)
+#        if pyxel.btnp(pyxel.KEY_SPACE):
+#            x = WINDOW_W // 2
+#            y = WINDOW_H // 2
+#            speed = BULLET_SPEED
+#            Bullet(x, y, speed)
 
         #list実行
         update_list(bullets)
@@ -136,6 +159,8 @@ class App:
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
+        self.player.draw()
+
         draw_list(bullets)
 
         #text表示(x座標、y座標、文字列、color)
