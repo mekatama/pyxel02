@@ -182,8 +182,24 @@ class App:
     def update_play_scene(self):
         #一定時間でenemy出現判定
         if pyxel.frame_count % 60 == 0:
+            #生成辺ランダム
+            spawn_side = pyxel.rndi(0, 3)
+            #生成座標ランダム
+            if spawn_side == 0:
+                spawn_x = pyxel.rndi(-32, 160)
+                spawn_y = -32
+            elif spawn_side == 1:
+                spawn_x = pyxel.rndi(-32, 160)
+                spawn_y = 160
+            elif spawn_side == 2:
+                spawn_x = -32
+                spawn_y = pyxel.rndi(-32, 160)
+            elif spawn_side == 3:
+                spawn_x = 160
+                spawn_y = pyxel.rndi(-32, 160)
+            pass                
             #enemy生成
-            Enemy(100, 20, 1, 1, 1)
+            Enemy(spawn_x, spawn_y, 1, 1, 1)
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
