@@ -144,6 +144,18 @@ class Blast:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 0, 32 + (16 * self.motion), 16, 16, 0)
 
+#■Cursor
+class Cursor:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    def update(self):
+        self.x = pyxel.mouse_x
+        self.y = pyxel.mouse_y
+    def draw(self):
+        #editorデータ描画(player)
+        pyxel.blt(self.x - 8, self.y - 8, 0, 16, 32, 16, 16, 0)
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
@@ -154,7 +166,9 @@ class App:
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         # マウスカーソル表示
-        pyxel.mouse(True)
+        pyxel.mouse(False)
+        #Cursor生成
+        self.cursor = Cursor(pyxel.mouse_x, pyxel.mouse_y)
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
         #実行開始 更新関数 描画関数
@@ -177,6 +191,8 @@ class App:
         if pyxel.btnr(pyxel.KEY_RETURN):
             pyxel.playm(0, loop = True)    #BGM再生
             self.scene = SCENE_PLAY
+        #Cursor制御
+        self.cursor.update()
 
     #ゲーム画面処理用update
     def update_play_scene(self):
@@ -240,6 +256,8 @@ class App:
                     self.scene = SCENE_GAMEOVER
         #Player制御
         self.player.update()
+        #Cursor制御
+        self.cursor.update()
 
         #list実行
         update_list(bullets)
@@ -290,12 +308,14 @@ class App:
 
     #タイトル画面描画用update
     def draw_title_scene(self):
+        self.cursor.draw()
         pyxel.text(70, 40, "Title", 7)
         pyxel.text(50, 80, "- PRESS ENTER -", 7)
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
         self.player.draw()
+        self.cursor.draw()
         draw_list(bullets)
         draw_list(enemies)
         draw_list(enemiesUI)
