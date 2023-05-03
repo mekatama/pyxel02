@@ -272,6 +272,8 @@ class App:
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
+        #Cursor制御
+        self.cursor.update()
         update_list(bullets)
         update_list(enemies)
         update_list(enemiesUI)
@@ -323,6 +325,7 @@ class App:
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
+        self.cursor.draw()
         draw_list(bullets)
         draw_list(enemies)
         draw_list(enemiesUI)
