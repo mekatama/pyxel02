@@ -104,7 +104,7 @@ class Enemy:
         self.x += self.direction[0] * self.addSpeed
         self.y += self.direction[1] * self.addSpeed
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 16, 0, 16, 16, 0)
+        pyxel.blt(self.x, self.y, 0, 16 * self.img, 0, 16, 16, 0)
         #当たり判定
         pyxel.rectb(self.x + 2, self.y,12, 16, 10)
 
@@ -197,8 +197,8 @@ class App:
     #ゲーム画面処理用update
     def update_play_scene(self):
         #一定時間でenemy出現判定
-        if pyxel.frame_count % 60 == 0:
-            #生成辺ランダム
+        if pyxel.frame_count % 40 == 0:
+            #生成辺(位置)ランダム
             spawn_side = pyxel.rndi(0, 3)
             #生成座標ランダム
             if spawn_side == 0:
@@ -214,8 +214,22 @@ class App:
                 spawn_x = 160
                 spawn_y = pyxel.rndi(-32, 160)
             pass                
-            #enemy生成
-            Enemy(spawn_x, spawn_y, 1, 1, 1)
+            #enemy生成(scoreで分岐)
+            if self.score < 30:
+                speed = 1
+                Enemy(spawn_x, spawn_y, 1, 1, speed)
+            elif self.score >= 30 and self.score < 70:
+                speed = pyxel.rndf(1, 1.5)
+                img = pyxel.rndi(1, 2)
+                Enemy(spawn_x, spawn_y, 1, img, speed)
+            elif self.score >= 70:
+                speed = pyxel.rndf(1.5, 2)
+                img = pyxel.rndi(1, 3)
+                if img == 3:
+                    Enemy(spawn_x, spawn_y, 2, img, speed)
+                else:
+                    Enemy(spawn_x, spawn_y, 1, img, speed)
+                
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
