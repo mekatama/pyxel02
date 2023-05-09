@@ -15,6 +15,7 @@ enemies = []
 enemiesUI = []
 bullets = []
 blasts = []
+boms = []
 
 #関数(List実行)
 def update_list(list):
@@ -153,8 +154,22 @@ class Cursor:
         self.x = pyxel.mouse_x
         self.y = pyxel.mouse_y
     def draw(self):
-        #editorデータ描画(player)
+        #editorデータ描画
         pyxel.blt(self.x - 8, self.y - 8, 0, 16, 32, 16, 16, 0)
+
+#■Bom
+class Bom:
+    def __init__(self, x, y, hp):
+        self.x = x
+        self.y = y
+        self.hp = hp
+        self.is_alive = True
+        boms.append(self)
+    def update(self):
+        #何も動かない
+        pass
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 32, 32, 16, 16, 0)
 
 class App:
     def __init__(self):
@@ -197,7 +212,7 @@ class App:
     #ゲーム画面処理用update
     def update_play_scene(self):
         #一定時間でenemy出現判定
-        if pyxel.frame_count % 40 == 0:
+        if pyxel.frame_count % 60 == 0:
             #生成辺(位置)ランダム
             spawn_side = pyxel.rndi(0, 3)
             #生成座標ランダム
@@ -238,8 +253,9 @@ class App:
                     enemy.y + 16    > bullet.y and
                     enemy.y         < bullet.y + 2):
                     #Hit時の処理
-                    enemy.hp -= 1
                     bullet.is_alive = False
+                    enemy.hp -= 1
+                    cleanup_list(bullets)
                     #残りHP判定
                     if enemy.hp <= 0:
                         enemy.is_alive = False
@@ -251,6 +267,10 @@ class App:
                         blasts.append(
                             Blast(enemy.x, enemy.y)
                         )
+                        #Bom生成判定
+                        if pyxel.rndi(1, 10) == 10:
+                            Bom(enemy.x, enemy.y, 3)
+                        
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
             if (self.player.x + 16  > enemy.x and
@@ -258,8 +278,8 @@ class App:
                 self.player.y + 16  > enemy.y and
                 self.player.y       < enemy.y + 16):
                 #Hit時の処理
-                enemy.is_alive = False
                 self.player.hp -= 1
+                enemy.is_alive = False
                 pyxel.play(1, 1, loop=False)    #SE再生
                 #player残りHP判定
                 if self.player.hp <= 0:
@@ -268,6 +288,26 @@ class App:
                     )
                     pyxel.stop(0)
                     self.scene = SCENE_GAMEOVER
+        #BomとBulletの当たり判定
+        for bom in boms:
+            for bullet in bullets:
+                if (bom.x + 16    > bullet.x and
+                    bom.x         < bullet.x + 2 and
+                    bom.y + 16    > bullet.y and
+                    bom.y         < bullet.y + 2):
+                    #Hit時の処理
+                    bom.hp -= 1
+                    print("hit" + str(boms[0].hp))
+                    bullet.is_alive = False
+                    #残りHP判定
+                    if bom.hp <= 0:
+                        print("dead")
+                        bom.is_alive = False
+                        pyxel.play(1, 0, loop=False)    #SE再生
+                        blasts.append(
+                            Blast(bom.x, bom.y)
+                        )
+
         #Player制御
         self.player.update()
         #Cursor制御
@@ -278,11 +318,13 @@ class App:
         update_list(enemies)
         update_list(enemiesUI)
         update_list(blasts)
+        update_list(boms)
         #list更新
         cleanup_list(bullets)
         cleanup_list(enemies)
         cleanup_list(enemiesUI)
         cleanup_list(blasts)
+        cleanup_list(boms)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -292,10 +334,12 @@ class App:
         update_list(enemies)
         update_list(enemiesUI)
         update_list(blasts)
+        update_list(boms)
         cleanup_list(bullets)
         cleanup_list(enemies)
         cleanup_list(enemiesUI)
         cleanup_list(blasts)
+        cleanup_list(boms)
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)         #BGM再生
@@ -306,6 +350,7 @@ class App:
             enemies.clear()                     #list全要素削除
             enemiesUI.clear()                   #list全要素削除
             blasts.clear()                      #list全要素削除
+            boms.clear()                      #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -336,6 +381,7 @@ class App:
         draw_list(enemies)
         draw_list(enemiesUI)
         draw_list(blasts)
+        draw_list(boms)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
@@ -344,6 +390,7 @@ class App:
         draw_list(enemies)
         draw_list(enemiesUI)
         draw_list(blasts)
+        draw_list(boms)
         pyxel.text(55, 40, "GAME OVER", 7)
         pyxel.text(50, 80, "- PRESS ENTER -", 7)
 App()
