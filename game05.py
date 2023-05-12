@@ -297,16 +297,29 @@ class App:
                     bom.y         < bullet.y + 2):
                     #Hit時の処理
                     bom.hp -= 1
-                    print("hit" + str(boms[0].hp))
                     bullet.is_alive = False
-                    #残りHP判定
+                    #Bom残りHP判定
                     if bom.hp <= 0:
-                        print("dead")
                         bom.is_alive = False
                         pyxel.play(1, 0, loop=False)    #SE再生
                         blasts.append(
                             Blast(bom.x, bom.y)
                         )
+                        #BomでEnemy全部にダメージ発生
+                        for enemy in enemies:
+                            print("bom!")
+                            enemy.hp -= 2
+                            #enemy残りHP判定
+                            if enemy.hp <= 0:
+                                enemy.is_alive = False
+                                self.score += 10
+                                pyxel.play(1, 0, loop=False)    #SE再生
+                                enemiesUI.append(
+                                    EnemyUI(enemy.x, enemy.y, 10)
+                                )
+                                blasts.append(
+                                    Blast(enemy.x, enemy.y)
+                                )
 
         #Player制御
         self.player.update()
