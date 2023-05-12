@@ -176,7 +176,7 @@ class App:
         #画面サイズの設定　titleはwindow枠にtext出せる
         pyxel.init(WINDOW_W, WINDOW_H, title="Pysel Base")
         #editorデータ読み込み(コードと同じフォルダにある)
-        pyxel.load("my_resource.pyxres")
+        pyxel.load("my_resource05.pyxres")
         self.score = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
