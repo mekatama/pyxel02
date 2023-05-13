@@ -50,7 +50,7 @@ class Player:
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 0, 0, 16, 16, 0)
         #当たり判定
-        pyxel.rectb(self.x + 4, self.y + 4, 8, 8, 10)
+#        pyxel.rectb(self.x + 4, self.y + 4, 8, 8, 10)
 
 #■Bullet
 class Bullet:
@@ -107,7 +107,7 @@ class Enemy:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16 * self.img, 0, 16, 16, 0)
         #当たり判定
-        pyxel.rectb(self.x + 4, self.y + 4, 8, 8, 10)
+#        pyxel.rectb(self.x + 4, self.y + 4, 8, 8, 10)
 
 #■Enemy_UI
 class EnemyUI:
@@ -212,7 +212,7 @@ class App:
     #ゲーム画面処理用update
     def update_play_scene(self):
         #一定時間でenemy出現判定
-        if pyxel.frame_count % 60 == 0:
+        if pyxel.frame_count % 30 == 0:
             #生成辺(位置)ランダム
             spawn_side = pyxel.rndi(0, 3)
             #生成座標ランダム
@@ -231,14 +231,14 @@ class App:
             pass                
             #enemy生成(scoreで分岐)
             if self.score < 30:
-                speed = 1
+                speed = 0.5
                 Enemy(spawn_x, spawn_y, 1, 1, speed)
             elif self.score >= 30 and self.score < 70:
-                speed = pyxel.rndf(1, 1.5)
+                speed = pyxel.rndf(0.5, 1.0)
                 img = pyxel.rndi(1, 2)
                 Enemy(spawn_x, spawn_y, 1, img, speed)
             elif self.score >= 70:
-                speed = pyxel.rndf(1.5, 2)
+                speed = pyxel.rndf(1.0, 1.5)
                 img = pyxel.rndi(1, 3)
                 if img == 3:
                     Enemy(spawn_x, spawn_y, 2, img, speed)
@@ -383,8 +383,14 @@ class App:
     #タイトル画面描画用update
     def draw_title_scene(self):
         self.cursor.draw()
-        pyxel.text(70, 40, "Title", 7)
-        pyxel.text(50, 80, "- PRESS ENTER -", 7)
+#        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
+        pyxel.text(48, 28, "SPACE360", 7)
+        pyxel.text(32, 58, "- PRESS  ENTER -", 7)
+        pyxel.text(0, 76, "--------------------------------", 7)
+        pyxel.text(40, 82, "HOW TO PLAY", 7)
+        pyxel.text(24, 94, "THE TARGET IS MOVED", 7)
+        pyxel.text(36, 100, "WITH THE MOUSE", 7)
+        pyxel.text(24, 112, "LEFT CLICK TO ATTACK", 7)
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
@@ -404,6 +410,6 @@ class App:
         draw_list(enemiesUI)
         draw_list(blasts)
         draw_list(boms)
-        pyxel.text(55, 40, "GAME OVER", 7)
-        pyxel.text(50, 80, "- PRESS ENTER -", 7)
+        pyxel.text(44, 40, "GAME OVER", 7)
+        pyxel.text(32, 80, "- PRESS ENTER -", 7)
 App()
