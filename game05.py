@@ -50,7 +50,7 @@ class Player:
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 0, 0, 16, 16, 0)
         #当たり判定
-        pyxel.rectb(self.x, self.y, 16, 16, 10)
+        pyxel.rectb(self.x + 4, self.y + 4, 8, 8, 10)
 
 #■Bullet
 class Bullet:
@@ -93,7 +93,7 @@ class Enemy:
         self.direction = [0, 0]
         self.is_alive = True
         # 敵の移動方向を計算
-        dx = WINDOW_W / 2 - self.x
+        dx = WINDOW_W / 2 - self.x -4
         dy = WINDOW_H / 2 - self.y
         length = (dx**2 + dy**2)**0.5
         if length > 0:
@@ -107,7 +107,7 @@ class Enemy:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16 * self.img, 0, 16, 16, 0)
         #当たり判定
-        pyxel.rectb(self.x + 2, self.y,12, 16, 10)
+        pyxel.rectb(self.x + 4, self.y + 4, 8, 8, 10)
 
 #■Enemy_UI
 class EnemyUI:
@@ -248,10 +248,10 @@ class App:
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
-                if (enemy.x + 16    > bullet.x and
-                    enemy.x         < bullet.x + 2 and
-                    enemy.y + 16    > bullet.y and
-                    enemy.y         < bullet.y + 2):
+                if (enemy.x + 12    > bullet.x and
+                    enemy.x + 4     < bullet.x + 2 and
+                    enemy.y + 12    > bullet.y and
+                    enemy.y + 4     < bullet.y + 2):
                     #Hit時の処理
                     bullet.is_alive = False
                     enemy.hp -= 1
@@ -273,10 +273,10 @@ class App:
                         
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
-            if (self.player.x + 16  > enemy.x and
-                self.player.x       < enemy.x + 16 and
-                self.player.y + 16  > enemy.y and
-                self.player.y       < enemy.y + 16):
+            if (self.player.x + 12  > enemy.x + 4 and
+                self.player.x + 4   < enemy.x + 12 and
+                self.player.y + 12  > enemy.y + 4 and
+                self.player.y + 4   < enemy.y + 12):
                 #Hit時の処理
                 self.player.hp -= 1
                 enemy.is_alive = False
