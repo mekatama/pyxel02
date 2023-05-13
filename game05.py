@@ -211,8 +211,16 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
+        #scoreで生成間隔を制御
+        if self.score < 30:
+            spawntime = 30
+        elif self.score >= 30 and self.score < 70:
+            spawntime = 25
+        elif self.score >= 70:
+            spawntime = 20
+        
         #一定時間でenemy出現判定
-        if pyxel.frame_count % 30 == 0:
+        if pyxel.frame_count % spawntime == 0:
             #生成辺(位置)ランダム
             spawn_side = pyxel.rndi(0, 3)
             #生成座標ランダム
@@ -390,7 +398,7 @@ class App:
         pyxel.text(40, 82, "HOW TO PLAY", 7)
         pyxel.text(24, 94, "THE TARGET IS MOVED", 7)
         pyxel.text(36, 100, "WITH THE MOUSE", 7)
-        pyxel.text(24, 112, "LEFT CLICK TO ATTACK", 7)
+        pyxel.text(24, 112, "SPACE KEY TO ATTACK", 7)
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
