@@ -44,8 +44,9 @@ class Player:
         self.hp = PLAYER_HP
         self.is_alive = True
     def update(self):
+        #pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
         # スペースキーが押されたら新しい弾を発射する
-        if pyxel.btnp(pyxel.KEY_SPACE):
+        if pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
             Bullet(WINDOW_W // 2, WINDOW_H // 2, BULLET_SPEED)
     def draw(self):
         #editorデータ描画(player)
