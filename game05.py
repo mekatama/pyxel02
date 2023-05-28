@@ -16,6 +16,7 @@ enemiesUI = []
 bullets = []
 blasts = []
 boms = []
+bomseffects = []
 
 #関数(List実行)
 def update_list(list):
@@ -105,7 +106,10 @@ class Enemy:
         self.x += self.direction[0] * self.addSpeed
         self.y += self.direction[1] * self.addSpeed
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 16 * self.img, 0, 16, 16, 0)
+        if self.hp == 1:
+            pyxel.blt(self.x, self.y, 0, 16 * self.img, 0, 16, 16, 0)
+        elif self.hp == 2:
+            pyxel.blt(self.x, self.y, 0, 16 * self.img, 16, 16, 16, 0)
         #当たり判定
 #        pyxel.rectb(self.x + 4, self.y + 4, 8, 8, 10)
 
@@ -169,7 +173,25 @@ class Bom:
         #何も動かない
         pass
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 32, 32, 16, 16, 0)
+        if self.hp == 3:
+            pyxel.blt(self.x, self.y, 0, 64, 32, 16, 16, 0)
+        elif self.hp == 2: 
+            pyxel.blt(self.x, self.y, 0, 64, 16, 16, 16, 0)
+        elif self.hp == 1: 
+            pyxel.blt(self.x, self.y, 0, 64,  0, 16, 16, 0)
+
+#■BomEffect
+class BomEffect:
+    def __init__(self, x, y, r):
+        self.x = x
+        self.y = y
+        self.r = r
+        self.is_alive = True
+        bomseffects.append(self)
+    def update(self):
+        self.r += 9    #円の半径大きくする用
+    def draw(self):
+        pyxel.circb(self.x, self.y, self.r, 7)
 
 class App:
     def __init__(self):
@@ -313,6 +335,9 @@ class App:
                         blasts.append(
                             Blast(bom.x, bom.y)
                         )
+                        bomseffects.append(
+                            BomEffect(bom.x, bom.y, 0)
+                        )
                         #BomでEnemy全部にダメージ発生
                         for enemy in enemies:
                             print("bom!")
@@ -340,12 +365,14 @@ class App:
         update_list(enemiesUI)
         update_list(blasts)
         update_list(boms)
+        update_list(bomseffects)
         #list更新
         cleanup_list(bullets)
         cleanup_list(enemies)
         cleanup_list(enemiesUI)
         cleanup_list(blasts)
         cleanup_list(boms)
+        cleanup_list(bomseffects)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -356,11 +383,13 @@ class App:
         update_list(enemiesUI)
         update_list(blasts)
         update_list(boms)
+        update_list(bomseffects)
         cleanup_list(bullets)
         cleanup_list(enemies)
         cleanup_list(enemiesUI)
         cleanup_list(blasts)
         cleanup_list(boms)
+        cleanup_list(bomseffects)
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)         #BGM再生
@@ -371,7 +400,8 @@ class App:
             enemies.clear()                     #list全要素削除
             enemiesUI.clear()                   #list全要素削除
             blasts.clear()                      #list全要素削除
-            boms.clear()                      #list全要素削除
+            boms.clear()                        #list全要素削除
+            bomseffects.clear()                 #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -409,6 +439,7 @@ class App:
         draw_list(enemiesUI)
         draw_list(blasts)
         draw_list(boms)
+        draw_list(bomseffects)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
@@ -418,6 +449,7 @@ class App:
         draw_list(enemiesUI)
         draw_list(blasts)
         draw_list(boms)
+        draw_list(bomseffects)
         pyxel.text(44, 40, "GAME OVER", 7)
         pyxel.text(32, 80, "- PRESS ENTER -", 7)
 App()
