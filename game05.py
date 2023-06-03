@@ -191,13 +191,15 @@ class BomEffect:
         bomseffects.append(self)
     def update(self):
         self.r += 9    #円の半径大きくする用
+        if self.r >= 200:
+            self.is_alive = False
     def draw(self):
         pyxel.circb(self.x, self.y, self.r, 7)
 
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
-        pyxel.init(WINDOW_W, WINDOW_H, title="Pysel Base")
+        pyxel.init(WINDOW_W, WINDOW_H, title="Pyxel Base")
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource05.pyxres")
         self.score = 0
