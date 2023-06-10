@@ -8,7 +8,7 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 WINDOW_H = 128
 WINDOW_W = 128
 #list用意
-
+playerbullets = []
 
 #関数(List実行)
 def update_list(list):
@@ -42,14 +42,20 @@ class Player:
         self.is_alive = True
     def update(self):
         self.count += 1
+        #攻撃
         if pyxel.btnp(pyxel.KEY_A) and (self.isAtk == True):
+            #弾生成
+            if self.direction == 1:
+                PlayerBullet(self.x + 16, self.y + 14)
+            elif self.direction == -1:
+                PlayerBullet(self.x - 2,  self.y + 14)
             self.isAtk = False
             self.isMotion = 1
         #一定時間攻撃不可判定
         if self.count % 8 == 0 and (self.isAtk == False):
             self.isAtk = True
             self.isMotion = 0
-        #
+        #左右移動
         if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)) and (self.isAtk == True):
             self.dx = -2
             self.direction = -1
@@ -62,6 +68,24 @@ class Player:
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 0, self.isMotion * 16, 16 * self.direction, 16, 0)
+
+#■PlayerBullet
+class PlayerBullet:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.size = 2
+        self.color = 10     #colorは0～15
+        self.count = 0      #時間計測用
+        self.is_alive = True
+        playerbullets.append(self)
+    def update(self):
+        self.count += 1
+        if self.count % 8 == 0: #一定時間表示
+            self.is_alive = False       #消去
+    def draw(self):
+        pyxel.circ(self.x, self.y, self.size, self.color)
+
 
 class App:
     def __init__(self):
@@ -99,18 +123,23 @@ class App:
         #Player制御
         self.player.update()
         #list実行
+        update_list(playerbullets)
         #list更新
+        cleanup_list(playerbullets)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
         #list実行
+        update_list(playerbullets)
         #list更新
+        cleanup_list(playerbullets)
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.scene = SCENE_TITLE
             #list更新
+            playerbullets.clear()                #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -131,8 +160,10 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         self.player.draw()
+        draw_list(playerbullets)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
         pyxel.text(0, 20, "01234567890123456789012345678901", 7)
+        draw_list(playerbullets)
 App()
