@@ -37,10 +37,18 @@ class Player:
         self.dy = 0
         self.direction = 1  #playerの向き
         self.isAtk = True   #playerの攻撃flag
-        self.isMotion = 0   #playerのmotion(wait:0 attak:1)
+        self.motion = 0   #playerのmotion(歩行motion制御用)
         self.count = 0      #時間計測用
+        self.aniCount = 0   #アニメ用カウント
         self.is_alive = True
     def update(self):
+        self.aniCount += 1
+        #歩行アニメ切り替え
+        if self.aniCount % 4 == 0: #一定時間表示
+            if self.motion == 0:
+                self.motion = 1
+            elif self.motion == 1:
+                self.motion = 0
         #攻撃
         if pyxel.btnp(pyxel.KEY_A) and (self.isAtk == True):
             #弾生成
@@ -71,7 +79,12 @@ class Player:
         self.x = self.x + self.dx
     def draw(self):
         #editorデータ描画(player)
-        pyxel.blt(self.x, self.y, 0, 0, self.isMotion * 16, 16 * self.direction, 16, 0)
+        if self.isAtk == True:
+            pyxel.blt(self.x, self.y, 0, 16 * self.motion, 0, 16 * self.direction, 16, 0)
+        else:
+            pyxel.blt(self.x, self.y, 0, 0, 16, 16 * self.direction, 16, 0)
+
+#        pyxel.blt(self.x, self.y, 0, 0, self.isMotion * 16, 16 * self.direction, 16, 0)
 
 #■PlayerBullet
 class PlayerBullet:
