@@ -41,7 +41,6 @@ class Player:
         self.count = 0      #時間計測用
         self.is_alive = True
     def update(self):
-        self.count += 1
         #攻撃
         if pyxel.btnp(pyxel.KEY_A) and (self.isAtk == True):
             #弾生成
@@ -51,8 +50,13 @@ class Player:
                 PlayerBullet(self.x - 2,  self.y + 14)
             self.isAtk = False
             self.isMotion = 1
-        #一定時間攻撃不可判定
-        if self.count % 8 == 0 and (self.isAtk == False):
+        #攻撃間隔
+        if self.isAtk == False:
+            self.count += 1
+        else:
+            self.count = 0  #リセット
+        #一定時間攻撃不可判定(8がよさそう)
+        if self.count % 8 == 0 and self.isAtk == False:
             self.isAtk = True
             self.isMotion = 0
         #左右移動
@@ -81,7 +85,8 @@ class PlayerBullet:
         playerbullets.append(self)
     def update(self):
         self.count += 1
-        if self.count % 8 == 0: #一定時間表示
+        #一定時間表示(8がよさそう)
+        if self.count % 8 == 0:
             self.is_alive = False       #消去
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
@@ -159,6 +164,9 @@ class App:
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
+        #score表示(f文字列的な)
+        pyxel.text(0, 0, f"isAtk {self.player.isAtk}", 7)
+
         self.player.draw()
         draw_list(playerbullets)
 
