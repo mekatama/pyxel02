@@ -11,6 +11,7 @@ PLAYER_SPEED = 1
 #list用意
 playerbullets = []
 enemies = []
+blasts = []
 
 #関数(List実行)
 def update_list(list):
@@ -123,6 +124,23 @@ class Enemy:
         #当たり判定
         pyxel.rectb(self.x + 4, self.y + 13, 8, 3, 5)
 
+#■Blust
+class Blast:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.count = 0
+        self.motion = 0         #アニメ切り替え用
+        self.is_alive = True
+        blasts.append(self)
+    def update(self):
+        self.count += 1
+        if self.count >= 5 and self.count < 10:
+            self.motion = 1
+        elif self.count >= 10:
+            self.is_alive = False
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 0, 32 + (16 * self.motion), 16, 16, 0)
 
 class App:
     def __init__(self):
@@ -182,22 +200,29 @@ class App:
                         enemy.is_alive = False
                         self.score += 10
                         pyxel.play(1, 0, loop=False)    #SE再生
+                        blasts.append(
+                            Blast(enemy.x, enemy.y)
+                        )
 
         #list実行
         update_list(playerbullets)
         update_list(enemies)
+        update_list(blasts)
         #list更新
         cleanup_list(playerbullets)
         cleanup_list(enemies)
+        cleanup_list(blasts)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
         #list実行
         update_list(playerbullets)
         update_list(enemies)
+        update_list(blasts)
         #list更新
         cleanup_list(playerbullets)
         cleanup_list(enemies)
+        cleanup_list(blasts)
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)         #BGM再生
@@ -206,6 +231,7 @@ class App:
             #list更新
             playerbullets.clear()          #list全要素削除
             enemies.clear()                #list全要素削除
+            blasts.clear()                 #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -233,10 +259,12 @@ class App:
         self.player.draw()
         draw_list(playerbullets)
         draw_list(enemies)
+        draw_list(blasts)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
         pyxel.text(0, 20, "01234567890123456789012345678901", 7)
         draw_list(playerbullets)
         draw_list(enemies)
+        draw_list(blasts)
 App()
