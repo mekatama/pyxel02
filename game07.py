@@ -173,6 +173,7 @@ class App:
                     enemy.y + 13    < bullet.y + 3):
                     #Hit時の処理
                     print("hit!")
+                    pyxel.play(1, 1, loop=False)    #SE再生
                     bullet.is_alive = False
                     enemy.hp -= 1
                     cleanup_list(playerbullets)
@@ -180,6 +181,7 @@ class App:
                     if enemy.hp <= 0:
                         enemy.is_alive = False
                         self.score += 10
+                        pyxel.play(1, 0, loop=False)    #SE再生
 
         #list実行
         update_list(playerbullets)
