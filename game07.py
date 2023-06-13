@@ -10,6 +10,7 @@ WINDOW_W = 128
 PLAYER_SPEED = 2
 #list用意
 playerbullets = []
+enemies = []
 
 #関数(List実行)
 def update_list(list):
@@ -54,9 +55,9 @@ class Player:
         if pyxel.btnp(pyxel.KEY_A) and (self.isAtk == True):
             #弾生成
             if self.direction == 1:
-                PlayerBullet(self.x + 16, self.y + 14)
+                PlayerBullet(self.x + 13, self.y + 13)
             elif self.direction == -1:
-                PlayerBullet(self.x - 2,  self.y + 14)
+                PlayerBullet(self.x - 1,  self.y + 13)
             self.isAtk = False
             self.isMotion = 1
         #攻撃間隔
@@ -86,8 +87,6 @@ class Player:
         else:
             pyxel.blt(self.x, self.y, 0, 0, 16, 16 * self.direction, 16, 0)
 
-#        pyxel.blt(self.x, self.y, 0, 0, self.isMotion * 16, 16 * self.direction, 16, 0)
-
 #■PlayerBullet
 class PlayerBullet:
     def __init__(self, x, y):
@@ -104,7 +103,25 @@ class PlayerBullet:
         if self.count % 8 == 0:
             self.is_alive = False       #消去
     def draw(self):
-        pyxel.circ(self.x, self.y, self.size, self.color)
+        pyxel.rectb(self.x, self.y, 4, 3, 5)
+
+#■Enemy
+class Enemy:
+    def __init__(self, x, y, hp, img, speed):
+        self.x = x
+        self.y = y
+        self.hp = hp
+        self.img = img          #表示画像指定
+        self.speed = speed
+        self.is_alive = True
+        enemies.append(self)
+    def update(self):
+        #移動
+        pass
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 32, 0, 16, 16, 0)
+        #当たり判定
+        pyxel.rectb(self.x + 4, self.y + 13, 8, 3, 5)
 
 
 class App:
@@ -142,24 +159,33 @@ class App:
     def update_play_scene(self):
         #Player制御
         self.player.update()
+
+        #仮の敵配置
+        Enemy(100, 60, 1, 0, 0)
+
         #list実行
         update_list(playerbullets)
+        update_list(enemies)
         #list更新
         cleanup_list(playerbullets)
+        cleanup_list(enemies)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
         #list実行
         update_list(playerbullets)
+        update_list(enemies)
         #list更新
         cleanup_list(playerbullets)
+        cleanup_list(enemies)
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.scene = SCENE_TITLE
             #list更新
-            playerbullets.clear()                #list全要素削除
+            playerbullets.clear()          #list全要素削除
+            enemies.clear()                #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -184,9 +210,11 @@ class App:
 
         self.player.draw()
         draw_list(playerbullets)
+        draw_list(enemies)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
         pyxel.text(0, 20, "01234567890123456789012345678901", 7)
         draw_list(playerbullets)
+        draw_list(enemies)
 App()
