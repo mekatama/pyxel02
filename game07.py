@@ -7,7 +7,7 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 #定数
 WINDOW_H = 128
 WINDOW_W = 128
-PLAYER_SPEED = 2
+PLAYER_SPEED = 1
 #list用意
 playerbullets = []
 enemies = []
@@ -135,6 +135,10 @@ class App:
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
+
+        #仮の敵配置
+        Enemy(100, 60, 3, 0, 0)
+
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -160,8 +164,22 @@ class App:
         #Player制御
         self.player.update()
 
-        #仮の敵配置
-        Enemy(100, 60, 1, 0, 0)
+        #EnemyとBulletの当たり判定
+        for enemy in enemies:
+            for bullet in playerbullets:
+                if (enemy.x + 12    > bullet.x and
+                    enemy.x + 4     < bullet.x + 4 and
+                    enemy.y + 16    > bullet.y and
+                    enemy.y + 13    < bullet.y + 3):
+                    #Hit時の処理
+                    print("hit!")
+                    bullet.is_alive = False
+                    enemy.hp -= 1
+                    cleanup_list(playerbullets)
+                    #残りHP判定
+                    if enemy.hp <= 0:
+                        enemy.is_alive = False
+                        self.score += 10
 
         #list実行
         update_list(playerbullets)
@@ -198,6 +216,8 @@ class App:
             self.draw_play_scene()
         elif self.scene == SCENE_GAMEOVER:
             self.draw_gameover_scene()
+
+        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
 
     #タイトル画面描画用update
     def draw_title_scene(self):
