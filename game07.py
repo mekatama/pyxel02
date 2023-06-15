@@ -8,6 +8,7 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 WINDOW_H = 128
 WINDOW_W = 128
 PLAYER_SPEED = 1
+ENEMY_SPEED = 1
 #list用意
 playerbullets = []
 enemies = []
@@ -115,11 +116,22 @@ class Enemy:
         self.img = img          #表示画像指定
         self.speed = speed
         self.dir = dir
+        self.is_Move = True
+        self.hitStopCount = 0
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #移動
-        pass
+        if self.is_Move == True:
+            if self.dir == -1:
+                self.x += ENEMY_SPEED
+            elif self.dir == 1:
+                self.x -= ENEMY_SPEED
+        #ヒットストップ
+        else:
+            self.hitStopCount += 1
+            if self.hitStopCount >= 20:
+                self.is_Move = True
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 16 * self.dir, 16, 0)
         #当たり判定
@@ -183,11 +195,11 @@ class App:
             #生成座標ランダム
             if spawn_side == 0:     #左端
                 spawn_x = -32
-                spawn_y = pyxel.rndi(32, 160)
+                spawn_y = pyxel.rndi(32, 100)
                 spawn_dir = -1
             elif spawn_side == 1:   #右端
                 spawn_x = 160
-                spawn_y = pyxel.rndi(32, 160)
+                spawn_y = pyxel.rndi(32, 100)
                 spawn_dir = 1
             #敵生成
             Enemy(spawn_x, spawn_y, 3, 0, 0, spawn_dir)
@@ -203,9 +215,9 @@ class App:
                     enemy.y + 16    > bullet.y and
                     enemy.y + 13    < bullet.y + 3):
                     #Hit時の処理
-                    print("hit!")
                     pyxel.play(1, 1, loop=False)    #SE再生
                     bullet.is_alive = False
+                    enemy.is_Move = False
                     enemy.hp -= 1
                     cleanup_list(playerbullets)
                     #残りHP判定
