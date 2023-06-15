@@ -154,10 +154,6 @@ class App:
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
-
-        #仮の敵配置
-        Enemy(100, 60, 3, 0, 0, 1)
-
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -188,10 +184,13 @@ class App:
             if spawn_side == 0:     #左端
                 spawn_x = -32
                 spawn_y = pyxel.rndi(32, 160)
+                spawn_dir = -1
             elif spawn_side == 1:   #右端
                 spawn_x = 160
                 spawn_y = pyxel.rndi(32, 160)
-            pass
+                spawn_dir = 1
+            #敵生成
+            Enemy(spawn_x, spawn_y, 3, 0, 0, spawn_dir)
 
         #Player制御
         self.player.update()
