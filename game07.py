@@ -108,19 +108,20 @@ class PlayerBullet:
 
 #■Enemy
 class Enemy:
-    def __init__(self, x, y, hp, img, speed):
+    def __init__(self, x, y, hp, img, speed ,dir):
         self.x = x
         self.y = y
         self.hp = hp
         self.img = img          #表示画像指定
         self.speed = speed
+        self.dir = dir
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #移動
         pass
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 32, 0, 16, 16, 0)
+        pyxel.blt(self.x, self.y, 0, 32, 0, 16 * self.dir, 16, 0)
         #当たり判定
         pyxel.rectb(self.x + 4, self.y + 13, 8, 3, 5)
 
@@ -155,7 +156,7 @@ class App:
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
 
         #仮の敵配置
-        Enemy(100, 60, 3, 0, 0)
+        Enemy(100, 60, 3, 0, 0, 1)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -179,6 +180,19 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
+        #一定時間でenemy出現判定
+        if pyxel.frame_count % 30 == 0:
+            #生成辺(位置)ランダム
+            spawn_side = pyxel.rndi(0, 1)
+            #生成座標ランダム
+            if spawn_side == 0:     #左端
+                spawn_x = -32
+                spawn_y = pyxel.rndi(32, 160)
+            elif spawn_side == 1:   #右端
+                spawn_x = 160
+                spawn_y = pyxel.rndi(32, 160)
+            pass
+
         #Player制御
         self.player.update()
 
