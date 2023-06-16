@@ -285,7 +285,9 @@ class App:
         draw_list(playerbullets)
 
         #敵とplayerのリストをY座標でソートする
+        #self.playerリストがあったら、リスト合体させてる
         characters = enemies + [self.player] if self.player else []
+        #charactersリストの中から、keyのcharacter.yでソートする。
         sorted_characters = sorted(characters, key=lambda character: character.y)
         #ソートされた順番で敵の描画
         for character in sorted_characters:
