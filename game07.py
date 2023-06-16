@@ -284,11 +284,12 @@ class App:
         self.player.draw()
         draw_list(playerbullets)
 
-        #敵リストをY座標でソートする
-        sorted_enemies = sorted(enemies, key=lambda enemy: enemy.y)
+        #敵とplayerのリストをY座標でソートする
+        characters = enemies + [self.player] if self.player else []
+        sorted_characters = sorted(characters, key=lambda character: character.y)
         #ソートされた順番で敵の描画
-        for enemy in sorted_enemies:
-            enemy.draw()
+        for character in sorted_characters:
+            character.draw()
 
         draw_list(blasts)
 
