@@ -10,6 +10,7 @@ WINDOW_W = 128
 PLAYER_SPEED = 1
 ENEMY_SPEED = 1
 #list用意
+player = None
 playerbullets = []
 enemies = []
 blasts = []
@@ -280,10 +281,15 @@ class App:
     def draw_play_scene(self):
         #score表示(f文字列的な)
         pyxel.text(0, 0, f"isAtk {self.player.isAtk}", 7)
-
         self.player.draw()
         draw_list(playerbullets)
-        draw_list(enemies)
+
+        #敵リストをY座標でソートする
+        sorted_enemies = sorted(enemies, key=lambda enemy: enemy.y)
+        #ソートされた順番で敵の描画
+        for enemy in sorted_enemies:
+            enemy.draw()
+
         draw_list(blasts)
 
     #ゲームオーバー画面描画用update
