@@ -24,11 +24,15 @@ def get_tile(tile_x, tile_y):
 def check_collision(x, y):
     x1 = x // 8             #キャラx座標左端のTileMapの座標
     y1 = y // 8             #キャラy座標上端のTileMapの座標
-    #playerがいる場所のタイルの種類を取得
+    x2 = (x + 8 - 1) // 8   #キャラx座標右端のTileMapの座標
+    y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
     #tileの種類で判定
-    #右上判定
+    #左上判定
     if get_tile(x1,y1) == (1,0):
-        print("wall!")
+        print("wall_左上")
+    #右下判定
+    if get_tile(x2,y2) == (1,0):
+        print("wall_右下")
     return False
 
 
