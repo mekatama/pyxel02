@@ -7,26 +7,28 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 #定数
 WINDOW_H = 128
 WINDOW_W = 128
-TILE_FLOOR = (1, 0) #床パーツの指定
+TILE_SIZE = 8
+MAP_WIDTH = 16
+MAP_HEIGHT = 16
+PLAYER_SPEED = 1
 #list用意
 
 #関数(TileMap(0)のタイルを取得)
+#指定座標のタイルの種類を取得
 def get_tile(tile_x, tile_y):
     return pyxel.tilemap(0).pget(tile_x, tile_y)
-
+ 
 #関数(タイルとのコリジョン判定)
     #//は商を求める(余りは切り捨てる)
     #8は今回のplayerが8×8ドットサイズだから
-def detect_collision(x, y, dy):
+def check_collision(x, y):
     x1 = x // 8             #キャラx座標左端のTileMapの座標
     y1 = y // 8             #キャラy座標上端のTileMapの座標
-    x2 = (x + 8 - 1) // 8   #キャラx座標右端のTileMapの座標
-    y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
-    #画面下に移動している時 and キャラの下端が1ドットだかTileにめり込んでいる時
-    if dy > 0 and y % 8 == 1:
-        for xi in range(x1, x2 + 1):
-            if get_tile(xi, y1 + 1) == TILE_FLOOR:
-                return True
+    #playerがいる場所のタイルの種類を取得
+    #tileの種類で判定
+    #右上判定
+    if get_tile(x1,y1) == (1,0):
+        print("wall!")
     return False
 
 
@@ -56,22 +58,19 @@ class Player:
         self.dx = 0
         self.dy = 0
         self.direction = 1
-        self.is_falling = False
         self.is_alive = True
     def update(self):
-        if pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT):
-            self.dx = -2
-            self.dy = 1
+        #移動入力
+        if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
+            self.x -= PLAYER_SPEED
             self.direction = -1
-        elif pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT):
-            self.dx = 2
-            self.dy = 1
+        if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
+            self.x += PLAYER_SPEED
             self.direction = 1
-        else:
-            self.dx = 0
-            self.dy = 1
-        self.x = self.x + self.dx
-        self.y = self.y + 1
+        if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
+            self.y -= PLAYER_SPEED
+        if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
+            self.y += PLAYER_SPEED
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
@@ -111,6 +110,9 @@ class App:
     def update_play_scene(self):
         #Player制御
         self.player.update()
+
+        check_collision(self.player.x, self.player.y)
+
         #list実行
         #list更新
 
@@ -144,7 +146,7 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         #BG描画
-        pyxel.bltm(0, 0, 0, 0, 0, 160, 120, 0)
+        pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
         self.player.draw()
 
     #ゲームオーバー画面描画用update
