@@ -30,9 +30,13 @@ def check_collision(x, y):
     #左上判定
     if get_tile(x1,y1) == (1,0):
         print("wall_左上")
+        isStop = True
+        return isStop
     #右下判定
     if get_tile(x2,y2) == (1,0):
         print("wall_右下")
+        isStop = True
+        return isStop
     return False
 
 
@@ -62,19 +66,34 @@ class Player:
         self.dx = 0
         self.dy = 0
         self.direction = 1
+        self.isStop = False
         self.is_alive = True
     def update(self):
         #移動入力
-        if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
-            self.x -= PLAYER_SPEED
-            self.direction = -1
-        if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
-            self.x += PLAYER_SPEED
-            self.direction = 1
-        if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
-            self.y -= PLAYER_SPEED
-        if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
-            self.y += PLAYER_SPEED
+        if self.isStop == False:
+            if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
+                self.dx = -1
+#                self.direction = -1
+            if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
+                self.dx = 1
+#                self.direction = 1
+            if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
+                self.dy = -1
+            if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
+                self.dy = 1
+        #Playerの位置を更新
+        new_player_x = self.x + self.dx
+        new_player_y = self.y + self.dy
+        #移動先で当たり判定
+        if check_collision(new_player_x, self.y) == False:
+            self.x = new_player_x
+        if check_collision(self.x, new_player_y) == False:
+            self.y = new_player_y
+
+        #移動停止
+        self.dx = 0
+        self.dy = 0
+
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
@@ -112,10 +131,12 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
+#        if check_collision(self.player.x, self.player.y) == True:
+#            self.player.isStop = True
+
         #Player制御
         self.player.update()
 
-        check_collision(self.player.x, self.player.y)
 
         #list実行
         #list更新
