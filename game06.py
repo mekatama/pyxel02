@@ -32,6 +32,16 @@ def check_collision(x, y):
         print("wall_左上")
         isStop = True
         return isStop
+    #右上判定
+    if get_tile(x2,y1) == (1,0):
+        print("wall_右上")
+        isStop = True
+        return isStop
+    #左下判定
+    if get_tile(x1,y2) == (1,0):
+        print("wall_左下")
+        isStop = True
+        return isStop
     #右下判定
     if get_tile(x2,y2) == (1,0):
         print("wall_右下")
