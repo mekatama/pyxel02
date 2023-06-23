@@ -121,6 +121,7 @@ class Player:
 
         if check_collision(self.x, new_player_y) == False:
             self.y = new_player_y   #足元に障害物が無いので座標更新
+            self.isGround = False
         else:   #床的なところに接触
             self.isGround = True
             self.isJump = False
