@@ -29,22 +29,22 @@ def check_collision(x, y):
     #tileの種類で判定
     #左上判定
     if get_tile(x1,y1) == (1,0):
-        print("wall_左上")
+#        print("wall_左上")
         isStop = True
         return isStop
     #右上判定
     if get_tile(x2,y1) == (1,0):
-        print("wall_右上")
+#        print("wall_右上")
         isStop = True
         return isStop
     #左下判定
     if get_tile(x1,y2) == (1,0):
-        print("wall_左下")
+#        print("wall_左下")
         isStop = True
         return isStop
     #右下判定
     if get_tile(x2,y2) == (1,0):
-        print("wall_右下")
+#        print("wall_右下")
         isStop = True
         return isStop
     return False
@@ -101,28 +101,33 @@ class Player:
             self.isGround = False
         #jump挙動
         if self.isJump == True:
+            #jump中処理
             if self.jumpCount < self.jumpHeight:
                 self.y -= 2 #上に移動
                 self.jumpCount += 1
+                #jump中の頭上当たり判定
+                if check_collision(self.x, self.y) == True:
+                    self.isJump = False
+                    self.dy = 2 #強引に下降させてメリコミ回避
         else:
-            self.jumpCount = 0
+            self.jumpCount = 0  #初期化
 
         #Playerの位置を更新
         new_player_x = self.x + self.dx
         new_player_y = self.y + self.dy
         #移動先で当たり判定
         if check_collision(new_player_x, self.y) == False:
-            self.x = new_player_x   #障害物が無いので座標更新
+            self.x = new_player_x   #左右に障害物が無いので座標更新
 
         if check_collision(self.x, new_player_y) == False:
-            self.y = new_player_y   #障害物が無いので座標更新
+            self.y = new_player_y   #足元に障害物が無いので座標更新
         else:   #床的なところに接触
             self.isGround = True
             self.isJump = False
 
         #移動停止
         self.dx = 0
-        self.dy = 1
+        self.dy = 1 #重力加速度的な
 
     def draw(self):
         #editorデータ描画(player)
