@@ -14,6 +14,7 @@ PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
 #list用意
 bullets = []
+enemies = []
 
 #関数(TileMap(0)のタイルを取得)
 #指定座標のタイルの種類を取得
@@ -185,9 +186,24 @@ class Bullet:
             self.is_alive = False   #画面外なら消去
         #移動先で当たり判定
         if check_bullet_collision(self.x, self.y) == True:
-            self.is_alive = False   #tail接触なら消去
+            self.is_alive = False   #タイル接触なら消去
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
+
+#■Enemy
+class Enemy:
+    def __init__(self, x, y, speed, dir, hp):
+        self.x = x
+        self.y = y
+        self.hp = hp
+        self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.is_alive = True
+        enemies.append(self)
+    def update(self):
+        #移動
+        pass
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
 class App:
     def __init__(self):
@@ -200,6 +216,10 @@ class App:
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
+
+        #仮
+        Enemy(64, 112, 0, 0,3)
+
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -227,8 +247,10 @@ class App:
 
         #list実行
         update_list(bullets)
+        update_list(enemies)
         #list更新
         cleanup_list(bullets)
+        cleanup_list(enemies)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -241,6 +263,7 @@ class App:
             self.scene = SCENE_TITLE
             #list全要素削除
             bullets.clear()                     #list全要素削除
+            enemies.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -264,6 +287,7 @@ class App:
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
         self.player.draw()
         draw_list(bullets)
+        draw_list(enemies)
 
         #debug表示(f文字列的な)
         pyxel.text(0, 0, f"isJump {self.player.isJump}", 7)
