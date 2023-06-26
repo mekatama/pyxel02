@@ -87,12 +87,12 @@ class Player:
     def update(self):
         #移動入力
         if self.isStop == False:
-            if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
-                self.dx = -1
-#                self.direction = -1
             if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
                 self.dx = 1
-#                self.direction = 1
+                self.direction = 1  #右向き
+            if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
+                self.dx = -1
+                self.direction = -1 #左向き
 #            if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
 #                self.dy = -1
 #            if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
@@ -116,7 +116,10 @@ class Player:
 
         #攻撃入力
         if pyxel.btnp(pyxel.KEY_A):
-            Bullet(self.x, self.y, PLAYER_BULLET_SPEED)
+            if self.direction == 1:
+                Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
+            elif self.direction == -1:
+                Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
 
         #Playerの位置を更新
         new_player_x = self.x + self.dx
@@ -141,17 +144,18 @@ class Player:
         pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
 
 class Bullet:
-    def __init__(self, x, y, speed):
+    def __init__(self, x, y, speed, dir):
         self.x = x
         self.y = y
         self.speed = speed
+        self.direction = dir
         self.size = 1
         self.color = 10 #colorは0～15
         self.is_alive = True
         bullets.append(self)
     def update(self):
-        self.x += self.speed        #弾移動
-        if self.x > 150:            #画面外判定
+        self.x += self.speed * self.direction        #弾移動
+        if self.x > 150 or self.x < -32:            #画面外判定
             self.is_alive = False   #画面外なら消去
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
