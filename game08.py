@@ -51,6 +51,32 @@ def check_collision(x, y):
         return isStop
     return False
 
+#関数(タイルとのBulletコリジョン判定)
+    #//は商を求める(余りは切り捨てる)
+    #2は今回のbulletが2×2ドットサイズだから
+def check_bullet_collision(x, y):
+    x1 = x // 8             #キャラx座標左端のTileMapの座標
+    y1 = y // 8             #キャラy座標上端のTileMapの座標
+    x2 = (x + 2 - 1) // 8   #キャラx座標右端のTileMapの座標
+    y2 = (y + 2 - 1) // 8   #キャラy座標下端のTileMapの座標
+    #tileの種類で判定
+    #左上判定
+    if get_tile(x1,y1) == (1,0):
+        isTileHit = True
+        return isTileHit
+    #右上判定
+    if get_tile(x2,y1) == (1,0):
+        isTileHit = True
+        return isTileHit
+    #左下判定
+    if get_tile(x1,y2) == (1,0):
+        isTileHit = True
+        return isTileHit
+    #右下判定
+    if get_tile(x2,y2) == (1,0):
+        isTileHit = True
+        return isTileHit
+    return False
 
 #関数(List実行)
 def update_list(list):
@@ -157,6 +183,9 @@ class Bullet:
         self.x += self.speed * self.direction        #弾移動
         if self.x > 150 or self.x < -32:            #画面外判定
             self.is_alive = False   #画面外なら消去
+        #移動先で当たり判定
+        if check_bullet_collision(self.x, self.y) == True:
+            self.is_alive = False   #tail接触なら消去
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
 
