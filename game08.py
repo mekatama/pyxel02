@@ -11,7 +11,9 @@ TILE_SIZE = 8
 MAP_WIDTH = 16
 MAP_HEIGHT = 16
 PLAYER_SPEED = 1
+PLAYER_BULLET_SPEED = 4
 #list用意
+bullets = []
 
 #関数(TileMap(0)のタイルを取得)
 #指定座標のタイルの種類を取得
@@ -112,6 +114,10 @@ class Player:
         else:
             self.jumpCount = 0  #初期化
 
+        #攻撃入力
+        if pyxel.btnp(pyxel.KEY_A):
+            Bullet(self.x, self.y, PLAYER_BULLET_SPEED)
+
         #Playerの位置を更新
         new_player_x = self.x + self.dx
         new_player_y = self.y + self.dy
@@ -121,7 +127,7 @@ class Player:
 
         if check_collision(self.x, new_player_y) == False:
             self.y = new_player_y   #足元に障害物が無いので座標更新
-            self.isGround = False
+            self.isGround = False   #つまり地面にいない状態
         else:   #床的なところに接触
             self.isGround = True
             self.isJump = False
@@ -133,6 +139,22 @@ class Player:
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
+
+class Bullet:
+    def __init__(self, x, y, speed):
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.size = 1
+        self.color = 10 #colorは0～15
+        self.is_alive = True
+        bullets.append(self)
+    def update(self):
+        self.x += self.speed        #弾移動
+        if self.x > 150:            #画面外判定
+            self.is_alive = False   #画面外なら消去
+    def draw(self):
+        pyxel.circ(self.x, self.y, self.size, self.color)
 
 class App:
     def __init__(self):
@@ -171,7 +193,9 @@ class App:
         self.player.update()
 
         #list実行
+        update_list(bullets)
         #list更新
+        cleanup_list(bullets)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -182,7 +206,8 @@ class App:
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.scene = SCENE_TITLE
-            #list更新
+            #list全要素削除
+            bullets.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -205,6 +230,7 @@ class App:
         #BG描画
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
         self.player.draw()
+        draw_list(bullets)
 
         #debug表示(f文字列的な)
         pyxel.text(0, 0, f"isJump {self.player.isJump}", 7)
