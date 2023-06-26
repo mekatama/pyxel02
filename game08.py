@@ -169,7 +169,7 @@ class Player:
 
     def draw(self):
         #editorデータ描画(player)
-        pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
+        pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
 
 class Bullet:
     def __init__(self, x, y, speed, dir):
