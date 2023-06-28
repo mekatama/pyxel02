@@ -1,5 +1,6 @@
 #画面中央からSTG
 import pyxel
+import json
 #画面遷移用の変数
 SCENE_TITLE = 0	    #タイトル画面
 SCENE_PLAY = 1	    #ゲーム画面
@@ -211,6 +212,9 @@ class App:
         self.cursor = Cursor(pyxel.mouse_x, pyxel.mouse_y)
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
+        #BGMのjsonデータLoad
+        with open(f"music.json", "rt",encoding="utf-8") as fin:
+            self.music = json.loads(fin.read())
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -229,7 +233,11 @@ class App:
     def update_title_scene(self):
         #ENTERでゲーム画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
-            pyxel.playm(0, loop = True)    #BGM再生
+#            pyxel.playm(0, loop = True)    #BGM再生
+            if pyxel.play_pos(0) is None:
+                for ch, sound in enumerate(self.music):
+                    pyxel.sound(ch).set(*sound)
+                    pyxel.play(ch, ch, loop=True)     
             self.scene = SCENE_PLAY
         #Cursor制御
         self.cursor.update()
@@ -293,7 +301,7 @@ class App:
                     if enemy.hp <= 0:
                         enemy.is_alive = False
                         self.score += 10
-                        pyxel.play(1, 0, loop=False)    #SE再生
+                        pyxel.play(3, 0, loop=False)    #SE再生
                         enemiesUI.append(
                             EnemyUI(enemy.x, enemy.y, 10)
                         )
@@ -313,13 +321,13 @@ class App:
                 #Hit時の処理
                 self.player.hp -= 1
                 enemy.is_alive = False
-                pyxel.play(1, 1, loop=False)    #SE再生
+                pyxel.play(3, 1, loop=False)    #SE再生
                 #player残りHP判定
                 if self.player.hp <= 0:
                     blasts.append(
                         Blast(enemy.x, enemy.y)
                     )
-                    pyxel.stop(0)
+                    pyxel.stop()
                     self.scene = SCENE_GAMEOVER
         #BomとBulletの当たり判定
         for bom in boms:
@@ -334,7 +342,7 @@ class App:
                     #Bom残りHP判定
                     if bom.hp <= 0:
                         bom.is_alive = False
-                        pyxel.play(1, 0, loop=False)    #SE再生
+                        pyxel.play(3, 0, loop=False)    #SE再生
                         blasts.append(
                             Blast(bom.x, bom.y)
                         )
@@ -349,7 +357,7 @@ class App:
                             if enemy.hp <= 0:
                                 enemy.is_alive = False
                                 self.score += 10
-                                pyxel.play(1, 0, loop=False)    #SE再生
+                                pyxel.play(3, 0, loop=False)    #SE再生
                                 enemiesUI.append(
                                     EnemyUI(enemy.x, enemy.y, 10)
                                 )
