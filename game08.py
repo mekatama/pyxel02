@@ -177,13 +177,15 @@ class Bullet:
         self.direction = dir
         self.size = 1
         self.color = 10 #colorは0～15
+        self.count = 0
         self.is_alive = True
         bullets.append(self)
     def update(self):
         self.x += self.speed * self.direction        #弾移動
-        #画面外判定
-        if self.x > 150 or self.x < -32:            #画面外判定
-            self.is_alive = False   #画面外なら消去
+        self.count += 0
+        #一定時間で消去
+        if self.count > 30:            
+            self.is_alive = False   #消去
         #移動先で当たり判定
         if check_bullet_collision(self.x, self.y) == True:
             self.is_alive = False   #タイル接触なら消去
