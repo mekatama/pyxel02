@@ -7,11 +7,16 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 #定数
 WINDOW_H = 128
 WINDOW_W = 128
+STAGE_W = 128 * 2
+SAGE_H = 128 * 1
+LEFT_LIMIT = 40
+RIGHT_LIMIT = WINDOW_W - 40 #調整項目
 TILE_SIZE = 8
 MAP_WIDTH = 16
 MAP_HEIGHT = 16
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
+scroll_y = 0    #画面スクロール制御
 #list用意
 bullets = []
 enemies = []
@@ -33,22 +38,18 @@ def check_collision(x, y):
     #tileの種類で判定
     #左上判定
     if get_tile(x1,y1) == (1,0):
-#        print("wall_左上")
         isStop = True
         return isStop
     #右上判定
     if get_tile(x2,y1) == (1,0):
-#        print("wall_右上")
         isStop = True
         return isStop
     #左下判定
     if get_tile(x1,y2) == (1,0):
-#        print("wall_左下")
         isStop = True
         return isStop
     #右下判定
     if get_tile(x2,y2) == (1,0):
-#        print("wall_右下")
         isStop = True
         return isStop
     return False
@@ -141,32 +142,29 @@ class Player:
                     self.dy = 2 #強引に下降させてメリコミ回避
         else:
             self.jumpCount = 0  #初期化
-
         #攻撃入力
         if pyxel.btnp(pyxel.KEY_A):
             if self.direction == 1:
                 Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
             elif self.direction == -1:
                 Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
-
         #Playerの位置を更新
         new_player_x = self.x + self.dx
         new_player_y = self.y + self.dy
         #移動先で当たり判定
+        #左右
         if check_collision(new_player_x, self.y) == False:
             self.x = new_player_x   #左右に障害物が無いので座標更新
-
+        #床
         if check_collision(self.x, new_player_y) == False:
             self.y = new_player_y   #足元に障害物が無いので座標更新
             self.isGround = False   #つまり地面にいない状態
         else:   #床的なところに接触
             self.isGround = True
             self.isJump = False
-
         #移動停止
         self.dx = 0
         self.dy = 1 #重力加速度的な
-
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
@@ -183,6 +181,7 @@ class Bullet:
         bullets.append(self)
     def update(self):
         self.x += self.speed * self.direction        #弾移動
+        #画面外判定
         if self.x > 150 or self.x < -32:            #画面外判定
             self.is_alive = False   #画面外なら消去
         #移動先で当たり判定
@@ -239,6 +238,10 @@ class App:
         #仮
         Enemy(64, 112, 0, 0,3)
 
+        #BG表示用の座標
+        self.scroll_x = 0
+        self.scroll_y = 0
+
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -263,7 +266,6 @@ class App:
     def update_play_scene(self):
         #Player制御
         self.player.update()
-
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
@@ -277,14 +279,25 @@ class App:
                     #残りHP判定
                     if enemy.hp <= 0:
                         enemy.is_alive = False
+                        blasts.append(
+                            Blast(enemy.x, enemy.y)
+                        )
 #                        self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 #                        enemiesUI.append(
 #                            EnemyUI(enemy.x, enemy.y, 10)
 #                        )
-                        blasts.append(
-                            Blast(enemy.x, enemy.y)
-                        )
+        #画面スクロール処理
+        #左へスクロール
+        if self.player.x < self.scroll_x + LEFT_LIMIT:  #左判定ライン到達
+            self.scroll_x = self.player.x - LEFT_LIMIT  #BG用座標更新
+            if self.scroll_x < 0:                       #BGの端到達判定
+                self.scroll_x = 0                       #スクロール停止
+        #右へスクロール
+        if self.scroll_x + RIGHT_LIMIT < self.player.x: #右判定ライン到達
+            self.scroll_x = self.player.x - RIGHT_LIMIT #BG用座標更新
+            if STAGE_W - pyxel.width < self.scroll_x:   #BGの端到達判定
+                self.scroll_x = STAGE_W - pyxel.width   #スクロール停止
         #list実行
         update_list(bullets)
         update_list(enemies)
@@ -312,6 +325,8 @@ class App:
     def draw(self):
         #画面クリア 0は黒
         pyxel.cls(0)
+        #cameraリセット
+        pyxel.camera()  #左上隅の座標を(0, 0)にリセット処理
         #描画の画面分岐
         if self.scene == SCENE_TITLE:
             self.draw_title_scene()
@@ -327,12 +342,14 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         #BG描画
-        pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
+        pyxel.bltm(0, 0, 0, self.scroll_x, self.scroll_y, 128, 128, 0)
+        #camera再セット
+        pyxel.camera(self.scroll_x, self.scroll_y)
+
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
         draw_list(blasts)
-
         #debug表示(f文字列的な)
         pyxel.text(0, 0, f"isJump {self.player.isJump}", 7)
         pyxel.text(0, 8, f"isGround {self.player.isGround}", 7)
