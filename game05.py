@@ -1,6 +1,5 @@
 #画面中央からSTG
 import pyxel
-import json
 #画面遷移用の変数
 SCENE_TITLE = 0	    #タイトル画面
 SCENE_PLAY = 1	    #ゲーム画面
@@ -212,9 +211,6 @@ class App:
         self.cursor = Cursor(pyxel.mouse_x, pyxel.mouse_y)
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
-        #BGMのjsonデータLoad
-        with open(f"music.json", "rt",encoding="utf-8") as fin:
-            self.music = json.loads(fin.read())
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -233,7 +229,7 @@ class App:
     def update_title_scene(self):
         #ENTERでゲーム画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
-#            pyxel.playm(0, loop = True)    #BGM再生
+            pyxel.playm(0, loop = True)    #BGM再生
             if pyxel.play_pos(0) is None:
                 for ch, sound in enumerate(self.music):
                     pyxel.sound(ch).set(*sound)
@@ -403,7 +399,7 @@ class App:
         cleanup_list(bomseffects)
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
-#            pyxel.playm(0, loop = True)         #BGM再生
+            pyxel.playm(0, loop = True)         #BGM再生
             self.player.hp = PLAYER_HP          #HP初期化
             self.score = 0
             self.scene = SCENE_TITLE
