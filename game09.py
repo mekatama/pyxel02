@@ -74,15 +74,19 @@ class Player:
             self.isMotion = 0
         #移動入力
         if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)) and (self.isAtk == True):
-            self.x -= PLAYER_SPEED
-            self.direction = -1
+            if self.x >= 2:
+                self.x -= PLAYER_SPEED
+                self.direction = -1
         if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)) and (self.isAtk == True):
-            self.x += PLAYER_SPEED
-            self.direction = 1
+            if self.x <= WINDOW_W - 18:
+                self.x += PLAYER_SPEED
+                self.direction = 1
         if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)) and (self.isAtk == True):
-            self.y -= PLAYER_SPEED
+            if self.y >= 16:
+                self.y -= PLAYER_SPEED
         if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)) and (self.isAtk == True):
-            self.y += PLAYER_SPEED
+            if self.y <= WINDOW_H - 20:
+                self.y += PLAYER_SPEED
     def draw(self):
         #editorデータ描画(player)
         if self.isAtk == True:
