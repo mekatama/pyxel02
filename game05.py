@@ -199,7 +199,7 @@ class BomEffect:
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
-        pyxel.init(WINDOW_W, WINDOW_H, title="Pyxel Base")
+        pyxel.init(WINDOW_W, WINDOW_H, title="Pyxel Base", fps = 30)
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource05.pyxres")
         self.score = 0
