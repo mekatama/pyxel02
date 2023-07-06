@@ -9,6 +9,7 @@ WINDOW_H = 64
 WINDOW_W = 128
 PLAYER_SPEED = 1
 ENEMY_SPEED = 1
+PLAYER_BULLET_SPEED = 2
 #list用意
 player = None
 playerbullets = []
@@ -58,11 +59,11 @@ class Player:
         if pyxel.btnp(pyxel.KEY_A) and (self.isAtk == True):
             #弾生成
             if self.direction == 1:
-                PlayerBullet(self.x + 13, self.y + 13)
+                PlayerBullet(self.x + 13, self.y + 13, 1)
             elif self.direction == -1:
-                PlayerBullet(self.x - 1,  self.y + 13)
+                PlayerBullet(self.x - 1,  self.y + 13, -1)
             self.isAtk = False
-            self.isMotion = 1
+#            self.isMotion = 1
         #攻撃間隔
         if self.isAtk == False:
             self.count += 1
@@ -96,21 +97,31 @@ class Player:
 
 #■PlayerBullet
 class PlayerBullet:
-    def __init__(self, x, y):
+    def __init__(self, x, y, dir):
         self.x = x
         self.y = y
         self.size = 2
-        self.color = 10     #colorは0～15
-        self.count = 0      #時間計測用
+        self.direction = dir    #移動の向き
+        self.color = 10         #colorは0～15
+        self.count = 0          #時間計測用
         self.is_alive = True
         playerbullets.append(self)
     def update(self):
         self.count += 1
+        #移動
+        if self.direction == 1:
+            self.x += PLAYER_BULLET_SPEED
+        if self.direction == -1:
+            self.x-= PLAYER_BULLET_SPEED
         #一定時間表示(8がよさそう)
-        if self.count % 8 == 0:
+        if self.count > 60:
             self.is_alive = False       #消去
     def draw(self):
-        pyxel.rectb(self.x, self.y, 4, 3, 5)
+        #見た目
+        pyxel.rect(self.x, self.y - 6, 4, 3, 10)
+        pyxel.rectb(self.x, self.y - 6, 4, 3, 1)
+        #collision
+        pyxel.rectb(self.x, self.y, 4, 3, 10)
 
 #■Enemy
 class Enemy:
