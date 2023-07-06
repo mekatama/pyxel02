@@ -56,36 +56,25 @@ class Player:
             elif self.motion == 1:
                 self.motion = 0
         #攻撃入力
-        if pyxel.btnp(pyxel.KEY_A) and (self.isAtk == True):
+        if pyxel.btnp(pyxel.KEY_A):
             #弾生成
             if self.direction == 1:
                 PlayerBullet(self.x + 13, self.y + 13, 1)
             elif self.direction == -1:
                 PlayerBullet(self.x - 1,  self.y + 13, -1)
-            self.isAtk = False
-#            self.isMotion = 1
-        #攻撃間隔
-        if self.isAtk == False:
-            self.count += 1
-        else:
-            self.count = 0  #リセット
-        #一定時間攻撃不可判定(8がよさそう)
-        if self.count % 8 == 0 and self.isAtk == False:
-            self.isAtk = True
-            self.isMotion = 0
         #移動入力
-        if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)) and (self.isAtk == True):
+        if pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT):
             if self.x >= 2:
                 self.x -= PLAYER_SPEED
                 self.direction = -1
-        if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)) and (self.isAtk == True):
+        if pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT):
             if self.x <= WINDOW_W - 18:
                 self.x += PLAYER_SPEED
                 self.direction = 1
-        if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)) and (self.isAtk == True):
+        if pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP):
             if self.y >= 16:
                 self.y -= PLAYER_SPEED
-        if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)) and (self.isAtk == True):
+        if pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN):
             if self.y <= WINDOW_H - 20:
                 self.y += PLAYER_SPEED
     def draw(self):
