@@ -8,7 +8,7 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 WINDOW_H = 64
 WINDOW_W = 128
 PLAYER_SPEED = 1
-ENEMY_SPEED = 1
+ENEMY_SPEED = 0.5
 PLAYER_BULLET_SPEED = 2
 #list用意
 player = None
@@ -193,7 +193,6 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
-        '''
         #一定時間でenemy出現判定
         if pyxel.frame_count % 30 == 0:
             #生成辺(位置)ランダム
@@ -201,19 +200,17 @@ class App:
             #生成座標ランダム
             if spawn_side == 0:     #左端
                 spawn_x = -32
-                spawn_y = pyxel.rndi(32, 100)
+                spawn_y = pyxel.rndi(24, 70)
                 spawn_dir = -1
             elif spawn_side == 1:   #右端
                 spawn_x = 160
-                spawn_y = pyxel.rndi(32, 100)
+                spawn_y = pyxel.rndi(24, 70)
                 spawn_dir = 1
             #敵生成
             Enemy(spawn_x, spawn_y, 3, 0, 0, spawn_dir)
-        '''
         #Player制御
         self.player.update()
 
-        '''
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in playerbullets:
@@ -235,7 +232,6 @@ class App:
                         blasts.append(
                             Blast(enemy.x, enemy.y)
                         )
-        '''
 
         #list実行
         update_list(playerbullets)
