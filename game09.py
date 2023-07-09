@@ -59,9 +59,11 @@ class Player:
         if pyxel.btnp(pyxel.KEY_A):
             #弾生成
             if self.direction == 1:
-                PlayerBullet(self.x + 13, self.y + 13, 1)
+                PlayerBullet(self.x + 13, self.y, 1)
+#                PlayerBullet(self.x + 13, self.y + 13, 1)
             elif self.direction == -1:
-                PlayerBullet(self.x - 1,  self.y + 13, -1)
+                PlayerBullet(self.x - 1,  self.y, -1)
+#                PlayerBullet(self.x - 1,  self.y + 13, -1)
         #移動入力
         if pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT):
             if self.x >= 2:
@@ -88,6 +90,7 @@ class Player:
 class PlayerBullet:
     def __init__(self, x, y, dir):
         self.x = x
+#        self.y = y + 13 #描画順のため数値補正
         self.y = y
         self.size = 2
         self.direction = dir    #移動の向き
@@ -107,10 +110,10 @@ class PlayerBullet:
             self.is_alive = False       #消去
     def draw(self):
         #見た目
-        pyxel.rect(self.x, self.y - 6, 4, 3, 10)
-        pyxel.rectb(self.x, self.y - 6, 4, 3, 1)
+        pyxel.rect(self.x, self.y + 6, 4, 3, 10)
+        pyxel.rectb(self.x, self.y + 6, 4, 3, 1)
         #collision
-        pyxel.rectb(self.x, self.y, 4, 3, 10)
+        pyxel.rectb(self.x, self.y + 13, 4, 3, 10)
 
 #■Enemy
 class Enemy:
@@ -216,8 +219,8 @@ class App:
             for bullet in playerbullets:
                 if (enemy.x + 12    > bullet.x and
                     enemy.x + 4     < bullet.x + 4 and
-                    enemy.y + 16    > bullet.y and
-                    enemy.y + 13    < bullet.y + 3):
+                    enemy.y + 16    > bullet.y + 13 and
+                    enemy.y + 13    < bullet.y + 17):
                     #Hit時の処理
                     pyxel.play(1, 1, loop=False)    #SE再生
                     bullet.is_alive = False
@@ -284,22 +287,23 @@ class App:
     def draw_play_scene(self):
         #BG背後
         offset = (pyxel.frame_count // 4) % 128
-        pyxel.blt(- offset, 8, 0, 0, 104, 128, 16, 0)
-        pyxel.blt(128 - offset, 8, 0, 0, 104, 128, 16, 0)
+#        pyxel.blt(- offset, 8, 0, 0, 104, 128, 16, 0)
+#        pyxel.blt(128 - offset, 8, 0, 0, 104, 128, 16, 0)
 
         #BGアクションAREA
         offset = (pyxel.frame_count // 2) % 128
-        pyxel.blt(- offset, 20, 0, 0, 64, 128, 40, 0)
-        pyxel.blt(128 - offset, 20, 0, 0, 64, 128, 40, 0)
+#        pyxel.blt(- offset, 20, 0, 0, 64, 128, 40, 0)
+#        pyxel.blt(128 - offset, 20, 0, 0, 64, 128, 40, 0)
 
         #score表示(f文字列的な)
         pyxel.text(0, 0, f"isAtk {self.player.isAtk}", 7)
         self.player.draw()
-        draw_list(playerbullets)
+#        draw_list(playerbullets)
 
         #敵とplayerのリストをY座標でソートする
         #self.playerリストがあったら、リスト合体させてる
-        characters = enemies + [self.player] if self.player else []
+        characters = enemies + playerbullets + [self.player] if self.player else []
+#        characters = enemies + [self.player] if self.player else []
         #charactersリストの中から、keyのcharacter.yでソートする。
         sorted_characters = sorted(characters, key=lambda character: character.y)
         #ソートされた順番で敵の描画
@@ -309,8 +313,8 @@ class App:
 
         #BG一番手前
         offset = pyxel.frame_count % 128
-        pyxel.blt(-offset, 56, 0, 0, 64, 128, 8, 0)
-        pyxel.blt(128 - offset, 56, 0, 0, 64, 128, 8, 0)
+#        pyxel.blt(-offset, 56, 0, 0, 64, 128, 8, 0)
+#        pyxel.blt(128 - offset, 56, 0, 0, 64, 128, 8, 0)
     
         draw_list(blasts)
 
