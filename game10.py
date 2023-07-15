@@ -49,7 +49,6 @@ def check_collision(x, y):
         return isStop
     return False
 
-
 #関数(List実行)
 def update_list(list):
     for elem in list:
@@ -75,6 +74,7 @@ class Player:
         self.y = y
         self.dx = 0
         self.dy = 0
+        self.vh = 0 #上下と左右移動の判定用
         self.direction = 1
         self.isStop = False
         self.is_alive = True
@@ -83,14 +83,24 @@ class Player:
         if self.isStop == False:
             if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
                 self.dx = -1
-#                self.direction = -1
-            if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
+                self.dy = 0
+                self.vh = 0
+                self.direction = -1
+            elif (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
                 self.dx = 1
-#                self.direction = 1
-            if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
+                self.dy = 0
+                self.vh = 0
+                self.direction = 1
+            elif (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
+                self.vh = 1
+                self.dx = 0
                 self.dy = -1
-            if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
+                self.direction = 1
+            elif (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
+                self.vh = 1
+                self.dx = 0
                 self.dy = 1
+                self.direction = -1
         #Playerの位置を更新
         new_player_x = self.x + self.dx
         new_player_y = self.y + self.dy
@@ -100,13 +110,12 @@ class Player:
         if check_collision(self.x, new_player_y) == False:
             self.y = new_player_y
 
-        #移動停止
-        self.dx = 0
-        self.dy = 0
-
     def draw(self):
         #editorデータ描画(player)
-        pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
+        if self.vh == 0:
+            pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
+        elif self.vh == 1:
+            pyxel.blt(self.x, self.y, 0, 8, 8, 8, 8 * self.direction, 0)
 
 class App:
     def __init__(self):
