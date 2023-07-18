@@ -11,7 +11,9 @@ TILE_SIZE = 8
 MAP_WIDTH = 16
 MAP_HEIGHT = 16
 PLAYER_SPEED = 1
+PLAYER_BULLET_SPEED = 4
 #list用意
+bullets = []
 
 #関数(TileMap(0)のタイルを取得)
 #指定座標のタイルの種類を取得
@@ -47,6 +49,33 @@ def check_collision(x, y):
         print("wall_右下")
         isStop = True
         return isStop
+    return False
+
+#関数(タイルとのBulletコリジョン判定)
+    #//は商を求める(余りは切り捨てる)
+    #2は今回のbulletが2×2ドットサイズだから
+def check_bullet_collision(x, y):
+    x1 = x // 8             #キャラx座標左端のTileMapの座標
+    y1 = y // 8             #キャラy座標上端のTileMapの座標
+    x2 = (x + 2 - 1) // 8   #キャラx座標右端のTileMapの座標
+    y2 = (y + 2 - 1) // 8   #キャラy座標下端のTileMapの座標
+    #tileの種類で判定
+    #左上判定
+    if get_tile(x1,y1) == (1,0):
+        isTileHit = True
+        return isTileHit
+    #右上判定
+    if get_tile(x2,y1) == (1,0):
+        isTileHit = True
+        return isTileHit
+    #左下判定
+    if get_tile(x1,y2) == (1,0):
+        isTileHit = True
+        return isTileHit
+    #右下判定
+    if get_tile(x2,y2) == (1,0):
+        isTileHit = True
+        return isTileHit
     return False
 
 #関数(List実行)
@@ -101,6 +130,18 @@ class Player:
                 self.dx = 0
                 self.dy = 1
                 self.direction = -1
+        #攻撃入力
+        if pyxel.btnp(pyxel.KEY_A):
+            if self.direction == 1:
+                if self.vh == 0:    #右向き
+                    Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, 6)
+                elif self.vh == 1:  #上向き
+                    Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8)
+            elif self.direction == -1:
+                if self.vh == 0:    #左向き
+                    Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, 4)
+                elif self.vh == 1:  #下向き
+                    Bullet(self.x + 4, self.y + 6, PLAYER_BULLET_SPEED, 2)
         #Playerの位置を更新
         new_player_x = self.x + self.dx
         new_player_y = self.y + self.dy
@@ -109,13 +150,43 @@ class Player:
             self.x = new_player_x
         if check_collision(self.x, new_player_y) == False:
             self.y = new_player_y
-
     def draw(self):
         #editorデータ描画(player)
         if self.vh == 0:
             pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
         elif self.vh == 1:
             pyxel.blt(self.x, self.y, 0, 8, 8, 8, 8 * self.direction, 0)
+
+class Bullet:
+    def __init__(self, x, y, speed, dir):
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.direction = dir
+        self.size = 1
+        self.color = 10 #colorは0～15
+        self.count = 0
+        self.is_alive = True
+        bullets.append(self)
+    def update(self):
+        #弾移動
+        if self.direction == 6:     #右向き
+            self.x += self.speed
+        elif self.direction == 4:   #左向き
+            self.x -= self.speed
+        elif self.direction == 8:   #上向き
+            self.y -= self.speed
+        elif self.direction == 2:   #下向き
+            self.y += self.speed
+        self.count += 0
+        #一定時間で消去
+        if self.count > 30:            
+            self.is_alive = False   #消去
+        #移動先で当たり判定
+        if check_bullet_collision(self.x, self.y) == True:
+            self.is_alive = False   #タイル接触なら消去
+    def draw(self):
+        pyxel.circ(self.x, self.y, self.size, self.color)
 
 class App:
     def __init__(self):
@@ -158,7 +229,13 @@ class App:
 
 
         #list実行
+        update_list(bullets)
+#        update_list(enemies)
+#        update_list(blasts)
         #list更新
+        cleanup_list(bullets)
+#        cleanup_list(enemies)
+#        cleanup_list(blasts)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -170,6 +247,7 @@ class App:
             self.score = 0
             self.scene = SCENE_TITLE
             #list更新
+            bullets.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -192,6 +270,7 @@ class App:
         #BG描画
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
         self.player.draw()
+        draw_list(bullets)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
