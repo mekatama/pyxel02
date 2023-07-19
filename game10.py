@@ -107,6 +107,7 @@ class Player:
         self.dy = 0
         self.vh = 0 #上下と左右移動の判定用
         self.direction = 1
+        self.target_dir = 6
         self.isStop = False
         self.is_alive = True
     def update(self):
@@ -117,21 +118,25 @@ class Player:
                 self.dy = 0
                 self.vh = 0
                 self.direction = -1
+                self.target_dir = 4
             elif (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
                 self.dx = PLAYER_SPEED
                 self.dy = 0
                 self.vh = 0
                 self.direction = 1
+                self.target_dir = 6
             elif (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
                 self.vh = 1
                 self.dx = 0
                 self.dy = -PLAYER_SPEED
                 self.direction = 1
+                self.target_dir = 8
             elif (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
                 self.vh = 1
                 self.dx = 0
                 self.dy = PLAYER_SPEED
                 self.direction = -1
+                self.target_dir = 2
         #攻撃入力
         if pyxel.btnp(pyxel.KEY_A):
             if self.direction == 1:
@@ -223,6 +228,26 @@ class Blast:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
 
+#■Target
+class Target:
+    def __init__(self, x, y, dir):
+        self.x = x
+        self.y = y
+        self.direction = dir    #方向flag
+        self.is_alive = True
+    def update(self):
+        if self.direction == 6:
+            self.x = self.x + 32
+        elif self.direction == 4:
+            self.x = self.x - 24
+        elif self.direction == 8:
+            self.y = self.y - 24
+        elif self.direction == 2:
+            self.y = self.y + 32
+        pass
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 8, 16, 8, 8, 0)
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
@@ -234,6 +259,8 @@ class App:
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
+        #Targetインスタンス生成
+        self.target = Target(self.player.x, self.player.y, self.player.target_dir)
 
         #仮
         Enemy(64, 32, 0, 0,3)
@@ -262,6 +289,14 @@ class App:
     def update_play_scene(self):
         #Player制御
         self.player.update()
+        #Target制御
+        self.target.x = self.player.x
+        self.target.y = self.player.y
+        self.target.direction = self.player.target_dir
+        self.target.update()
+
+#        self.target = Target(self.player.x + 32, self.player.y, 0)
+
 
         #EnemyとBulletの当たり判定
         for enemy in enemies:
@@ -327,6 +362,7 @@ class App:
         #BG描画
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
         self.player.draw()
+        self.target.draw()
         draw_list(bullets)
         draw_list(enemies)
         draw_list(blasts)
