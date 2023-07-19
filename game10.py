@@ -10,10 +10,12 @@ WINDOW_W = 128
 TILE_SIZE = 8
 MAP_WIDTH = 16
 MAP_HEIGHT = 16
-PLAYER_SPEED = 1
+PLAYER_SPEED = 0.5
 PLAYER_BULLET_SPEED = 4
 #list用意
 bullets = []
+enemies = []
+blasts = []
 
 #関数(TileMap(0)のタイルを取得)
 #指定座標のタイルの種類を取得
@@ -111,24 +113,24 @@ class Player:
         #移動入力
         if self.isStop == False:
             if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
-                self.dx = -1
+                self.dx = -PLAYER_SPEED
                 self.dy = 0
                 self.vh = 0
                 self.direction = -1
             elif (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
-                self.dx = 1
+                self.dx = PLAYER_SPEED
                 self.dy = 0
                 self.vh = 0
                 self.direction = 1
             elif (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
                 self.vh = 1
                 self.dx = 0
-                self.dy = -1
+                self.dy = -PLAYER_SPEED
                 self.direction = 1
             elif (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
                 self.vh = 1
                 self.dx = 0
-                self.dy = 1
+                self.dy = PLAYER_SPEED
                 self.direction = -1
         #攻撃入力
         if pyxel.btnp(pyxel.KEY_A):
@@ -188,6 +190,39 @@ class Bullet:
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
 
+#■Enemy
+class Enemy:
+    def __init__(self, x, y, speed, dir, hp):
+        self.x = x
+        self.y = y
+        self.hp = hp
+        self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.is_alive = True
+        enemies.append(self)
+    def update(self):
+        #移動
+        pass
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+
+#■Blust
+class Blast:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.count = 0
+        self.motion = 0         #アニメ切り替え用
+        self.is_alive = True
+        blasts.append(self)
+    def update(self):
+        self.count += 1
+        if self.count >= 5 and self.count < 10:
+            self.motion = 1
+        elif self.count >= 10:
+            self.is_alive = False
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
@@ -199,6 +234,10 @@ class App:
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
+
+        #仮
+        Enemy(64, 32, 0, 0,3)
+
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -221,21 +260,39 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
-#        if check_collision(self.player.x, self.player.y) == True:
-#            self.player.isStop = True
-
         #Player制御
         self.player.update()
 
+        #EnemyとBulletの当たり判定
+        for enemy in enemies:
+            for bullet in bullets:
+                if (enemy.x + 8    > bullet.x and
+                    enemy.x         < bullet.x + 2 and
+                    enemy.y + 8    > bullet.y and
+                    enemy.y         < bullet.y + 2):
+                    #Hit時の処理
+                    enemy.hp -= 1
+                    bullet.is_alive = False
+                    #残りHP判定
+                    if enemy.hp <= 0:
+                        enemy.is_alive = False
+                        blasts.append(
+                            Blast(enemy.x, enemy.y)
+                        )
+#                        self.score += 10
+#                        pyxel.play(1, 0, loop=False)    #SE再生
+#                        enemiesUI.append(
+#                            EnemyUI(enemy.x, enemy.y, 10)
+#                        )
 
         #list実行
         update_list(bullets)
-#        update_list(enemies)
-#        update_list(blasts)
+        update_list(enemies)
+        update_list(blasts)
         #list更新
         cleanup_list(bullets)
-#        cleanup_list(enemies)
-#        cleanup_list(blasts)
+        cleanup_list(enemies)
+        cleanup_list(blasts)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -271,6 +328,8 @@ class App:
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
         self.player.draw()
         draw_list(bullets)
+        draw_list(enemies)
+        draw_list(blasts)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
