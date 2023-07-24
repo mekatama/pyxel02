@@ -94,7 +94,8 @@ class Player:
         self.y = new_player_y
     def draw(self):
         #editorデータ描画(player)
-        pyxel.circ(self.x, self.y, 16, 1)
+#        pyxel.rect(self.x, self.y, 8, 8, 1)
+        pyxel.circ(self.x, self.y, 4, 1)
 
 class Bullet:
     def __init__(self, x, y, speed, dir):
@@ -124,6 +125,22 @@ class Bullet:
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
 
+#■Enemy
+class Enemy:
+    def __init__(self, x, y, speed, dir, hp):
+        self.x = x
+        self.y = y
+        self.hp = hp
+        self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.is_alive = True
+        enemies.append(self)
+    def update(self):
+        #移動
+        pass
+    def draw(self):
+#        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        pyxel.rect(self.x, self.y, 16, 16, 2)
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
@@ -137,7 +154,7 @@ class App:
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
 
         #仮
-#        Enemy(64, 32, 0, 0,3)
+        Enemy(64, 32, 0, 0,3)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -163,35 +180,26 @@ class App:
     def update_play_scene(self):
         #Player制御
         self.player.update()
-#        #Target制御
-#        self.target.x = self.player.x
-#        self.target.y = self.player.y
-#        self.target.direction = self.player.target_dir
-#        self.target.update()
 
-#        self.target = Target(self.player.x + 32, self.player.y, 0)
-
-
-        #EnemyとBulletの当たり判定
+        #EnemyとPlayerの当たり判定
         for enemy in enemies:
-            for bullet in bullets:
-                if (enemy.x + 8    > bullet.x and
-                    enemy.x         < bullet.x + 2 and
-                    enemy.y + 8    > bullet.y and
-                    enemy.y         < bullet.y + 2):
-                    #Hit時の処理
-                    enemy.hp -= 1
-                    bullet.is_alive = False
-                    #残りHP判定
-                    if enemy.hp <= 0:
-                        enemy.is_alive = False
-#                        blasts.append(
-#                            Blast(enemy.x, enemy.y)
-#                        self.score += 10
-#                        pyxel.play(1, 0, loop=False)    #SE再生
-#                        enemiesUI.append(
-#                            EnemyUI(enemy.x, enemy.y, 10)
-#                        )
+            #円の中心が長方形から見て上中下の位置にある場合
+            if ((enemy.x < self.player.x and self.player.x < enemy.x + 16) and
+                (enemy.y - 4 < self.player.y and self.player.y < enemy.y + 16 + 4)):
+                #Hit時の処理
+                print("Hit1")
+            #円の中心が長方形から見て左中右の位置にある場合
+            elif ((enemy.x - 4 < self.player.x and self.player.x < enemy.x + 16 + 4) and 
+                  (enemy.y < self.player.y and self.player.y < enemy.y + 16)):
+                #Hit時の処理
+                print("Hit2")
+            #円の中心が長方形から斜め上下の位置にある場合
+            elif (((enemy.x - self.player.x)**2 + (enemy.y - self.player.y)**2 < 4**2) or 
+                  ((enemy.x + 16 - self.player.x)**2 + (enemy.y - self.player.y)**2 < 4**2) or
+                  ((enemy.x - self.player.x)**2 + (enemy.y + 16 - self.player.y)**2 < 4**2) or
+                  ((enemy.x + 16 - self.player.x)**2 + (enemy.y + 16 - self.player.y)**2 < 4**2)):
+                #Hit時の処理
+                print("Hit3")
 
         #list実行
         update_list(bullets)
