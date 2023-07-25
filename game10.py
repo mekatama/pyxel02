@@ -14,6 +14,7 @@ PLAYER_SPEED = 0.5
 PLAYER_BULLET_SPEED = 4
 #list用意
 bullets = []
+melees = []
 enemies = []
 blasts = []
 
@@ -152,6 +153,9 @@ class Player:
             self.x = new_player_x
         if check_collision(self.x, new_player_y) == False:
             self.y = new_player_y
+        #移動停止
+        self.dx = 0
+        self.dy = 0
     def draw(self):
         #editorデータ描画(player)
         if self.vh == 0:
@@ -187,6 +191,38 @@ class Bullet:
         #移動先で当たり判定
         if check_bullet_collision(self.x, self.y) == True:
             self.is_alive = False   #タイル接触なら消去
+    def draw(self):
+        pyxel.circ(self.x, self.y, self.size, self.color)
+
+class Melee:
+    def __init__(self, x, y, dir):
+        self.x = x
+        self.y = y
+        self.direction = dir
+        self.size = 4
+        self.color = 10 #colorは0～15
+        self.count = 0
+        self.is_alive = True
+        melees.append(self)
+    def update(self):
+        #弾移動
+        '''
+        if self.direction == 6:     #右向き
+            self.x += self.speed
+        elif self.direction == 4:   #左向き
+            self.x -= self.speed
+        elif self.direction == 8:   #上向き
+            self.y -= self.speed
+        elif self.direction == 2:   #下向き
+            self.y += self.speed
+        '''
+        self.count += 1
+        #一定時間で消去
+        if self.count > 30:            
+            self.is_alive = False   #消去
+        #移動先で当たり判定
+#        if check_bullet_collision(self.x, self.y) == True:
+#            self.is_alive = False   #タイル接触なら消去
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
 
@@ -287,10 +323,12 @@ class App:
 
         #list実行
         update_list(bullets)
+        update_list(melees)
         update_list(enemies)
         update_list(blasts)
         #list更新
         cleanup_list(bullets)
+        cleanup_list(melees)
         cleanup_list(enemies)
         cleanup_list(blasts)
 
@@ -328,6 +366,7 @@ class App:
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
         self.player.draw()
         draw_list(bullets)
+        draw_list(melees)
         draw_list(enemies)
         draw_list(blasts)
 
