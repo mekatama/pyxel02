@@ -176,25 +176,24 @@ class Bullet:
         self.is_alive = True
         bullets.append(self)
     def update(self):
-        self.count += 1
-        #一定時間で消去
-        if self.count > 30:            
-            self.is_alive = False   #消去
-        #移動先で当たり判定
-#        if check_bullet_collision(self.x, self.y) == True:
-#            self.is_alive = False   #タイル接触なら消去
-    def draw(self):
-#        pyxel.circ(self.x, self.y, self.size, self.color)
-        #弾表示位置
+        #弾移動
         if self.direction == 6:     #右向き
-            pyxel.circ(self.x+ 32, self.y, 4, 1)
+            self.x += self.speed
         elif self.direction == 4:   #左向き
             self.x -= self.speed
         elif self.direction == 8:   #上向き
             self.y -= self.speed
         elif self.direction == 2:   #下向き
             self.y += self.speed
-#        pyxel.circ(self.x, self.y, 4, 1)
+        self.count += 0
+        #一定時間で消去
+        if self.count > 30:            
+            self.is_alive = False   #消去
+        #移動先で当たり判定
+        if check_bullet_collision(self.x, self.y) == True:
+            self.is_alive = False   #タイル接触なら消去
+    def draw(self):
+        pyxel.circ(self.x, self.y, self.size, self.color)
 
 #■Enemy
 class Enemy:
