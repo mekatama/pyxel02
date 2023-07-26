@@ -12,6 +12,7 @@ MAP_WIDTH = 16
 MAP_HEIGHT = 16
 PLAYER_SPEED = 0.5
 PLAYER_BULLET_SPEED = 4
+ENEMY_SPEED = 0.3
 #list用意
 bullets = []
 melees = []
@@ -247,12 +248,13 @@ class Enemy:
         self.x = x
         self.y = y
         self.hp = hp
+        self.speed = speed
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #移動
-        pass
+        self.x -= self.speed
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
@@ -287,7 +289,7 @@ class App:
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
 
         #仮
-        Enemy(64, 32, 0, 0,3)
+        Enemy(96, 32, ENEMY_SPEED, 4,3)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
