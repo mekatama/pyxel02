@@ -13,6 +13,7 @@ MAP_HEIGHT = 16
 PLAYER_SPEED = 0.5
 PLAYER_BULLET_SPEED = 4
 ENEMY_SPEED = 0.3
+ENEMY_HITSTOP = 1
 #list用意
 bullets = []
 melees = []
@@ -250,11 +251,20 @@ class Enemy:
         self.hp = hp
         self.speed = speed
         self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.count_hitstop = 0
+        self.is_stop = False
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #移動
-        self.x -= self.speed
+        if self.is_stop == False:
+            self.x -= self.speed
+        #HitStop処理
+        else:
+            self.count_hitstop += 1
+            if self.count_hitstop > 30:
+                self.is_stop = False
+                self.count_hitstop = 0 #初期化
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
@@ -325,6 +335,7 @@ class App:
                     enemy.y         < bullet.y + 2):
                     #Hit時の処理
                     enemy.hp -= 1
+                    enemy.is_stop = True
                     bullet.is_alive = False
                     #残りHP判定
                     if enemy.hp <= 0:
