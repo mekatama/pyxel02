@@ -29,8 +29,8 @@ def get_tile(tile_x, tile_y):
 def check_collision(x, y):
     x1 = x // 8             #キャラx座標左端のTileMapの座標
     y1 = y // 8             #キャラy座標上端のTileMapの座標
-    x2 = (x + 8 - 1) // 8   #キャラx座標右端のTileMapの座標
-    y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
+    x2 = (x + 8 - 0) // 8   #キャラx座標右端のTileMapの座標
+    y2 = (y + 8 - 0) // 8   #キャラy座標下端のTileMapの座標
     #tileの種類で判定
     #左上判定
     if get_tile(x1,y1) == (1,0):
@@ -133,7 +133,7 @@ class Player:
                 self.dx = 0
                 self.dy = PLAYER_SPEED
                 self.direction = -1
-        #攻撃入力
+        #shot攻撃入力
         if pyxel.btnp(pyxel.KEY_A):
             if self.direction == 1:
                 if self.vh == 0:    #右向き
@@ -145,6 +145,18 @@ class Player:
                     Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, 4)
                 elif self.vh == 1:  #下向き
                     Bullet(self.x + 4, self.y + 6, PLAYER_BULLET_SPEED, 2)
+        #melee攻撃入力
+        if pyxel.btnp(pyxel.KEY_S):
+            if self.direction == 1:
+                if self.vh == 0:    #右向き
+                    Melee(self.x + 8, self.y + 3, 6)
+                elif self.vh == 1:  #上向き
+                    Melee(self.x + 3, self.y - 8, 8)
+            elif self.direction == -1:
+                if self.vh == 0:    #左向き
+                    Melee(self.x - 8, self.y + 3, 4)
+                elif self.vh == 1:  #下向き
+                    Melee(self.x + 3, self.y + 8, 2)
         #Playerの位置を更新
         new_player_x = self.x + self.dx
         new_player_y = self.y + self.dy
@@ -199,8 +211,7 @@ class Melee:
         self.x = x
         self.y = y
         self.direction = dir
-        self.size = 4
-        self.color = 10 #colorは0～15
+        self.color = 9 #colorは0～15
         self.count = 0
         self.is_alive = True
         melees.append(self)
@@ -224,7 +235,14 @@ class Melee:
 #        if check_bullet_collision(self.x, self.y) == True:
 #            self.is_alive = False   #タイル接触なら消去
     def draw(self):
-        pyxel.circ(self.x, self.y, self.size, self.color)
+        if self.direction == 6:     #右向き
+            pyxel.rect(self.x, self.y, 8, 2, self.color)
+        elif self.direction == 4:   #左向き
+            pyxel.rect(self.x, self.y, 8, 2, self.color)
+        elif self.direction == 8:   #上向き
+            pyxel.rect(self.x, self.y, 2, 8, self.color)
+        elif self.direction == 2:   #下向き
+            pyxel.rect(self.x, self.y, 2, 8, self.color)
 
 #■Enemy
 class Enemy:
