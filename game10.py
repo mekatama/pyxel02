@@ -149,14 +149,14 @@ class Player:
         if pyxel.btnp(pyxel.KEY_S):
             if self.direction == 1:
                 if self.vh == 0:    #右向き
-                    Melee(self.x + 8, self.y + 3, 6)
+                    Melee(self.x + 8, self.y, 6)
                 elif self.vh == 1:  #上向き
-                    Melee(self.x + 3, self.y - 8, 8)
+                    Melee(self.x, self.y - 8, 8)
             elif self.direction == -1:
                 if self.vh == 0:    #左向き
-                    Melee(self.x - 8, self.y + 3, 4)
+                    Melee(self.x - 8, self.y, 4)
                 elif self.vh == 1:  #下向き
-                    Melee(self.x + 3, self.y + 8, 2)
+                    Melee(self.x, self.y + 8, 2)
         #Playerの位置を更新
         new_player_x = self.x + self.dx
         new_player_y = self.y + self.dy
@@ -213,36 +213,23 @@ class Melee:
         self.direction = dir
         self.color = 9 #colorは0～15
         self.count = 0
+        self.is_atk = True  #１回だけ当たり判定処理したいの
         self.is_alive = True
         melees.append(self)
     def update(self):
-        #弾移動
-        '''
-        if self.direction == 6:     #右向き
-            self.x += self.speed
-        elif self.direction == 4:   #左向き
-            self.x -= self.speed
-        elif self.direction == 8:   #上向き
-            self.y -= self.speed
-        elif self.direction == 2:   #下向き
-            self.y += self.speed
-        '''
         self.count += 1
         #一定時間で消去
         if self.count > 30:            
             self.is_alive = False   #消去
-        #移動先で当たり判定
-#        if check_bullet_collision(self.x, self.y) == True:
-#            self.is_alive = False   #タイル接触なら消去
     def draw(self):
         if self.direction == 6:     #右向き
-            pyxel.rect(self.x, self.y, 8, 2, self.color)
+            pyxel.rect(self.x, self.y, 8, 8, self.color)
         elif self.direction == 4:   #左向き
-            pyxel.rect(self.x, self.y, 8, 2, self.color)
+            pyxel.rect(self.x, self.y, 8, 8, self.color)
         elif self.direction == 8:   #上向き
-            pyxel.rect(self.x, self.y, 2, 8, self.color)
+            pyxel.rect(self.x, self.y, 8, 8, self.color)
         elif self.direction == 2:   #下向き
-            pyxel.rect(self.x, self.y, 2, 8, self.color)
+            pyxel.rect(self.x, self.y, 8, 8, self.color)
 
 #■Enemy
 class Enemy:
@@ -338,6 +325,29 @@ class App:
 #                        enemiesUI.append(
 #                            EnemyUI(enemy.x, enemy.y, 10)
 #                        )
+        #EnemyとMeleeの当たり判定
+        for enemy in enemies:
+            for melee in melees:
+                if melee.is_atk ==  True:
+                    if (enemy.x + 8    > melee.x and
+                        enemy.x         < melee.x + 8 and
+                        enemy.y + 8    > melee.y and
+                        enemy.y         < melee.y + 8):
+                        #Hit時の処理
+                        enemy.hp -= 1
+                        #残りHP判定
+                        if enemy.hp <= 0:
+                            enemy.is_alive = False
+                            blasts.append(
+                                Blast(enemy.x, enemy.y)
+                            )
+    #                        self.score += 10
+    #                        pyxel.play(1, 0, loop=False)    #SE再生
+    #                        enemiesUI.append(
+    #                            EnemyUI(enemy.x, enemy.y, 10)
+    #                        )
+                        #１回だけ処理
+                        melee.is_atk = False
 
         #list実行
         update_list(bullets)
