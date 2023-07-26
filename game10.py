@@ -108,11 +108,12 @@ class Player:
         self.dy = 0
         self.vh = 0 #上下と左右移動の判定用
         self.direction = 1
-        self.isStop = False
+        self.count = 0
+        self.is_stop = False
         self.is_alive = True
     def update(self):
         #移動入力
-        if self.isStop == False:
+        if self.is_stop == False:
             if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
                 self.dx = -PLAYER_SPEED
                 self.dy = 0
@@ -147,6 +148,7 @@ class Player:
                     Bullet(self.x + 4, self.y + 6, PLAYER_BULLET_SPEED, 2)
         #melee攻撃入力
         if pyxel.btnp(pyxel.KEY_S):
+            self.is_stop =True
             if self.direction == 1:
                 if self.vh == 0:    #右向き
                     Melee(self.x + 8, self.y, 6)
@@ -157,6 +159,9 @@ class Player:
                     Melee(self.x - 8, self.y, 4)
                 elif self.vh == 1:  #下向き
                     Melee(self.x, self.y + 8, 2)
+        if self.is_stop == True:
+            self.count += 1
+        
         #Playerの位置を更新
         new_player_x = self.x + self.dx
         new_player_y = self.y + self.dy
@@ -168,6 +173,11 @@ class Player:
         #移動停止
         self.dx = 0
         self.dy = 0
+        #一定時間停止
+        if self.count > 30:
+            self.is_stop = False
+            self.count = 0  #初期化            
+
     def draw(self):
         #editorデータ描画(player)
         if self.vh == 0:
@@ -196,7 +206,7 @@ class Bullet:
             self.y -= self.speed
         elif self.direction == 2:   #下向き
             self.y += self.speed
-        self.count += 0
+        self.count += 1
         #一定時間で消去
         if self.count > 30:            
             self.is_alive = False   #消去
