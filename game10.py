@@ -13,6 +13,7 @@ MAP_HEIGHT = 16
 PLAYER_SPEED = 0.5
 PLAYER_BULLET_SPEED = 4
 ENEMY_SPEED = 0.3
+ENEMY_BLOWSPEED = 2
 ENEMY_HITSTOP = 1
 #list用意
 bullets = []
@@ -36,22 +37,18 @@ def check_collision(x, y):
     #tileの種類で判定
     #左上判定
     if get_tile(x1,y1) == (1,0):
-        print("wall_左上")
         isStop = True
         return isStop
     #右上判定
     if get_tile(x2,y1) == (1,0):
-        print("wall_右上")
         isStop = True
         return isStop
     #左下判定
     if get_tile(x1,y2) == (1,0):
-        print("wall_左下")
         isStop = True
         return isStop
     #右下判定
     if get_tile(x2,y2) == (1,0):
-        print("wall_右下")
         isStop = True
         return isStop
     return False
@@ -109,7 +106,8 @@ class Player:
         self.dx = 0
         self.dy = 0
         self.vh = 0 #上下と左右移動の判定用
-        self.direction = 1
+        self.reversal = 1
+        self.direction = 6
         self.count = 0
         self.is_stop = False
         self.is_alive = True
@@ -120,30 +118,34 @@ class Player:
                 self.dx = -PLAYER_SPEED
                 self.dy = 0
                 self.vh = 0
-                self.direction = -1
+                self.reversal = -1
+                self.direction = 4
             elif (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
                 self.dx = PLAYER_SPEED
                 self.dy = 0
                 self.vh = 0
-                self.direction = 1
+                self.reversal = 1
+                self.direction = 6
             elif (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
                 self.vh = 1
                 self.dx = 0
                 self.dy = -PLAYER_SPEED
-                self.direction = 1
+                self.reversal = 1
+                self.direction = 8
             elif (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
                 self.vh = 1
                 self.dx = 0
                 self.dy = PLAYER_SPEED
-                self.direction = -1
+                self.reversal = -1
+                self.direction = 2
         #shot攻撃入力
         if pyxel.btnp(pyxel.KEY_A):
-            if self.direction == 1:
+            if self.reversal == 1:
                 if self.vh == 0:    #右向き
                     Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, 6)
                 elif self.vh == 1:  #上向き
                     Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8)
-            elif self.direction == -1:
+            elif self.reversal == -1:
                 if self.vh == 0:    #左向き
                     Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, 4)
                 elif self.vh == 1:  #下向き
@@ -151,12 +153,12 @@ class Player:
         #melee攻撃入力
         if pyxel.btnp(pyxel.KEY_S):
             self.is_stop =True
-            if self.direction == 1:
+            if self.reversal == 1:
                 if self.vh == 0:    #右向き
                     Melee(self.x + 8, self.y, 6)
                 elif self.vh == 1:  #上向き
                     Melee(self.x, self.y - 8, 8)
-            elif self.direction == -1:
+            elif self.reversal == -1:
                 if self.vh == 0:    #左向き
                     Melee(self.x - 8, self.y, 4)
                 elif self.vh == 1:  #下向き
@@ -183,9 +185,9 @@ class Player:
     def draw(self):
         #editorデータ描画(player)
         if self.vh == 0:
-            pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
+            pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.reversal, 8, 0)
         elif self.vh == 1:
-            pyxel.blt(self.x, self.y, 0, 8, 8, 8, 8 * self.direction, 0)
+            pyxel.blt(self.x, self.y, 0, 8, 8, 8, 8 * self.reversal, 0)
 
 class Bullet:
     def __init__(self, x, y, speed, dir):
@@ -252,12 +254,14 @@ class Enemy:
         self.speed = speed
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.count_hitstop = 0
+        self.melee_hit_dir = 0
+        self.is_meleeHit = False
         self.is_stop = False
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #移動
-        if self.is_stop == False:
+        if self.is_stop == False and self.is_meleeHit == False:
             self.x -= self.speed
         #HitStop処理
         else:
@@ -265,6 +269,22 @@ class Enemy:
             if self.count_hitstop > 30:
                 self.is_stop = False
                 self.count_hitstop = 0 #初期化
+
+        #meleeHit時ふっとび移動
+        if self.is_meleeHit == True:
+            if self.melee_hit_dir == 8:
+                self.x += 0
+                self.y -= ENEMY_BLOWSPEED
+            elif self.melee_hit_dir == 2:
+                self.x += 0
+                self.y += ENEMY_BLOWSPEED
+            elif self.melee_hit_dir == 6:
+                self.x += ENEMY_BLOWSPEED
+                self.y += 0
+            elif self.melee_hit_dir == 4:
+                self.x -= ENEMY_BLOWSPEED
+                self.y += 0
+                    
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
@@ -358,7 +378,9 @@ class App:
                         enemy.y         < melee.y + 8):
                         #Hit時の処理
                         enemy.hp -= 1
-                        #残りHP判定
+                        enemy.melee_hit_dir = self.player.direction
+                        enemy.is_meleeHit = True
+                       #残りHP判定
                         if enemy.hp <= 0:
                             enemy.is_alive = False
                             blasts.append(
