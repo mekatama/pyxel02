@@ -284,6 +284,13 @@ class Enemy:
             elif self.melee_hit_dir == 4:
                 self.x -= ENEMY_BLOWSPEED
                 self.y += 0
+        #ふっとび中のタイルとの当たり判定
+        if self.is_meleeHit == True:
+            if check_collision(self.x, self.y) == True:
+                self.is_alive = False   #タイル接触なら消去
+                blasts.append(
+                    Blast(self.x, self.y)
+                )
                     
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
@@ -320,6 +327,7 @@ class App:
 
         #仮
         Enemy(96, 32, ENEMY_SPEED, 4,3)
+        Enemy(108, 40, ENEMY_SPEED, 4,3)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
