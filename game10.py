@@ -313,7 +313,6 @@ class BlowEnemy:
         blowenemies.append(self)
     def update(self):
         #meleeHit時ふっとび移動
-#        if self.is_meleeHit == True:
         if self.melee_hit_dir == 8:
             self.x += 0
             self.y -= ENEMY_BLOWSPEED
@@ -327,7 +326,6 @@ class BlowEnemy:
             self.x -= ENEMY_BLOWSPEED
             self.y += 0
         #ふっとび中のタイルとの当たり判定
-#        if self.is_meleeHit == True:
         if check_collision(self.x, self.y) == True:
             self.is_alive = False   #タイル接触なら消去
             blasts.append(
@@ -412,6 +410,23 @@ class App:
                         blasts.append(
                             Blast(enemy.x, enemy.y)
                         )
+#                        self.score += 10
+#                        pyxel.play(1, 0, loop=False)    #SE再生
+#                        enemiesUI.append(
+#                            EnemyUI(enemy.x, enemy.y, 10)
+#                        )
+        #EnemyとBiowEnemyの当たり判定
+        for enemy in enemies:
+            for blowenemy in blowenemies:
+                if (enemy.x + 8    > blowenemy.x and
+                    enemy.x         < blowenemy.x + 8 and
+                    enemy.y + 8    > blowenemy.y and
+                    enemy.y         < blowenemy.y + 8):
+                    #Hit時の処理
+                    enemy.is_alive = False
+                    blasts.append(
+                        Blast(enemy.x, enemy.y)
+                    )
 #                        self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 #                        enemiesUI.append(
