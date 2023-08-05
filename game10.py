@@ -19,6 +19,7 @@ ENEMY_HITSTOP = 1
 bullets = []
 melees = []
 enemies = []
+blowenemies = []
 blasts = []
 
 #関数(TileMap(0)のタイルを取得)
@@ -262,14 +263,15 @@ class Enemy:
     def update(self):
         #移動
         if self.is_stop == False and self.is_meleeHit == False:
-            self.x -= self.speed
+#            self.x -= self.speed
+            pass
         #HitStop処理
         else:
             self.count_hitstop += 1
             if self.count_hitstop > 30:
                 self.is_stop = False
                 self.count_hitstop = 0 #初期化
-
+        '''
         #meleeHit時ふっとび移動
         if self.is_meleeHit == True:
             if self.melee_hit_dir == 8:
@@ -291,7 +293,46 @@ class Enemy:
                 blasts.append(
                     Blast(self.x, self.y)
                 )
-                    
+        '''            
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+
+#■BlowEnemy
+class BlowEnemy:
+    def __init__(self, x, y, speed, dir, hp):
+        self.x = x
+        self.y = y
+        self.hp = hp
+        self.speed = speed
+#        self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.count_hitstop = 0
+        self.melee_hit_dir = dir
+        self.is_meleeHit = False
+        self.is_stop = False
+        self.is_alive = True
+        blowenemies.append(self)
+    def update(self):
+        #meleeHit時ふっとび移動
+#        if self.is_meleeHit == True:
+        if self.melee_hit_dir == 8:
+            self.x += 0
+            self.y -= ENEMY_BLOWSPEED
+        elif self.melee_hit_dir == 2:
+            self.x += 0
+            self.y += ENEMY_BLOWSPEED
+        elif self.melee_hit_dir == 6:
+            self.x += ENEMY_BLOWSPEED
+            self.y += 0
+        elif self.melee_hit_dir == 4:
+            self.x -= ENEMY_BLOWSPEED
+            self.y += 0
+        #ふっとび中のタイルとの当たり判定
+#        if self.is_meleeHit == True:
+        if check_collision(self.x, self.y) == True:
+            self.is_alive = False   #タイル接触なら消去
+            blasts.append(
+                Blast(self.x, self.y)
+            )
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
@@ -327,7 +368,7 @@ class App:
 
         #仮
         Enemy(96, 32, ENEMY_SPEED, 4,3)
-        Enemy(108, 40, ENEMY_SPEED, 4,3)
+        Enemy(100, 50, ENEMY_SPEED, 4,3)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -385,9 +426,13 @@ class App:
                         enemy.y + 8    > melee.y and
                         enemy.y         < melee.y + 8):
                         #Hit時の処理
-                        enemy.hp -= 1
-                        enemy.melee_hit_dir = self.player.direction
-                        enemy.is_meleeHit = True
+                        enemy.is_alive = False
+                        blasts.append(
+                            Blast(enemy.x, enemy.y)
+                        )
+                        blowenemies.append(
+                            BlowEnemy(enemy.x, enemy.y, ENEMY_BLOWSPEED, self.player.direction,1)
+                        )
                        #残りHP判定
                         if enemy.hp <= 0:
                             enemy.is_alive = False
@@ -406,11 +451,13 @@ class App:
         update_list(bullets)
         update_list(melees)
         update_list(enemies)
+        update_list(blowenemies)
         update_list(blasts)
         #list更新
         cleanup_list(bullets)
         cleanup_list(melees)
         cleanup_list(enemies)
+        cleanup_list(blowenemies)
         cleanup_list(blasts)
 
     #ゲームオーバー画面処理用update
@@ -449,6 +496,7 @@ class App:
         draw_list(bullets)
         draw_list(melees)
         draw_list(enemies)
+        draw_list(blowenemies)
         draw_list(blasts)
 
     #ゲームオーバー画面描画用update
