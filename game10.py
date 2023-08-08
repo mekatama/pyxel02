@@ -37,19 +37,19 @@ def check_collision(x, y):
     y2 = (y + 8 - 0) // 8   #キャラy座標下端のTileMapの座標
     #tileの種類で判定
     #左上判定
-    if get_tile(x1,y1) == (1,0):
+    if get_tile(x1,y1) == (0,0):
         isStop = True
         return isStop
     #右上判定
-    if get_tile(x2,y1) == (1,0):
+    if get_tile(x2,y1) == (0,0):
         isStop = True
         return isStop
     #左下判定
-    if get_tile(x1,y2) == (1,0):
+    if get_tile(x1,y2) == (0,0):
         isStop = True
         return isStop
     #右下判定
-    if get_tile(x2,y2) == (1,0):
+    if get_tile(x2,y2) == (0,0):
         isStop = True
         return isStop
     return False
