@@ -263,7 +263,14 @@ class Enemy:
     def update(self):
         #移動
         if self.is_stop == False and self.is_meleeHit == False:
-#            self.x -= self.speed
+            if self.direction == 6:
+                self.x += self.speed
+            elif self.direction == 4:
+                self.x -= self.speed
+            elif self.direction == 8:
+                self.y -= self.speed
+            elif self.direction == 2:
+                self.y += self.speed
             pass
         #HitStop処理
         else:
@@ -365,8 +372,8 @@ class App:
         self.player = Player(pyxel.width / 2 -8, pyxel.height / 2 -8)
 
         #仮
-        Enemy(96, 32, ENEMY_SPEED, 4,3)
-        Enemy(100, 50, ENEMY_SPEED, 4,3)
+#        Enemy(96, 32, ENEMY_SPEED, 4,3)
+#        Enemy(100, 50, ENEMY_SPEED, 4,3)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -390,6 +397,33 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
+        #最終的にscoreで生成間隔を制御
+        spawntime = 30
+        #一定時間でenemy出現判定
+        if pyxel.frame_count % spawntime == 0:
+            #生成辺(位置)ランダム
+            spawn_side = pyxel.rndi(0, 3)
+            #生成座標ランダム
+            if spawn_side == 0:
+                spawn_x = pyxel.rndi(0, 120)
+                spawn_y = -12
+                spawn_dir = 2
+            elif spawn_side == 1:
+                spawn_x = pyxel.rndi(0, 120)
+                spawn_y = 140
+                spawn_dir = 8
+            elif spawn_side == 2:
+                spawn_x = -12
+                spawn_y = pyxel.rndi(0, 120)
+                spawn_dir = 6
+            elif spawn_side == 3:
+                spawn_x = 140
+                spawn_y = pyxel.rndi(0, 120)
+                spawn_dir = 4
+            pass                
+            #enemy生成(最終的にscoreで分岐)
+            Enemy(spawn_x, spawn_y, ENEMY_SPEED, spawn_dir,3)
+
         #Player制御
         self.player.update()
 
