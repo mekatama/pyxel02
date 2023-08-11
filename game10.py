@@ -19,6 +19,7 @@ ENEMY_HITSTOP = 1
 bullets = []
 melees = []
 enemies = []
+enemiesUI = []
 blowenemies = []
 blasts = []
 
@@ -304,6 +305,24 @@ class Enemy:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
+#■Enemy_UI
+class EnemyUI:
+    def __init__(self, x, y, score):
+        self.x = x
+        self.y = y
+        self.score = score
+        self.count = 0
+        self.is_alive = True
+        enemiesUI.append(self)
+    def update(self):
+        self.count += 1
+        if self.count < 30:
+            self.y -= 0.2
+        else:
+            self.is_alive = False
+    def draw(self):
+        pyxel.text(self.x, self.y, f"+{self.score:2}", 13)
+
 #■BlowEnemy
 class BlowEnemy:
     def __init__(self, x, y, speed, dir, hp):
@@ -332,12 +351,14 @@ class BlowEnemy:
         elif self.melee_hit_dir == 4:
             self.x -= ENEMY_BLOWSPEED
             self.y += 0
+        '''
         #ふっとび中のタイルとの当たり判定
         if check_collision(self.x, self.y) == True:
             self.is_alive = False   #タイル接触なら消去
             blasts.append(
                 Blast(self.x, self.y)
             )
+        '''
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
@@ -444,12 +465,12 @@ class App:
                         blasts.append(
                             Blast(enemy.x, enemy.y)
                         )
-#                        self.score += 10
+                        self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
-#                        enemiesUI.append(
-#                            EnemyUI(enemy.x, enemy.y, 10)
-#                        )
-        #EnemyとBiowEnemyの当たり判定
+                        enemiesUI.append(
+                            EnemyUI(enemy.x, enemy.y, 10)
+                        )
+        #EnemyとBlowEnemyの当たり判定
         for enemy in enemies:
             for blowenemy in blowenemies:
                 if (enemy.x + 8    > blowenemy.x and
@@ -461,11 +482,11 @@ class App:
                     blasts.append(
                         Blast(enemy.x, enemy.y)
                     )
-#                        self.score += 10
+                    self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
-#                        enemiesUI.append(
-#                            EnemyUI(enemy.x, enemy.y, 10)
-#                        )
+                    enemiesUI.append(
+                        EnemyUI(enemy.x, enemy.y, 10)
+                    )
         #EnemyとMeleeの当たり判定
         for enemy in enemies:
             for melee in melees:
@@ -500,12 +521,14 @@ class App:
         update_list(bullets)
         update_list(melees)
         update_list(enemies)
+        update_list(enemiesUI)
         update_list(blowenemies)
         update_list(blasts)
         #list更新
         cleanup_list(bullets)
         cleanup_list(melees)
         cleanup_list(enemies)
+        cleanup_list(enemiesUI)
         cleanup_list(blowenemies)
         cleanup_list(blasts)
 
@@ -545,6 +568,7 @@ class App:
         draw_list(bullets)
         draw_list(melees)
         draw_list(enemies)
+        draw_list(enemiesUI)
         draw_list(blowenemies)
         draw_list(blasts)
 
