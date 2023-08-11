@@ -351,14 +351,6 @@ class BlowEnemy:
         elif self.melee_hit_dir == 4:
             self.x -= ENEMY_BLOWSPEED
             self.y += 0
-        '''
-        #ふっとび中のタイルとの当たり判定
-        if check_collision(self.x, self.y) == True:
-            self.is_alive = False   #タイル接触なら消去
-            blasts.append(
-                Blast(self.x, self.y)
-            )
-        '''
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
