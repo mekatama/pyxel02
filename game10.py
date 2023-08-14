@@ -154,7 +154,7 @@ class Player:
                 elif self.vh == 1:  #下向き
                     Bullet(self.x + 4, self.y + 6, PLAYER_BULLET_SPEED, 2)
         #melee攻撃入力
-        if pyxel.btnp(pyxel.KEY_S):
+        if pyxel.btnp(pyxel.KEY_S) and self.is_stop == False:
             self.is_stop =True
             if self.reversal == 1:
                 if self.vh == 0:    #右向き
@@ -181,7 +181,7 @@ class Player:
         self.dx = 0
         self.dy = 0
         #一定時間停止
-        if self.count > 30:
+        if self.count > 80:
             self.is_stop = False
             self.count = 0  #初期化            
 
@@ -236,7 +236,7 @@ class Melee:
     def update(self):
         self.count += 1
         #一定時間で消去
-        if self.count > 30:            
+        if self.count > 20:            
             self.is_alive = False   #消去
     def draw(self):
         if self.direction == 6:     #右向き
@@ -360,7 +360,7 @@ class BlowEnemy:
             self.y += 0
         self.count += 1
         #一定時間で消去
-        if self.count > 30:            
+        if self.count > 60:            
             self.is_alive = False   #消去
         #ふっとび敵死亡時にENEMY_COUNTリセット
         if self.is_alive == False:
