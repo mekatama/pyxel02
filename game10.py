@@ -256,6 +256,7 @@ class Enemy:
         self.hp = hp
         self.speed = speed
         self.enemyscore = 10
+        self.deadtype = 0       #どの攻撃で死んだか 0=初期値 1=shot 2=blowenemy
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.count_hitstop = 0
         self.melee_hit_dir = 0
@@ -282,32 +283,10 @@ class Enemy:
             if self.count_hitstop > 30:
                 self.is_stop = False
                 self.count_hitstop = 0 #初期化
-        if self.is_alive == False:
+        #blowenemyで倒した数をカウント
+        if self.is_alive == False and self.deadtype == 2:
             ENEMY_COUNT += 1
-            print(ENEMY_COUNT)
-        '''
-        #meleeHit時ふっとび移動
-        if self.is_meleeHit == True:
-            if self.melee_hit_dir == 8:
-                self.x += 0
-                self.y -= ENEMY_BLOWSPEED
-            elif self.melee_hit_dir == 2:
-                self.x += 0
-                self.y += ENEMY_BLOWSPEED
-            elif self.melee_hit_dir == 6:
-                self.x += ENEMY_BLOWSPEED
-                self.y += 0
-            elif self.melee_hit_dir == 4:
-                self.x -= ENEMY_BLOWSPEED
-                self.y += 0
-        #ふっとび中のタイルとの当たり判定
-        if self.is_meleeHit == True:
-            if check_collision(self.x, self.y) == True:
-                self.is_alive = False   #タイル接触なら消去
-                blasts.append(
-                    Blast(self.x, self.y)
-                )
-        '''            
+#            print(ENEMY_COUNT)
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
@@ -322,7 +301,7 @@ class EnemyUI:
         enemiesUI.append(self)
     def update(self):
         self.count += 1
-        if self.count < 30:
+        if self.count < 120:
             self.y -= 0.2
         else:
             self.is_alive = False
@@ -394,7 +373,6 @@ class App:
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource10.pyxres")
         self.score = 0
-        self.count = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
@@ -421,6 +399,7 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
+        global ENEMY_COUNT  #グローバル変数使えるようにする
         #最終的にscoreで生成間隔を制御
         spawntime = 20
         #一定時間でenemy出現判定
@@ -465,6 +444,7 @@ class App:
                     #残りHP判定
                     if enemy.hp <= 0:
                         enemy.is_alive = False
+                        enemy.deadtype = 1
                         blasts.append(
                             Blast(enemy.x, enemy.y)
                         )
@@ -475,28 +455,24 @@ class App:
                         )
         #EnemyとBlowEnemyの当たり判定
         #初期化
-        self.count = 0
         for enemy in enemies:
-            #ここで敵の数をカウントできる?
             for blowenemy in blowenemies:
                 if (enemy.x + 8    > blowenemy.x and
                     enemy.x         < blowenemy.x + 8 and
                     enemy.y + 8    > blowenemy.y and
                     enemy.y         < blowenemy.y + 8):
-                    #score計算
-
                     #Hit時の処理
                     enemy.is_alive = False
-                    self.count += 1
+                    enemy.deadtype = 2
                     blasts.append(
                         Blast(enemy.x, enemy.y)
                     )
+                    enemiesUI.append(
+                        EnemyUI(enemy.x, enemy.y, 10 * (ENEMY_COUNT + 1))
+                    )
 #                    self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
-                    enemiesUI.append(
-                        EnemyUI(enemy.x, enemy.y, 10)
-                    )
-            #EnemyとMeleeの当たり判定
+        #EnemyとMeleeの当たり判定
         for enemy in enemies:
             for melee in melees:
                 if melee.is_atk ==  True:
