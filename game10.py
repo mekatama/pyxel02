@@ -373,6 +373,7 @@ class App:
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource10.pyxres")
         self.score = 0
+        self.isPause = False
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
@@ -400,6 +401,13 @@ class App:
     #ゲーム画面処理用update
     def update_play_scene(self):
         global ENEMY_COUNT  #グローバル変数使えるようにする
+        #Pause入力
+        if pyxel.btnp(pyxel.KEY_D):
+                if self.isPause == False:
+                    self.isPause = True
+                else:
+                    self.isPause = False
+
         #最終的にscoreで生成間隔を制御
         spawntime = 20
         #一定時間でenemy出現判定
@@ -427,8 +435,10 @@ class App:
             #enemy生成(最終的にscoreで分岐)
             Enemy(spawn_x, spawn_y, ENEMY_SPEED, spawn_dir,3)
 
-        #Player制御
-        self.player.update()
+        #Pause判定
+        if self.isPause == False:
+            #Player制御
+            self.player.update()
 
         #EnemyとBulletの当たり判定
         for enemy in enemies:
@@ -502,20 +512,22 @@ class App:
                         #１回だけ処理
                         melee.is_atk = False
 
-        #list実行
-        update_list(bullets)
-        update_list(melees)
-        update_list(enemies)
-        update_list(enemiesUI)
-        update_list(blowenemies)
-        update_list(blasts)
-        #list更新
-        cleanup_list(bullets)
-        cleanup_list(melees)
-        cleanup_list(enemies)
-        cleanup_list(enemiesUI)
-        cleanup_list(blowenemies)
-        cleanup_list(blasts)
+        #Pause判定
+        if self.isPause == False:
+            #list実行
+            update_list(bullets)
+            update_list(melees)
+            update_list(enemies)
+            update_list(enemiesUI)
+            update_list(blowenemies)
+            update_list(blasts)
+            #list更新
+            cleanup_list(bullets)
+            cleanup_list(melees)
+            cleanup_list(enemies)
+            cleanup_list(enemiesUI)
+            cleanup_list(blowenemies)
+            cleanup_list(blasts)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
