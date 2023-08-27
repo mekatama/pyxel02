@@ -569,6 +569,12 @@ class App:
         draw_list(blowenemies)
         draw_list(blasts)
 
+        #dialog表示
+        if self.isPause == True:
+            pyxel.bltm(0, 0, 1, 0, 0, 128, 128, 0)
+            pyxel.text(56, 15, "SHOP", 7)
+#            pass
+
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
         pyxel.text(0, 20, "01234567890123456789012345678901", 7)
