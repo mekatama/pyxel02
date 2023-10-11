@@ -109,6 +109,7 @@ class Player:
         self.dx = 0
         self.dy = 0
         self.vh = 0 #上下と左右移動の判定用
+        self.hp = 1
         self.reversal = 1
         self.direction = 6
         self.count = 0
@@ -440,6 +441,24 @@ class App:
         if self.isPause == False:
             #Player制御
             self.player.update()
+
+        #EnemyとPlayerの当たり判定
+        for enemy in enemies:
+            if (self.player.x + 12  > enemy.x + 4 and
+                self.player.x + 4   < enemy.x + 12 and
+                self.player.y + 12  > enemy.y + 4 and
+                self.player.y + 4   < enemy.y + 12):
+                #Hit時の処理
+                self.player.hp -= 1
+                enemy.is_alive = False
+#                pyxel.play(3, 1, loop=False)    #SE再生
+                #player残りHP判定
+                if self.player.hp <= 0:
+                    blasts.append(
+                        Blast(enemy.x, enemy.y)
+                    )
+                    pyxel.stop()
+                    self.scene = SCENE_GAMEOVER
 
         #EnemyとBulletの当たり判定
         for enemy in enemies:
