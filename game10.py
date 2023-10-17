@@ -535,22 +535,20 @@ class App:
                         #１回だけ処理
                         melee.is_atk = False
 
-        #Pause判定
-        if self.isPause == False:
-            #list実行
-            update_list(bullets)
-            update_list(melees)
-            update_list(enemies)
-            update_list(enemiesUI)
-            update_list(blowenemies)
-            update_list(blasts)
-            #list更新
-            cleanup_list(bullets)
-            cleanup_list(melees)
-            cleanup_list(enemies)
-            cleanup_list(enemiesUI)
-            cleanup_list(blowenemies)
-            cleanup_list(blasts)
+        #list実行
+        update_list(bullets)
+        update_list(melees)
+        update_list(enemies)
+        update_list(enemiesUI)
+        update_list(blowenemies)
+        update_list(blasts)
+        #list更新
+        cleanup_list(bullets)
+        cleanup_list(melees)
+        cleanup_list(enemies)
+        cleanup_list(enemiesUI)
+        cleanup_list(blowenemies)
+        cleanup_list(blasts)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -563,6 +561,11 @@ class App:
             self.scene = SCENE_TITLE
             #list更新
             bullets.clear()                     #list全要素削除
+            melees.clear()
+            enemies.clear()
+            enemiesUI.clear()
+            blowenemies.clear()
+            blasts.clear()
 
 	#描画関数
     def draw(self):
