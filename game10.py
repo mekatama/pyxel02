@@ -345,6 +345,7 @@ class BlowEnemy:
         #ふっとび敵死亡時にENEMY_COUNTリセット
         if self.is_alive == False:
             ENEMY_COUNT = 0
+            pass
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
@@ -411,7 +412,7 @@ class App:
 #                    self.isPause = False
 
         #最終的にscoreで生成間隔を制御
-        spawntime = 20
+        spawntime = 60
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #生成辺(位置)ランダム
@@ -485,22 +486,24 @@ class App:
                         )
         #EnemyとBlowEnemyの当たり判定
         #初期化
-        for enemy in enemies:
-            for blowenemy in blowenemies:
+        for blowenemy in blowenemies:
+            for enemy in enemies:
                 if (enemy.x + 8    > blowenemy.x and
                     enemy.x         < blowenemy.x + 8 and
                     enemy.y + 8    > blowenemy.y and
                     enemy.y         < blowenemy.y + 8):
                     #Hit時の処理
-                    enemy.is_alive = False
-                    enemy.deadtype = 2
+                    if enemy.is_alive == True:
+                        enemy.is_alive = False
+                        enemy.deadtype = 2
+                        print("hit")
+                        self.score += 10 * (ENEMY_COUNT + 1)
                     blasts.append(
                         Blast(enemy.x, enemy.y)
                     )
                     enemiesUI.append(
                         EnemyUI(enemy.x, enemy.y, 10 * (ENEMY_COUNT + 1))
                     )
-#                    self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
         #EnemyとMeleeの当たり判定
         for enemy in enemies:
@@ -572,6 +575,9 @@ class App:
             self.draw_play_scene()
         elif self.scene == SCENE_GAMEOVER:
             self.draw_gameover_scene()
+
+        #score表示(f文字列的な)
+        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
 
     #タイトル画面描画用update
     def draw_title_scene(self):
