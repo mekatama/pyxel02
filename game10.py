@@ -404,15 +404,13 @@ class App:
     def update_play_scene(self):
         global ENEMY_COUNT  #グローバル変数使えるようにする
 
-        #Pause入力
-#        if pyxel.btnp(pyxel.KEY_D):
-#                if self.isPause == False:
-#                    self.isPause = True
-#                else:
-#                    self.isPause = False
-
-        #最終的にscoreで生成間隔を制御
-        spawntime = 60
+        #scoreで生成間隔を制御
+        if self.score < 100:
+            spawntime = 60
+        elif self.score >= 100 and self.score < 300:
+            spawntime = 40
+        elif self.score >= 300:
+            spawntime = 20
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #生成辺(位置)ランダム
