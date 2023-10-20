@@ -1,4 +1,4 @@
-#tank01
+#meleeで吹っ飛ばし４方向アクション
 import pyxel
 #画面遷移用の変数
 SCENE_TITLE = 0	    #タイトル画面
@@ -582,7 +582,16 @@ class App:
 
     #タイトル画面描画用update
     def draw_title_scene(self):
-        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
+#        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
+        pyxel.text(48, 28, "________", 7)
+        pyxel.text(32, 58, "- PRESS  ENTER -", 7)
+        pyxel.text(0, 76, "--------------------------------", 7)
+        pyxel.text(40, 82, "HOW TO PLAY", 7)
+        pyxel.text(24, 94, "MOVE  : ARROW KEY", 7)
+        pyxel.text(24, 100, "SHOT  : A", 7)
+        pyxel.text(24, 106, "MELEE : B", 7)
+        pyxel.text(8, 112, "BLOWING UP AN ENEMY IN MELEE", 7)
+        pyxel.text(24, 118, "IS A SPECIAL ATTACK", 7)
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
@@ -604,5 +613,7 @@ class App:
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
-        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
+#        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
+        pyxel.text(44, 40, "GAME OVER", 7)
+        pyxel.text(32, 80, "- PRESS ENTER -", 7)
 App()
