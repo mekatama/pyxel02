@@ -15,6 +15,7 @@ bullets = []
 enemies = []
 enemiesUI = []
 blasts = []
+items = []
 
 #関数(List実行)
 def update_list(list):
@@ -176,6 +177,24 @@ class Blast:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
 
+#■Item
+class Item:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.count = 0
+        self.motion = 0         #アニメ切り替え用
+        self.is_alive = True
+        blasts.append(self)
+    def update(self):
+        self.count += 1
+        if self.count >= 5 and self.count < 10:
+            self.motion = 1
+#        elif self.count >= 10:
+#            self.is_alive = False
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
@@ -242,6 +261,9 @@ class App:
                         blasts.append(
                             Blast(enemy.x, enemy.y)
                         )
+                        items.append(
+                            Item(enemy.x, enemy.y)
+                        )
                         self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 
@@ -263,16 +285,29 @@ class App:
                     pyxel.stop()
                     self.scene = SCENE_GAMEOVER
 
+        #ItemとPlayerの当たり判定
+        for item in items:
+            if (self.player.x + 12  > item.x + 4 and
+                self.player.x + 4   < item.x + 12 and
+                self.player.y + 12  > item.y + 4 and
+                self.player.y + 4   < item.y + 12):
+                #Hit時の処理
+                self.score += 10
+                item.is_alive = False
+#                pyxel.play(3, 1, loop=False)    #SE再生
+
         #list実行
         update_list(bullets)
         update_list(enemies)
         update_list(enemiesUI)
         update_list(blasts)
+        update_list(items)
         #list更新
         cleanup_list(bullets)
         cleanup_list(enemies)
         cleanup_list(enemiesUI)
         cleanup_list(blasts)
+        cleanup_list(items)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -288,6 +323,7 @@ class App:
             enemies.clear()                     #list全要素削除
             enemiesUI.clear()                     #list全要素削除
             blasts.clear()                     #list全要素削除
+            items.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -316,6 +352,7 @@ class App:
         draw_list(enemies)
         draw_list(enemiesUI)
         draw_list(blasts)
+        draw_list(items)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
