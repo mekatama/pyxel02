@@ -182,16 +182,17 @@ class Item:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.vec = 0
         self.count = 0
         self.motion = 0         #アニメ切り替え用
         self.is_alive = True
         blasts.append(self)
     def update(self):
+        self.x = self.x
+        self.y = self.y
         self.count += 1
         if self.count >= 5 and self.count < 10:
             self.motion = 1
-#        elif self.count >= 10:
-#            self.is_alive = False
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
 
@@ -287,6 +288,14 @@ class App:
 
         #ItemとPlayerの当たり判定
         for item in items:
+            #Itemの動き
+            ex = (self.player.x - item.x)
+            ey = (self.player.y - item.y)
+            Kp = 0.2
+            if ex != 0 or ey != 0:
+                item.x = item.x + ex * Kp
+                item.y = item.y + ey * Kp
+                pass
             if (self.player.x + 12  > item.x + 4 and
                 self.player.x + 4   < item.x + 12 and
                 self.player.y + 12  > item.y + 4 and
@@ -295,6 +304,7 @@ class App:
                 self.score += 10
                 item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
+        
 
         #list実行
         update_list(bullets)
