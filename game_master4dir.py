@@ -194,7 +194,7 @@ class Item:
         if self.count >= 5 and self.count < 10:
             self.motion = 1
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
+        pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
 
 class App:
     def __init__(self):
@@ -286,7 +286,7 @@ class App:
                     pyxel.stop()
                     self.scene = SCENE_GAMEOVER
 
-        #ItemとPlayerの当たり判定
+        #ItemとPlayerの処理
         for item in items:
             #Itemの動き
             ex = (self.player.x - item.x)
@@ -295,7 +295,8 @@ class App:
             if ex != 0 or ey != 0:
                 item.x = item.x + ex * Kp
                 item.y = item.y + ey * Kp
-                pass
+
+            #ItemとPlayerの当たり判定
             if (self.player.x + 12  > item.x + 4 and
                 self.player.x + 4   < item.x + 12 and
                 self.player.y + 12  > item.y + 4 and
@@ -304,7 +305,6 @@ class App:
                 self.score += 10
                 item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
-        
 
         #list実行
         update_list(bullets)
