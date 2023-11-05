@@ -80,7 +80,7 @@ class Bullet:
         bullets.append(self)
     def update(self):
         self.x += self.speed * self.direction        #弾移動
-        self.count += 0
+        self.count += 1
         #一定時間で消去
         if self.count > 30:            
             self.is_alive = False   #消去
