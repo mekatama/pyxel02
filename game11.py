@@ -95,11 +95,16 @@ class Enemy:
         self.y = y
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.speed = speed
         self.is_alive = True
         enemies.append(self)
     def update(self):
+        if self.x < 0:
+            self.direction = 1
+        elif self.x > (WINDOW_H - 8):
+            self.direction = -1
         #移動
-        pass
+        self.x += self.speed * self.direction
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
@@ -171,7 +176,7 @@ class App:
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
 
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, 0,3)
+        Enemy(32, 100, 1, 1,3)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
