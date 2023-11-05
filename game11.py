@@ -90,12 +90,13 @@ class Bullet:
 
 #■Enemy
 class Enemy:
-    def __init__(self, x, y, speed, dir, hp):
+    def __init__(self, x, y, speed, dir, hp, ver):
         self.x = x
         self.y = y
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.speed = speed
+        self.version = ver
         self.is_alive = True
         enemies.append(self)
     def update(self):
@@ -106,7 +107,11 @@ class Enemy:
         #移動
         self.x += self.speed * self.direction
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        if self.version == 0:
+            pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        else:
+            pyxel.blt(self.x, self.y, 0, 24, 8, 8, 8, 0)
+
 
 #■Enemy_UI
 class EnemyUI:
@@ -176,7 +181,9 @@ class App:
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
 
         #仮配置
-        Enemy(32, 100, 1, 1,3)
+        Enemy(24, 100, 1, 1, 1, 1)
+        Enemy(32, 100, 1, 1, 1, 0)
+        Enemy(40, 100, 1, 1, 1, 1)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -233,25 +240,11 @@ class App:
                             Item(enemy.x, enemy.y)
                         )
                         self.score += 10
+                        #中央の敵破壊時は、左右敵も同時破壊
+                        if enemy.version == 0:
+                            for enemy in enemies:
+                                enemy.is_alive = False
 #                        pyxel.play(1, 0, loop=False)    #SE再生
-
-        #EnemyとPlayerの当たり判定
-        for enemy in enemies:
-            if (self.player.x + 12  > enemy.x + 4 and
-                self.player.x + 4   < enemy.x + 12 and
-                self.player.y + 12  > enemy.y + 4 and
-                self.player.y + 4   < enemy.y + 12):
-                #Hit時の処理
-                self.player.hp -= 1
-                enemy.is_alive = False
-#                pyxel.play(3, 1, loop=False)    #SE再生
-                #player残りHP判定
-                if self.player.hp <= 0:
-                    blasts.append(
-                        Blast(enemy.x, enemy.y)
-                    )
-                    pyxel.stop()
-                    self.scene = SCENE_GAMEOVER
 
         #ItemとPlayerの処理
         for item in items:
