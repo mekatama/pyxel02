@@ -98,6 +98,7 @@ class Enemy:
         self.speed = speed
         self.version = ver
         self.is_alive = True
+        self.is_bonus = True
         enemies.append(self)
     def update(self):
         if self.x < 0:
@@ -175,6 +176,7 @@ class App:
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource10.pyxres")
         self.score = 0
+        self.is_bonus = True    #敵は１組しか出ないのでとりあえずflagをここで管理
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
@@ -239,11 +241,19 @@ class App:
                         items.append(
                             Item(enemy.x, enemy.y)
                         )
-                        self.score += 10
                         #中央の敵破壊時は、左右敵も同時破壊
                         if enemy.version == 0:
+                            if self.is_bonus == True:
+                                self.score += 100
+                            else:
+                                self.score += 10
+                            #左右の敵強制破壊
                             for enemy in enemies:
                                 enemy.is_alive = False
+                        else:
+                            self.is_bonus = False
+                            self.score += 10
+
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 
         #ItemとPlayerの処理
