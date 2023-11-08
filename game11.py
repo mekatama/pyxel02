@@ -177,16 +177,11 @@ class App:
         pyxel.load("my_resource10.pyxres")
         self.score = 0
         self.is_bonus = True    #敵は１組しか出ないのでとりあえずflagをここで管理
+        self.is_spawn = True
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
-
-        #仮配置
-        Enemy(24, 100, 1, 1, 1, 1)
-        Enemy(32, 100, 1, 1, 1, 0)
-        Enemy(40, 100, 1, 1, 1, 1)
-
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -209,14 +204,13 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
-        #scoreで生成間隔を制御
-        if self.score < 30:
-            spawntime = 30
-        elif self.score >= 30 and self.score < 70:
-            spawntime = 25
-        elif self.score >= 70:
-            spawntime = 20
-
+        #self.is_bounsで生成
+        if self.is_spawn == True:
+            #仮配置
+            Enemy(24, 100, 1, 1, 1, 1)
+            Enemy(32, 100, 1, 1, 1, 0)
+            Enemy(40, 100, 1, 1, 1, 1)
+            self.is_spawn = False
         #Player制御
         self.player.update()
         #EnemyとBulletの当たり判定
@@ -255,6 +249,11 @@ class App:
                             self.score += 10
 
 #                        pyxel.play(1, 0, loop=False)    #SE再生
+        #enemy全て倒したら
+        if not enemies:
+            #flag初期化
+            self.is_spawn = True
+            self.is_bonus = True
 
         #ItemとPlayerの処理
         for item in items:
