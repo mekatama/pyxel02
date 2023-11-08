@@ -44,6 +44,7 @@ class Player:
         self.dy = 0
         self.hp = PLAYER_HP
         self.direction = 1
+        self.bulletNum = 3      #残弾数
         self.is_alive = True
     def update(self):
         #移動入力
@@ -55,6 +56,7 @@ class Player:
             self.direction = -1 #左向き
         #攻撃入力
         if pyxel.btnp(pyxel.KEY_A):
+            self.bulletNum -= 1
             if self.direction == 1:
                 Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
             elif self.direction == -1:
@@ -254,6 +256,11 @@ class App:
             #flag初期化
             self.is_spawn = True
             self.is_bonus = True
+        
+        #残弾ゼロでgameover
+        if self.player.bulletNum == 0:
+            pyxel.stop()
+            self.scene = SCENE_GAMEOVER
 
         #ItemとPlayerの処理
         for item in items:
@@ -326,6 +333,7 @@ class App:
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
+        pyxel.text(39, 10, f"BULLET {self.player.bulletNum:4}", 7)
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
