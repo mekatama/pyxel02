@@ -154,10 +154,10 @@ class Blast:
 
 #■Item
 class Item:
-    def __init__(self, x, y):
+    def __init__(self, x, y, type):
         self.x = x
         self.y = y
-        self.vec = 0
+        self.type = type
         self.count = 0
         self.motion = 0         #アニメ切り替え用
         self.is_alive = True
@@ -169,7 +169,10 @@ class Item:
         if self.count >= 5 and self.count < 10:
             self.motion = 1
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
+        if self.type == 1:
+            pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
+        else:
+            pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
 
 class App:
     def __init__(self):
@@ -236,21 +239,27 @@ class App:
                         blasts.append(
                             Blast(enemy.x, enemy.y)
                         )
-                        items.append(
-                            Item(enemy.x, enemy.y)
-                        )
                         #中央の敵破壊時は、左右敵も同時破壊
                         if enemy.version == 0:
                             if self.is_bonus == True:
                                 self.score += 100
+                                items.append(
+                                    Item(enemy.x, enemy.y, 3)
+                                )
                             else:
                                 self.score += 10
+                                items.append(
+                                    Item(enemy.x, enemy.y, 1)
+                                )
                             #左右の敵強制破壊
                             for enemy in enemies:
                                 enemy.is_alive = False
                         else:
                             self.is_bonus = False
                             self.score += 10
+                            items.append(
+                                Item(enemy.x, enemy.y, 1)
+                            )
 
 #                        pyxel.play(1, 0, loop=False)    #SE再生
         #enemy全て倒したら
@@ -282,7 +291,10 @@ class App:
                 self.player.y + 12  > item.y + 4 and
                 self.player.y + 4   < item.y + 12):
                 #Hit時の処理
-                self.player.bulletNum += 1
+                if item.type == 1:
+                    self.player.bulletNum += 1
+                elif item.type == 3:
+                    self.player.bulletNum += 3
                 item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
