@@ -229,6 +229,7 @@ class App:
                     #残りHP判定
                     if enemy.hp <= 0:
                         enemy.is_alive = False
+                        self.count = 0
                         enemiesUI.append(
                             EnemyUI(enemy.x, enemy.y, 10)
                         )
@@ -281,7 +282,7 @@ class App:
                 self.player.y + 12  > item.y + 4 and
                 self.player.y + 4   < item.y + 12):
                 #Hit時の処理
-                self.score += 10
+                self.player.bulletNum += 1
                 item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
@@ -307,6 +308,8 @@ class App:
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.scene = SCENE_TITLE
+            self.player.bulletNum = 3
+            self.count = 0
             #list全要素削除
             bullets.clear()                     #list全要素削除
             enemies.clear()                     #list全要素削除
