@@ -178,6 +178,7 @@ class App:
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource10.pyxres")
         self.score = 0
+        self.count = 0
         self.is_bonus = True    #敵は１組しか出ないのでとりあえずflagをここで管理
         self.is_spawn = True
         #画面遷移の初期化
@@ -259,8 +260,10 @@ class App:
         
         #残弾ゼロでgameover
         if self.player.bulletNum == 0:
-            pyxel.stop()
-            self.scene = SCENE_GAMEOVER
+            self.count += 1
+            if self.count > 30:
+                pyxel.stop()
+                self.scene = SCENE_GAMEOVER
 
         #ItemとPlayerの処理
         for item in items:
