@@ -55,7 +55,7 @@ class Player:
             self.dx = -1
             self.direction = -1 #左向き
         #攻撃入力
-        if pyxel.btnp(pyxel.KEY_A):
+        if pyxel.btnp(pyxel.KEY_A) and self.bulletNum != 0:
             self.bulletNum -= 1
             if self.direction == 1:
                 Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
