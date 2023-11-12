@@ -172,7 +172,7 @@ class Item:
         if self.type == 1:
             pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
         else:
-            pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
+            pyxel.blt(self.x, self.y, 0, 32, 8, 8, 8, 0)
 
 class App:
     def __init__(self):
