@@ -182,6 +182,7 @@ class App:
         pyxel.load("my_resource10.pyxres")
         self.score = 0
         self.count = 0
+        self.enemyNum = 0       #enemy破壊数
         self.is_bonus = True    #敵は１組しか出ないのでとりあえずflagをここで管理
         self.is_spawn = True
         #画面遷移の初期化
@@ -224,14 +225,15 @@ class App:
         for enemy in enemies:
             for bullet in bullets:
                 if (enemy.x + 8    > bullet.x and
-                    enemy.x         < bullet.x + 2 and
+                    enemy.x         < bullet.x + 1 and
                     enemy.y + 8    > bullet.y and
-                    enemy.y         < bullet.y + 2):
+                    enemy.y         < bullet.y + 1):
                     #Hit時の処理
                     enemy.hp -= 1
                     bullet.is_alive = False
                     #残りHP判定
                     if enemy.hp <= 0:
+#                        self.enemyNum += 1
                         enemy.is_alive = False
                         self.count = 0
                         enemiesUI.append(
@@ -242,6 +244,7 @@ class App:
                         )
                         #中央の敵破壊時は、左右敵も同時破壊
                         if enemy.version == 0:
+#                            self.enemyNum += 1
                             if self.is_bonus == True:
                                 self.score += 100
                                 items.append(
@@ -254,9 +257,11 @@ class App:
                                 )
                             #左右の敵強制破壊
                             for enemy in enemies:
+                                self.enemyNum += 1
                                 enemy.is_alive = False
                         else:
                             self.is_bonus = False
+                            self.enemyNum += 1
                             self.score += 10
                             items.append(
                                 Item(enemy.x, enemy.y, 1)
@@ -323,6 +328,7 @@ class App:
             self.scene = SCENE_TITLE
             self.player.bulletNum = 3
             self.count = 0
+            self.enemyNum = 0
             #list全要素削除
             bullets.clear()                     #list全要素削除
             enemies.clear()                     #list全要素削除
@@ -353,6 +359,7 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         pyxel.text(39, 10, f"BULLET {self.player.bulletNum:4}", 7)
+        pyxel.text(39, 16, f"ENEMY {self.enemyNum:4}", 7)
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
