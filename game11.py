@@ -212,10 +212,11 @@ class App:
     def update_play_scene(self):
         #self.is_bounsで生成
         if self.is_spawn == True:
+            spawn_pos = pyxel.rndi(0, 104)
             #仮配置
-            Enemy(24, 100, 1, 1, 1, 1)
-            Enemy(32, 100, 1, 1, 1, 0)
-            Enemy(40, 100, 1, 1, 1, 1)
+            Enemy(spawn_pos,      100, 1, 1, 1, 1)
+            Enemy(spawn_pos + 8,  100, 1, 1, 1, 0)
+            Enemy(spawn_pos + 16, 100, 1, 1, 1, 1)
             self.is_spawn = False
         #Player制御
         self.player.update()
