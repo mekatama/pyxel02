@@ -177,12 +177,14 @@ class Item:
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
-        pyxel.init(WINDOW_W, WINDOW_H, title="sky bom")
+        pyxel.init(WINDOW_W, WINDOW_H, title="sky bom", fps = 30)
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource10.pyxres")
         self.score = 0
         self.count = 0
         self.enemyNum = 0       #enemy破壊数
+        self.enemySpeed = 1
+        self.isOnce1 = True     #enemyのspeed制御用
         self.is_bonus = True    #敵は１組しか出ないのでとりあえずflagをここで管理
         self.is_spawn = True
         #画面遷移の初期化
@@ -211,13 +213,18 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
+        #enemy破壊数でenemy速度変化
+        if self.enemyNum % 6 == 0 and self.isOnce1 == True:
+            self.enemySpeed += 0.1
+            self.isOnce1 = False
         #self.is_bounsで生成
         if self.is_spawn == True:
+            #enemy生成位置
             spawn_pos = pyxel.rndi(0, 104)
-            #仮配置
-            Enemy(spawn_pos,      100, 1, 1, 1, 1)
-            Enemy(spawn_pos + 8,  100, 1, 1, 1, 0)
-            Enemy(spawn_pos + 16, 100, 1, 1, 1, 1)
+            #enemy生成
+            Enemy(spawn_pos,      100, self.enemySpeed, 1, 1, 1)
+            Enemy(spawn_pos + 8,  100, self.enemySpeed, 1, 1, 0)
+            Enemy(spawn_pos + 16, 100, self.enemySpeed, 1, 1, 1)
             self.is_spawn = False
         #Player制御
         self.player.update()
@@ -236,6 +243,7 @@ class App:
 #                        self.enemyNum += 1
                         enemy.is_alive = False
                         self.count = 0
+                        self.isOnce1 = True
                         enemiesUI.append(
                             EnemyUI(enemy.x, enemy.y, 10)
                         )
@@ -360,6 +368,7 @@ class App:
     def draw_play_scene(self):
         pyxel.text(39, 10, f"BULLET {self.player.bulletNum:4}", 7)
         pyxel.text(39, 16, f"ENEMY {self.enemyNum:4}", 7)
+        pyxel.text(39, 22, f"SPEED {self.enemySpeed:4}", 7)
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
