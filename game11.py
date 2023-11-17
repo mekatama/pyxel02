@@ -216,6 +216,8 @@ class App:
         #enemy破壊数でenemy速度変化
         if self.enemyNum % 6 == 0 and self.isOnce1 == True:
             self.enemySpeed += 0.1
+            if self.enemySpeed > 2:
+                self.enemySpeed = 2
             self.isOnce1 = False
         #self.is_bounsで生成
         if self.is_spawn == True:
