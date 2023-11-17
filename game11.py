@@ -216,17 +216,22 @@ class App:
         #enemy破壊数でenemy速度変化
         if self.enemyNum % 6 == 0 and self.isOnce1 == True:
             self.enemySpeed += 0.1
-            if self.enemySpeed > 2:
+            if self.enemySpeed > 2: #最大speed設定
                 self.enemySpeed = 2
             self.isOnce1 = False
         #self.is_bounsで生成
         if self.is_spawn == True:
             #enemy生成位置
-            spawn_pos = pyxel.rndi(0, 104)
+            spawn_pos = pyxel.rndi(8, 100)
+            #enemy移動方向
+            if spawn_pos % 2 == 0:
+                dir = 1
+            else:
+                dir = -1
             #enemy生成
-            Enemy(spawn_pos,      100, self.enemySpeed, 1, 1, 1)
-            Enemy(spawn_pos + 8,  100, self.enemySpeed, 1, 1, 0)
-            Enemy(spawn_pos + 16, 100, self.enemySpeed, 1, 1, 1)
+            Enemy(spawn_pos,      100, self.enemySpeed, dir, 1, 1)
+            Enemy(spawn_pos + 8,  100, self.enemySpeed, dir, 1, 0)
+            Enemy(spawn_pos + 16, 100, self.enemySpeed, dir, 1, 1)
             self.is_spawn = False
         #Player制御
         self.player.update()
