@@ -103,9 +103,9 @@ class Enemy:
         self.is_bonus = True
         enemies.append(self)
     def update(self):
-        if self.x < 0:
+        if self.x <= 0:
             self.direction = 1
-        elif self.x > (WINDOW_H - 8):
+        elif self.x >= (WINDOW_H - 8):
             self.direction = -1
         #移動
         self.x += self.speed * self.direction
@@ -127,9 +127,9 @@ class EnemyUI:
         enemiesUI.append(self)
     def update(self):
         self.count += 1
-        if self.count < 10:
+        if self.count < 20:
             self.y -= 1
-        elif self.count >= 10:
+        elif self.count >= 20:
             self.is_alive = False
     def draw(self):
         pyxel.text(self.x, self.y, f"+{self.score:2}", 13)
