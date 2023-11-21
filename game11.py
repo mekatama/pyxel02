@@ -229,9 +229,9 @@ class App:
             else:
                 dir = -1
             #enemy生成
-            Enemy(spawn_pos,      100, self.enemySpeed, dir, 1, 1)
-            Enemy(spawn_pos + 8,  100, self.enemySpeed, dir, 1, 0)
-            Enemy(spawn_pos + 16, 100, self.enemySpeed, dir, 1, 1)
+            Enemy(spawn_pos,      99, self.enemySpeed, dir, 1, 1)
+            Enemy(spawn_pos + 8,  99, self.enemySpeed, dir, 1, 0)
+            Enemy(spawn_pos + 16, 99, self.enemySpeed, dir, 1, 1)
             self.is_spawn = False
         #Player制御
         self.player.update()
@@ -377,6 +377,8 @@ class App:
         pyxel.text(39, 16, f"ENEMY {self.enemyNum:4}", 7)
         pyxel.text(39, 22, f"SPEED {self.enemySpeed:4}", 7)
         self.player.draw()
+        #BG描画
+        pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
         draw_list(bullets)
         draw_list(enemies)
         draw_list(enemiesUI)
