@@ -104,8 +104,10 @@ class Enemy:
         enemies.append(self)
     def update(self):
         if self.x <= 0:
+            self.x = 0
             self.direction = 1
         elif self.x >= (WINDOW_H - 8):
+            self.x = (WINDOW_H - 8)
             self.direction = -1
         #移動
         self.x += self.speed * self.direction
@@ -216,8 +218,8 @@ class App:
         #enemy破壊数でenemy速度変化
         if self.enemyNum % 6 == 0 and self.isOnce1 == True:
             self.enemySpeed += 0.1
-            if self.enemySpeed > 2: #最大speed設定
-                self.enemySpeed = 2
+            if self.enemySpeed > 4: #最大speed設定
+                self.enemySpeed = 4
             self.isOnce1 = False
         #self.is_bounsで生成
         if self.is_spawn == True:
@@ -237,6 +239,7 @@ class App:
         self.player.update()
         #EnemyとBulletの当たり判定
         for enemy in enemies:
+#            print(enemies[2].speed)
             for bullet in bullets:
                 if (enemy.x + 8    > bullet.x and
                     enemy.x         < bullet.x + 1 and
@@ -250,7 +253,7 @@ class App:
 #                        self.enemyNum += 1
                         enemy.is_alive = False
                         self.count = 0
-                        self.isOnce1 = True
+#                        self.isOnce1 = True
                         enemiesUI.append(
                             EnemyUI(enemy.x, enemy.y, 10)
                         )
@@ -272,11 +275,11 @@ class App:
                                 )
                             #左右の敵強制破壊
                             for enemy in enemies:
-                                self.enemyNum += 1
+#                                self.enemyNum += 1
                                 enemy.is_alive = False
                         else:
                             self.is_bonus = False
-                            self.enemyNum += 1
+#                            self.enemyNum += 1
                             self.score += 10
                             items.append(
                                 Item(enemy.x, enemy.y, 1)
@@ -285,10 +288,12 @@ class App:
 #                        pyxel.play(1, 0, loop=False)    #SE再生
         #enemy全て倒したら
         if not enemies:
+            self.enemyNum += 3
             #flag初期化
             self.is_spawn = True
             self.is_bonus = True
-        
+            self.isOnce1 = True
+       
         #残弾ゼロでgameover
         if self.player.bulletNum == 0:
             self.count += 1
