@@ -186,6 +186,8 @@ class App:
         self.count = 0
         self.enemyNum = 0       #enemy破壊数
         self.enemySpeed = 1
+        self.bonusTime = 50
+        self.bonusCount = 0
         self.isOnce1 = True     #enemyのspeed制御用
         self.is_bonus = True    #敵は１組しか出ないのでとりあえずflagをここで管理
         self.is_spawn = True
@@ -215,6 +217,10 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
+        #bonusTime
+        self.bonusCount += 1
+        if self.bonusCount % 6 == 0 and self.bonusTime >= 1:
+            self.bonusTime -= 1
         #enemy破壊数でenemy速度変化
         if self.enemyNum % 6 == 0 and self.isOnce1 == True:
             self.enemySpeed += 0.1
@@ -381,6 +387,7 @@ class App:
         pyxel.text(39, 10, f"BULLET {self.player.bulletNum:4}", 7)
         pyxel.text(39, 16, f"ENEMY {self.enemyNum:4}", 7)
         pyxel.text(39, 22, f"SPEED {self.enemySpeed:4}", 7)
+        pyxel.text(39, 28, f"TIME {self.bonusTime:4}", 7)
         self.player.draw()
         #BG描画
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
