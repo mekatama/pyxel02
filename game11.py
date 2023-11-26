@@ -261,9 +261,6 @@ class App:
                         enemy.is_alive = False
                         self.count = 0
 #                        self.isOnce1 = True
-                        enemiesUI.append(
-                            EnemyUI(enemy.x, enemy.y, 10)
-                        )
                         blasts.append(
                             Blast(enemy.x, enemy.y)
                         )
@@ -273,11 +270,17 @@ class App:
                             if self.is_bonus == True:
                                 self.score += 100
                                 self.score += self.bonusTime
+                                enemiesUI.append(
+                                    EnemyUI(enemy.x, enemy.y, self.bonusTime + 100)
+                                )
                                 items.append(
                                     Item(enemy.x, enemy.y, 3)
                                 )
                             else:
                                 self.score += 10
+                                enemiesUI.append(
+                                    EnemyUI(enemy.x, enemy.y, 10)
+                                )
                                 items.append(
                                     Item(enemy.x, enemy.y, 1)
                                 )
@@ -289,6 +292,9 @@ class App:
                             self.is_bonus = False
 #                            self.enemyNum += 1
                             self.score += 10
+                            enemiesUI.append(
+                                EnemyUI(enemy.x, enemy.y, 10)
+                            )
                             items.append(
                                 Item(enemy.x, enemy.y, 1)
                             )
