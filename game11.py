@@ -10,6 +10,7 @@ WINDOW_W = 128
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
+BONUS_TIME = 50
 #list用意
 bullets = []
 enemies = []
@@ -186,7 +187,7 @@ class App:
         self.count = 0
         self.enemyNum = 0       #enemy破壊数
         self.enemySpeed = 1
-        self.bonusTime = 50
+        self.bonusTime = BONUS_TIME
         self.bonusCount = 0
         self.isOnce1 = True     #enemyのspeed制御用
         self.is_bonus = True    #敵は１組しか出ないのでとりあえずflagをここで管理
@@ -300,6 +301,8 @@ class App:
             self.is_spawn = True
             self.is_bonus = True
             self.isOnce1 = True
+            self.bonusTime = BONUS_TIME
+            self.bonusCount = 0
        
         #残弾ゼロでgameover
         if self.player.bulletNum == 0:
