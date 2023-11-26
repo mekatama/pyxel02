@@ -271,6 +271,7 @@ class App:
 #                            self.enemyNum += 1
                             if self.is_bonus == True:
                                 self.score += 100
+                                self.score += self.bonusTime
                                 items.append(
                                     Item(enemy.x, enemy.y, 3)
                                 )
