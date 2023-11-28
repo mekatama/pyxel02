@@ -184,6 +184,7 @@ class App:
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource10.pyxres")
         self.score = 0
+        self.highScore = 0
         self.count = 0
         self.enemyNum = 0       #enemy破壊数
         self.enemySpeed = 1
@@ -304,7 +305,9 @@ class App:
             self.isOnce1 = True
             self.bonusTime = BONUS_TIME
             self.bonusCount = 0
-       
+        #High Score
+        if self.score >= self.highScore:
+            self.highScore = self.score
         #残弾ゼロでgameover
         if self.player.bulletNum == 0:
             self.count += 1
@@ -381,7 +384,8 @@ class App:
             self.draw_gameover_scene()
 
         #score表示(f文字列的な)
-        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
+        pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
+        pyxel.text(60, 4, f"HIGH SCORE {self.highScore:5}", 6)
 
     #タイトル画面描画用update
     def draw_title_scene(self):
