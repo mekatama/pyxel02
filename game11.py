@@ -365,6 +365,7 @@ class App:
             self.player.bulletNum = 3
             self.count = 0
             self.enemyNum = 0
+            self.enemySpeed = 1
             #list全要素削除
             bullets.clear()                     #list全要素削除
             enemies.clear()                     #list全要素削除
