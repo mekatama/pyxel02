@@ -257,16 +257,13 @@ class App:
                     bullet.is_alive = False
                     #残りHP判定
                     if enemy.hp <= 0:
-#                        self.enemyNum += 1
                         enemy.is_alive = False
                         self.count = 0
-#                        self.isOnce1 = True
                         blasts.append(
                             Blast(enemy.x, enemy.y)
                         )
                         #中央の敵破壊時は、左右敵も同時破壊
                         if enemy.version == 0:
-#                            self.enemyNum += 1
                             if self.is_bonus == True:
                                 self.score += 100
                                 self.score += self.bonusTime
@@ -286,11 +283,9 @@ class App:
                                 )
                             #左右の敵強制破壊
                             for enemy in enemies:
-#                                self.enemyNum += 1
                                 enemy.is_alive = False
                         else:
                             self.is_bonus = False
-#                            self.enemyNum += 1
                             self.score += 10
                             enemiesUI.append(
                                 EnemyUI(enemy.x, enemy.y, 10)
