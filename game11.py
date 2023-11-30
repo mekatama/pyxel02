@@ -324,6 +324,24 @@ class App:
                 pyxel.stop()
                 self.scene = SCENE_GAMEOVER
 
+        #EnemyとPlayerの当たり判定
+        for enemy in enemies:
+            if (self.player.x + 12  > enemy.x + 4 and
+                self.player.x + 4   < enemy.x + 12 and
+                self.player.y + 12  > enemy.y + 4 and
+                self.player.y + 4   < enemy.y + 12):
+                #Hit時の処理
+                self.player.hp -= 1
+                enemy.is_alive = False
+#                pyxel.play(3, 1, loop=False)    #SE再生
+                #player残りHP判定
+                if self.player.hp <= 0:
+                    blasts.append(
+                        Blast(enemy.x, enemy.y)
+                    )
+                    pyxel.stop()
+                    self.scene = SCENE_GAMEOVER
+
         #ItemとPlayerの処理
         for item in items:
             #Itemの動き
@@ -369,10 +387,13 @@ class App:
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.scene = SCENE_TITLE
-            self.player.bulletNum = 3
             self.count = 0
             self.enemyNum = 0
             self.enemySpeed = 1
+            self.player.bulletNum = 3
+            self.player.hp = PLAYER_HP
+            self.player.x = pyxel.width / 2
+            self.player.y = pyxel.height / 2
             #list全要素削除
             bullets.clear()                     #list全要素削除
             enemies.clear()                     #list全要素削除
