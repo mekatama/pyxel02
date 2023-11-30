@@ -51,9 +51,11 @@ class Player:
         #移動入力
         if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
             self.dx = 1
+            self.dy = -1
             self.direction = 1  #右向き
         if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
             self.dx = -1
+            self.dy = -1
             self.direction = -1 #左向き
         #攻撃入力
         if pyxel.btnp(pyxel.KEY_A) and self.bulletNum != 0:
@@ -62,10 +64,17 @@ class Player:
                 Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
             elif self.direction == -1:
                 Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
+        #浮上入力
         #Playerの位置を更新
         self.x = self.x + self.dx
+        self.y = self.y + self.dy
         #移動停止
         self.dx = 0
+        #下降
+        if self.y <= 98:
+            self.dy = 0.5
+        else:
+            self.dy = 0
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
