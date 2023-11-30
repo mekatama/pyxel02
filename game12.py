@@ -49,9 +49,11 @@ class Player:
         #移動入力
         if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
             self.dx = 1
+            self.dy = -1        #上昇
             self.direction = 1  #前進
         elif (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
             self.dx = -1
+            self.dy = -1        #上昇
             self.direction = -1 #後退
         else:
             self.direction = 0  #停止
@@ -65,8 +67,14 @@ class Player:
                 Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, 0)
         #Playerの位置を更新
         self.x = self.x + self.dx
+        self.y = self.y + self.dy
         #移動停止
         self.dx = 0
+        #下降
+        if self.y <= 98:
+            self.dy = 0.5
+        else:
+            self.dy = 0
     def draw(self):
         #editorデータ描画(player)
         if self.direction == 1:
