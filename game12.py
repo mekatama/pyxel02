@@ -335,6 +335,8 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         self.player.draw()
+        #BG描画
+        pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
         draw_list(bullets)
         draw_list(enemies)
         draw_list(enemiesUI)
