@@ -173,11 +173,10 @@ class Item:
         self.is_alive = True
         blasts.append(self)
     def update(self):
-        self.x = self.x
-        self.y = self.y
-        self.count += 1
-        if self.count >= 5 and self.count < 10:
-            self.motion = 1
+#        self.x = self.x
+        self.y += 1
+        if self.y >= 98:
+            self.y = 98
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
 
@@ -194,7 +193,7 @@ class App:
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
 
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, 0,3)
+        Enemy(100, pyxel.height / 2, 0, 0,3)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -273,14 +272,6 @@ class App:
 
         #ItemとPlayerの処理
         for item in items:
-            #Itemの動き
-            ex = (self.player.x - item.x)
-            ey = (self.player.y - item.y)
-            Kp = 0.2
-            if ex != 0 or ey != 0:
-                item.x = item.x + ex * Kp
-                item.y = item.y + ey * Kp
-
             #ItemとPlayerの当たり判定
             if (self.player.x + 12  > item.x + 4 and
                 self.player.x + 4   < item.x + 12 and
