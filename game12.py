@@ -69,7 +69,13 @@ class Player:
         self.dx = 0
     def draw(self):
         #editorデータ描画(player)
-        pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
+        if self.direction == 1:
+            pyxel.blt(self.x, self.y, 0, 8,  8, 8, 8, 0)
+        elif self.direction == -1:
+            pyxel.blt(self.x, self.y, 0, 8, 16, 8, 8, 0)
+        else:
+            pyxel.blt(self.x, self.y, 0, 8,  0, 8, 8, 0)
+
 
 class Bullet:
     def __init__(self, x, y, speed, dir):
