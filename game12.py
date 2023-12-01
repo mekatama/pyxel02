@@ -128,7 +128,7 @@ class Enemy:
         else:
             self.x -= self.speed
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        pyxel.blt(self.x, self.y, 0, 24, 0, 8 * self.direction, 8, 0)
 
 #■Enemy_UI
 class EnemyUI:
