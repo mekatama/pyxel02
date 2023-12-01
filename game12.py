@@ -177,14 +177,16 @@ class Item:
         if self.y >= 98:
             self.y = 98
         else:
-            self.y += 1
+            self.y += 2
         #左右移動
         if self.y == 98:
             if self.direction == 0:
                 self.x += 0.4
             else:
                 self.x -= 0.4
-
+        #消去判定
+        if self.x < -10 or self.x > WINDOW_W:
+            self.is_alive = False
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
 
