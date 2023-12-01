@@ -164,19 +164,27 @@ class Blast:
 
 #■Item
 class Item:
-    def __init__(self, x, y):
+    def __init__(self, x, y, dir):
         self.x = x
         self.y = y
-        self.vec = 0
+        self.direction = dir
         self.count = 0
         self.motion = 0         #アニメ切り替え用
         self.is_alive = True
         blasts.append(self)
     def update(self):
-#        self.x = self.x
-        self.y += 1
+        #下降処理
         if self.y >= 98:
             self.y = 98
+        else:
+            self.y += 1
+        #左右移動
+        if self.y == 98:
+            if self.direction == 0:
+                self.x += 0.4
+            else:
+                self.x -= 0.4
+
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
 
@@ -247,7 +255,7 @@ class App:
                             Blast(enemy.x, enemy.y)
                         )
                         items.append(
-                            Item(enemy.x, enemy.y)
+                            Item(enemy.x, enemy.y, pyxel.rndi(0, 2))
                         )
                         self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
