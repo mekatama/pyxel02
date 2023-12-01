@@ -116,13 +116,17 @@ class Enemy:
     def __init__(self, x, y, speed, dir, hp):
         self.x = x
         self.y = y
+        self.speed = speed
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #移動
-        pass
+        if self.direction == 1:
+            self.x += self.speed
+        else:
+            self.x -= self.speed
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
@@ -177,7 +181,7 @@ class Item:
         if self.y >= 98:
             self.y = 98
         else:
-            self.y += 2
+            self.y += 0.5
         #左右移動
         if self.y == 98:
             if self.direction == 0:
@@ -201,9 +205,6 @@ class App:
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
-
-        #仮配置
-        Enemy(100, pyxel.height / 2, 0, 0,3)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -234,6 +235,21 @@ class App:
             spawntime = 25
         elif self.score >= 70:
             spawntime = 20
+        #一定時間でenemy出現判定
+        if pyxel.frame_count % spawntime == 0:
+            #生成辺(位置)ランダム
+            spawn_side = pyxel.rndi(0, 1)
+            #生成座標ランダム
+            if spawn_side == 0:
+                spawn_x = -12
+                spawn_y = pyxel.rndi(0, 100)
+                spawn_dir = 1
+            elif spawn_side == 1:
+                spawn_x = WINDOW_W + 12
+                spawn_y = pyxel.rndi(0, 100)
+                spawn_dir = -1
+            #enemy配置
+            Enemy(spawn_x, spawn_y, 1, spawn_dir,3)
 
         #Player制御
         self.player.update()
@@ -257,7 +273,7 @@ class App:
                             Blast(enemy.x, enemy.y)
                         )
                         items.append(
-                            Item(enemy.x, enemy.y, pyxel.rndi(0, 2))
+                            Item(enemy.x, enemy.y, pyxel.rndi(0, 1))
                         )
                         self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
