@@ -191,7 +191,7 @@ class App:
         #画面サイズの設定　titleはwindow枠にtext出せる
         pyxel.init(WINDOW_W, WINDOW_H, title="sky bom", fps = 30)
         #editorデータ読み込み(コードと同じフォルダにある)
-        pyxel.load("my_resource10.pyxres")
+        pyxel.load("my_resource11.pyxres")
         self.score = 0
         self.highScore = 0
         self.count = 0
