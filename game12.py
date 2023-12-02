@@ -384,6 +384,8 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         pyxel.text(4, 10, f"SCORE {self.player.fuel:5}", 7)
+        #Fuel UI
+        pyxel.rect(4, 16, self.player.fuel, 4, 7)
         self.player.draw()
         #BG描画
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
