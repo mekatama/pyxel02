@@ -45,18 +45,22 @@ class Player:
         self.hp = PLAYER_HP
         self.direction = 1
         self.is_alive = True
+        self.count = 0
     def update(self):
         #移動入力
         if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
             self.dx = 1
             self.dy = -1        #上昇
             self.direction = 1  #前進
+            self.count = 0      #初期化
         elif (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
             self.dx = -1
             self.dy = -1        #上昇
             self.direction = -1 #後退
+            self.count = 0      #初期化
         else:
             self.direction = 0  #停止
+            self.count += 1          #下降ブースト用カウント
         #攻撃入力
         if pyxel.btnp(pyxel.KEY_A):
             if self.direction == 1:
@@ -72,9 +76,13 @@ class Player:
         self.dx = 0
         #下降
         if self.y <= 98:
-            self.dy = 0.5
+            if self.count < 20:
+                self.dy = 1
+            elif self.count >= 20:  #下降ブースト
+                self.dy = 4
         else:
             self.dy = 0
+            self.y = 99
     def draw(self):
         #editorデータ描画(player)
         if self.direction == 1:
@@ -199,7 +207,7 @@ class App:
         #画面サイズの設定　titleはwindow枠にtext出せる
         pyxel.init(WINDOW_W, WINDOW_H, title="Pyxel Base")
         #editorデータ読み込み(コードと同じフォルダにある)
-        pyxel.load("my_resource10.pyxres")
+        pyxel.load("my_resource12.pyxres")
         self.score = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
@@ -329,6 +337,7 @@ class App:
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
+            self.count = 0
             self.scene = SCENE_TITLE
             #list全要素削除
             bullets.clear()                     #list全要素削除
