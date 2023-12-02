@@ -10,6 +10,7 @@ WINDOW_W = 128
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
+PLAYER_FUEL = 100
 #list用意
 bullets = []
 enemies = []
@@ -46,7 +47,13 @@ class Player:
         self.direction = 1
         self.is_alive = True
         self.count = 0
+        self.fuel = PLAYER_FUEL
+        self.fuelCount = 0
     def update(self):
+        #Fuelカウント
+        self.fuelCount += 1
+        if self.fuelCount % 6 == 0 and self.fuel >= 1:
+            self.fuel -= 1
         #移動入力
         if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
             self.dx = 1
@@ -60,7 +67,7 @@ class Player:
             self.count = 0      #初期化
         else:
             self.direction = 0  #停止
-            self.count += 1          #下降ブースト用カウント
+            self.count += 1     #下降ブースト用カウント
         #攻撃入力
         if pyxel.btnp(pyxel.KEY_A):
             if self.direction == 1:
@@ -315,6 +322,13 @@ class App:
                 self.score += 10
                 item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
+        #fuelでゲームオーバー処理
+        if self.player.fuel <= 0:
+            blasts.append(
+                Blast(enemy.x, enemy.y)
+            )
+            pyxel.stop()
+            self.scene = SCENE_GAMEOVER
 
         #list実行
         update_list(bullets)
@@ -338,6 +352,7 @@ class App:
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.count = 0
+            self.player.fuel = PLAYER_FUEL
             self.scene = SCENE_TITLE
             #list全要素削除
             bullets.clear()                     #list全要素削除
@@ -359,7 +374,7 @@ class App:
             self.draw_gameover_scene()
 
         #score表示(f文字列的な)
-        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
+        pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
 
     #タイトル画面描画用update
     def draw_title_scene(self):
@@ -368,6 +383,7 @@ class App:
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
+        pyxel.text(4, 10, f"SCORE {self.player.fuel:5}", 7)
         self.player.draw()
         #BG描画
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
