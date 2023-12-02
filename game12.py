@@ -10,7 +10,7 @@ WINDOW_W = 128
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
-PLAYER_FUEL = 100
+PLAYER_FUEL = 800
 #list用意
 bullets = []
 enemies = []
@@ -135,13 +135,18 @@ class Enemy:
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.is_alive = True
+        self.is_catch = False
         enemies.append(self)
     def update(self):
         #移動
-        if self.direction == 1:
-            self.x += self.speed
+        if self.is_catch == False:
+            if self.direction == 1:
+                self.x += self.speed
+            else:
+                self.x -= self.speed
         else:
-            self.x -= self.speed
+            #停止
+            pass
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8 * self.direction, 8, 0)
 
@@ -190,22 +195,30 @@ class Item:
         self.count = 0
         self.motion = 0         #アニメ切り替え用
         self.is_alive = True
+        self.mode = 0   #0:下降 1:往復 2:キャトラレ
         blasts.append(self)
     def update(self):
-        #下降処理
-        if self.y >= 98:
-            self.y = 98
-        else:
-            self.y += 0.5
-        #左右移動
-        if self.y == 98:
-            if self.direction == 0:
-                self.x += 0.4
+        if self.mode == 0:
+            #下降処理
+            if self.y >= 98:
+                self.y = 98
+                self.mode = 1
             else:
-                self.x -= 0.4
-        #消去判定
-        if self.x < -10 or self.x > WINDOW_W:
-            self.is_alive = False
+                self.y += 0.5
+        elif self.mode == 1:
+            #左右移動
+            if self.y == 98:
+                if self.direction == 0:
+                    self.x += 0.4
+                    if self.x >= 120:
+                        self.direction = 1
+                else:
+                    self.x -= 0.4
+                    if self.x <= 0:
+                        self.direction = 0
+        else:
+            #キャトラレ
+            self.y -= 5
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
 
@@ -245,7 +258,7 @@ class App:
     def update_play_scene(self):
         #scoreで生成間隔を制御
         if self.score < 30:
-            spawntime = 30
+            spawntime = 60
         elif self.score >= 30 and self.score < 70:
             spawntime = 25
         elif self.score >= 70:
@@ -264,7 +277,7 @@ class App:
                 spawn_y = pyxel.rndi(0, 100)
                 spawn_dir = -1
             #enemy配置
-            Enemy(spawn_x, spawn_y, 1, spawn_dir,3)
+            Enemy(spawn_x, spawn_y, 1, spawn_dir,2)
 
         #Player制御
         self.player.update()
@@ -311,6 +324,28 @@ class App:
                     pyxel.stop()
                     self.scene = SCENE_GAMEOVER
 
+        #Enemyとitemの当たり判定
+        for enemy in enemies:
+            for item in items:
+                #enemyのキャプチャービームにitem接触
+                if (enemy.x + 2    > item.x and
+                    enemy.x         < item.x + 2 and
+                    enemy.y + 128    > item.y and
+                    enemy.y         < item.y + 2):
+                    #Hit時の処理
+                    if item.mode == 1:
+                        enemy.is_catch = True   #enemy停止
+                        item.mode = 2       #キャトラレmode
+                #enemyにitem接触
+                if (enemy.x + 8    > item.x and
+                    enemy.x         < item.x + 8 and
+                    enemy.y + 8    > item.y and
+                    enemy.y         < item.y + 8):
+                    #Hit時の処理
+                    if item.mode == 2:
+                        enemy.is_catch = False
+                        item.is_alive = False
+                    pass
         #ItemとPlayerの処理
         for item in items:
             #ItemとPlayerの当たり判定
@@ -393,10 +428,10 @@ class App:
         #BG描画
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
         draw_list(bullets)
-        draw_list(enemies)
         draw_list(enemiesUI)
         draw_list(blasts)
         draw_list(items)
+        draw_list(enemies)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
