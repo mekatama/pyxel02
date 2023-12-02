@@ -90,6 +90,14 @@ class Player:
         else:
             self.dy = 0
             self.y = 99
+        #上昇の移動制限
+        if self.y <= 20:
+            self.y = 20
+        #左右移動の制限
+        if self.x <= 0:
+            self.x = 0
+        if self.x >= 120:
+            self.x = 120
     def draw(self):
         #editorデータ描画(player)
         if self.direction == 1:
@@ -266,15 +274,16 @@ class App:
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #生成辺(位置)ランダム
-            spawn_side = pyxel.rndi(0, 1)
+            spawn_side = 1
+#            spawn_side = pyxel.rndi(0, 1)
             #生成座標ランダム
             if spawn_side == 0:
                 spawn_x = -12
-                spawn_y = pyxel.rndi(0, 100)
+                spawn_y = pyxel.rndi(32, 80)
                 spawn_dir = 1
             elif spawn_side == 1:
                 spawn_x = WINDOW_W + 12
-                spawn_y = pyxel.rndi(0, 100)
+                spawn_y = pyxel.rndi(32, 80)
                 spawn_dir = -1
             #enemy配置
             Enemy(spawn_x, spawn_y, 1, spawn_dir,2)
@@ -342,7 +351,7 @@ class App:
                     enemy.y + 8    > item.y and
                     enemy.y         < item.y + 8):
                     #Hit時の処理
-                    if item.mode == 2:
+                    if item.mode == 2 and enemy.is_catch == True:
                         enemy.is_catch = False
                         item.is_alive = False
                     pass
