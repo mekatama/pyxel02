@@ -320,6 +320,9 @@ class App:
                 self.player.y + 4   < item.y + 12):
                 #Hit時の処理
                 self.score += 10
+                self.player.fuel += 10
+                if self.player.fuel >= PLAYER_FUEL:
+                    self.player.fuel = PLAYER_FUEL
                 item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
         #fuelでゲームオーバー処理
