@@ -52,7 +52,7 @@ class Player:
     def update(self):
         #Fuelカウント
         self.fuelCount += 1
-        if self.fuelCount % 6 == 0 and self.fuel >= 1:
+        if self.fuelCount % 12 == 0 and self.fuel >= 1:
             self.fuel -= 1
         #移動入力
         if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
@@ -237,6 +237,7 @@ class App:
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource12.pyxres")
         self.score = 0
+        self.highScore = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
@@ -266,11 +267,11 @@ class App:
     def update_play_scene(self):
         #scoreで生成間隔を制御
         if self.score < 30:
-            spawntime = 60
+            spawntime = 120
         elif self.score >= 30 and self.score < 70:
-            spawntime = 25
+            spawntime = 100
         elif self.score >= 70:
-            spawntime = 20
+            spawntime = 60
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #生成辺(位置)ランダム
@@ -369,6 +370,9 @@ class App:
                     self.player.fuel = PLAYER_FUEL
                 item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
+        #High Score
+        if self.score >= self.highScore:
+            self.highScore = self.score
         #fuelでゲームオーバー処理
         if self.player.fuel <= 0:
             blasts.append(
@@ -422,6 +426,7 @@ class App:
 
         #score表示(f文字列的な)
         pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
+        pyxel.text(60, 4, f"HIGH SCORE {self.highScore:5}", 6)
 
     #タイトル画面描画用update
     def draw_title_scene(self):
