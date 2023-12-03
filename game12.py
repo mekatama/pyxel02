@@ -10,7 +10,7 @@ WINDOW_W = 128
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
-PLAYER_FUEL = 800
+PLAYER_FUEL = 100
 #list用意
 bullets = []
 enemies = []
@@ -432,7 +432,8 @@ class App:
     def draw_play_scene(self):
         pyxel.text(4, 10, f"SCORE {self.player.fuel:5}", 7)
         #Fuel UI
-        pyxel.rect(4, 16, self.player.fuel, 4, 7)
+        pyxel.text(4, 16, "FUEL", 7)
+        pyxel.rect(20, 16, self.player.fuel, 5, 7)
         self.player.draw()
         #BG描画
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
