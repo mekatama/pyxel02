@@ -10,6 +10,8 @@ WINDOW_W = 128
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
+PLAYER_X = 32
+PLAYER_Y = 80
 #list用意
 bullets = []
 enemies = []
@@ -81,14 +83,28 @@ class Player:
         #一定時間で自動射撃
         if pyxel.frame_count % 8 == 0:
             #弾生成
-            Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
+            if self.direction == 1:
+                Bullet(self.x + 5, self.y + 8, PLAYER_BULLET_SPEED, self.direction)
+            elif self.direction == 4:
+                Bullet(self.x + 3, self.y + 6, PLAYER_BULLET_SPEED, self.direction)
+            elif self.direction == 3:
+                Bullet(self.x + 3, self.y + 2, PLAYER_BULLET_SPEED, self.direction)
+            elif self.direction == 5:
+                Bullet(self.x + 13, self.y + 12, PLAYER_BULLET_SPEED, self.direction)
         #Playerの位置を更新
         self.x = self.x + self.dx
         #移動停止
         self.dx = 0
     def draw(self):
         #editorデータ描画(player)
-        pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
+        if self.direction == 1:
+            pyxel.blt(self.x, self.y, 0, 8, 0, 8, 16, 0)
+        elif self.direction == 4:
+            pyxel.blt(self.x, self.y, 0, 8, 16, 8, 16, 0)
+        elif self.direction == 3:
+            pyxel.blt(self.x, self.y, 0, 8, 32, 8, 16, 0)
+        elif self.direction == 5:
+            pyxel.blt(self.x, self.y + 8, 0, 0, 48, 16, 8, 0)
 
 class Bullet:
     def __init__(self, x, y, speed, dir):
@@ -111,11 +127,12 @@ class Bullet:
             self.y -= self.speed
         if self.direction == 3:
             #上
+#            self.x = 50
             self.y -= self.speed
         if self.direction == 5:
             #下
             self.x += self.speed
-            self.y = 72
+#            self.y = 77
         self.count += 1
         #一定時間で消去
         if self.count > 30:            
@@ -198,13 +215,13 @@ class App:
         #画面サイズの設定　titleはwindow枠にtext出せる
         pyxel.init(WINDOW_W, WINDOW_H, title="Pyxel Base")
         #editorデータ読み込み(コードと同じフォルダにある)
-        pyxel.load("my_resource10.pyxres")
+        pyxel.load("my_resource13.pyxres")
         self.score = 0
         self.highScore = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
-        self.player = Player(pyxel.width / 2, pyxel.height / 2)
+        self.player = Player(PLAYER_X, PLAYER_Y)
 
         #仮配置
         Enemy(32, pyxel.height / 2, 0, 0,3)
@@ -360,8 +377,8 @@ class App:
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
-        self.player.draw()
         draw_list(bullets)
+        self.player.draw()
         draw_list(enemies)
         draw_list(enemiesUI)
         draw_list(blasts)
