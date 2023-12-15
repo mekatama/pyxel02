@@ -46,6 +46,7 @@ class Player:
         self.dy = 0
         self.hp = PLAYER_HP
         self.direction = 1
+        self.directionMove = 1
         self.is_right = False
         self.is_up = False
         self.is_down = False
@@ -54,6 +55,12 @@ class Player:
         #方向入力
         if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
             self.is_right = True
+            self.directionMove = 1
+            self.dx = 1
+        if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
+#            self.is_right = False
+            self.directionMove = -1
+            self.dx = -1
         if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
             self.is_up = True
         if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
@@ -98,13 +105,13 @@ class Player:
     def draw(self):
         #editorデータ描画(player)
         if self.direction == 1:
-            pyxel.blt(self.x, self.y, 0, 8, 0, 8, 16, 0)
+            pyxel.blt(self.x, self.y,       0, 8, 0, 8 * self.directionMove, 16, 0)
         elif self.direction == 4:
-            pyxel.blt(self.x, self.y, 0, 8, 16, 8, 16, 0)
+            pyxel.blt(self.x, self.y,       0, 8, 16, 8 * self.directionMove, 16, 0)
         elif self.direction == 3:
-            pyxel.blt(self.x, self.y, 0, 8, 32, 8, 16, 0)
+            pyxel.blt(self.x, self.y,       0, 8, 32, 8 * self.directionMove, 16, 0)
         elif self.direction == 5:
-            pyxel.blt(self.x, self.y + 8, 0, 0, 48, 16, 8, 0)
+            pyxel.blt(self.x, self.y + 8,   0, 0, 48, 16 * self.directionMove, 8, 0)
 
 class Bullet:
     def __init__(self, x, y, speed, dir):
