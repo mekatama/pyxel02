@@ -48,6 +48,7 @@ class Player:
         self.direction = 1
         self.directionMove = 1
         self.is_right = False
+        self.is_left = False
         self.is_up = False
         self.is_down = False
         self.is_alive = True
@@ -58,16 +59,19 @@ class Player:
             self.directionMove = 1
             self.dx = 1
         if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
-#            self.is_right = False
+            self.is_left = True
             self.directionMove = -1
             self.dx = -1
         if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
             self.is_up = True
         if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
             self.is_down = True
+            self.dx = 0
         #ボタン入力終了判定
         if pyxel.btnr(pyxel.KEY_RIGHT) == True:
             self.is_right = False
+        if pyxel.btnr(pyxel.KEY_LEFT) == True:
+            self.is_left = False
         if pyxel.btnr(pyxel.KEY_UP) == True:
             self.is_up = False
         if pyxel.btnr(pyxel.KEY_DOWN) == True:
@@ -76,12 +80,18 @@ class Player:
         #右上向き方向入力
         if self.is_right == True and self.is_up == True:
             self.direction = 4  #右上向き
+        #左上向き方向入力
+        elif self.is_left == True and self.is_up == True:
+            self.direction = 6  #左上向き
         #上向き方向入力
         elif self.is_up == True:
             self.direction = 3 #上向き
         #下向き方向入力
         elif self.is_down == True:
             self.direction = 5 #下向き
+        #左向き方向入力
+        elif self.is_left == True:
+            self.direction = 2 #左向き
         #右向き方向入力
         else:
             self.direction = 1  #右向き
@@ -104,9 +114,9 @@ class Player:
         self.dx = 0
     def draw(self):
         #editorデータ描画(player)
-        if self.direction == 1:
+        if self.direction == 1 or self.direction == 2:
             pyxel.blt(self.x, self.y,       0, 8, 0, 8 * self.directionMove, 16, 0)
-        elif self.direction == 4:
+        elif self.direction == 4 or self.direction == 6:
             pyxel.blt(self.x, self.y,       0, 8, 16, 8 * self.directionMove, 16, 0)
         elif self.direction == 3:
             pyxel.blt(self.x, self.y,       0, 8, 32, 8 * self.directionMove, 16, 0)
