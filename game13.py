@@ -56,10 +56,12 @@ class Player:
         #方向入力
         if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
             self.is_right = True
+            self.is_left = False
             self.directionMove = 1
             self.dx = 1
         if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
             self.is_left = True
+            self.is_right = False
             self.directionMove = -1
             self.dx = -1
         if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
@@ -67,47 +69,63 @@ class Player:
         if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
             self.is_down = True
             self.dx = 0
+
         #ボタン入力終了判定
         if pyxel.btnr(pyxel.KEY_RIGHT) == True:
-            self.is_right = False
+#           self.is_right = False
+            pass
         if pyxel.btnr(pyxel.KEY_LEFT) == True:
-            self.is_left = False
+#            self.is_left = False
+            pass
         if pyxel.btnr(pyxel.KEY_UP) == True:
             self.is_up = False
         if pyxel.btnr(pyxel.KEY_DOWN) == True:
             self.is_down = False
 
-        #右上向き方向入力
-        if self.is_right == True and self.is_up == True:
-            self.direction = 4  #右上向き
-        #左上向き方向入力
-        elif self.is_left == True and self.is_up == True:
-            self.direction = 6  #左上向き
         #上向き方向入力
-        elif self.is_up == True:
+        if self.is_up == True:
             self.direction = 3 #上向き
-        #下向き方向入力
+            #右上向き方向入力
+            if self.is_right == True and self.dx != 0:
+                self.direction = 4  #右上向き
+            #左上向き方向入力
+            elif self.is_left == True and self.dx != 0:
+                self.direction = 6  #左上向き
+        #伏せ入力
         elif self.is_down == True:
-            self.direction = 5 #下向き
+            #伏せ右方向入力
+            if self.is_right == True:
+                self.direction = 5 #下向き
+            #伏せ左方向入力
+            if self.is_left == True:
+                self.direction = 7 #下向き
         #左向き方向入力
         elif self.is_left == True:
             self.direction = 2 #左向き
         #右向き方向入力
-        else:
+        elif self.is_right == True:
             self.direction = 1  #右向き
-#        print(self.is_right, self.is_up, self.is_down)
-
+#        print(self.is_right, self.is_left, self.is_down, self.is_up)
+#        print(self.is_down)
+#        print(self.is_up)
+#        print(self.direction)
         #一定時間で自動射撃
         if pyxel.frame_count % 8 == 0:
             #弾生成
-            if self.direction == 1:
+            if self.direction == 1:     #右
                 Bullet(self.x + 5, self.y + 8, PLAYER_BULLET_SPEED, self.direction)
-            elif self.direction == 4:
+            elif self.direction == 2:   #左
+                Bullet(self.x + 1, self.y + 8, PLAYER_BULLET_SPEED, self.direction)
+            elif self.direction == 4:   #右上
                 Bullet(self.x + 3, self.y + 6, PLAYER_BULLET_SPEED, self.direction)
-            elif self.direction == 3:
+            elif self.direction == 3:   #上
                 Bullet(self.x + 3, self.y + 2, PLAYER_BULLET_SPEED, self.direction)
-            elif self.direction == 5:
+            elif self.direction == 5:   #伏せ右
                 Bullet(self.x + 13, self.y + 12, PLAYER_BULLET_SPEED, self.direction)
+            elif self.direction == 6:   #左上
+                Bullet(self.x + 3, self.y + 6, PLAYER_BULLET_SPEED, self.direction)
+            elif self.direction == 7:   #伏せ左
+                Bullet(self.x + 0, self.y + 12, PLAYER_BULLET_SPEED, self.direction)
         #Playerの位置を更新
         self.x = self.x + self.dx
         #移動停止
@@ -120,7 +138,7 @@ class Player:
             pyxel.blt(self.x, self.y,       0, 8, 16, 8 * self.directionMove, 16, 0)
         elif self.direction == 3:
             pyxel.blt(self.x, self.y,       0, 8, 32, 8 * self.directionMove, 16, 0)
-        elif self.direction == 5:
+        elif self.direction == 5 or self.direction == 7:
             pyxel.blt(self.x, self.y + 8,   0, 0, 48, 16 * self.directionMove, 8, 0)
 
 class Bullet:
@@ -138,18 +156,26 @@ class Bullet:
         if self.direction == 1:
             #右
             self.x += self.speed
+        if self.direction == 2:
+            #左
+            self.x -= self.speed
         if self.direction == 4:
             #右上
             self.x += self.speed
             self.y -= self.speed
         if self.direction == 3:
             #上
-#            self.x = 50
             self.y -= self.speed
         if self.direction == 5:
-            #下
+            #伏せ右
             self.x += self.speed
-#            self.y = 77
+        if self.direction == 6:
+            #左上
+            self.x -= self.speed
+            self.y -= self.speed
+        if self.direction == 7:
+            #伏せ左
+            self.x -= self.speed
         self.count += 1
         #一定時間で消去
         if self.count > 30:            
