@@ -185,18 +185,22 @@ class Bullet:
 
 #■Enemy
 class Enemy:
-    def __init__(self, x, y, speed, dir, hp):
+    def __init__(self, x, y, speed, dir, hp, type):
         self.x = x
         self.y = y
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.enemyType = type   #0:移動敵 1:固定敵
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #移動
         pass
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        if self.enemyType == 0:
+            pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        elif self.enemyType == 1:
+            pyxel.blt(self.x, self.y, 0, 40, 0, 16, 16, 0)
 
 #■Enemy_UI
 class EnemyUI:
@@ -267,7 +271,7 @@ class App:
         self.player = Player(PLAYER_X, PLAYER_Y)
 
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, 0,3)
+        Enemy(90, 80, 0, 0, 3, 1)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -304,10 +308,10 @@ class App:
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
-                if (enemy.x + 8    > bullet.x and
-                    enemy.x         < bullet.x + 2 and
-                    enemy.y + 8    > bullet.y and
-                    enemy.y         < bullet.y + 2):
+                if (enemy.x + 8 + (8 * enemy.enemyType) > bullet.x and
+                enemy.x                                 < bullet.x + 2 and
+                    enemy.y + 8 + (8 * enemy.enemyType) > bullet.y and
+                enemy.y                                 < bullet.y + 2):
                     #Hit時の処理
                     enemy.hp -= 1
                     bullet.is_alive = False
