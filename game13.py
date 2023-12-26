@@ -198,7 +198,9 @@ class Enemy:
         #移動
         if self.enemyType == 1:
             self.countAnim += 1
-            if self.countAnim < 5:
+            if self.countAnim < 2:
+                self.y -=4
+            elif self.countAnim > 4 and self.countAnim < 8:
                 self.y -=4
                 pass
     def draw(self):
@@ -276,7 +278,7 @@ class App:
         self.player = Player(PLAYER_X, PLAYER_Y)
 
         #仮配置
-        Enemy(90, 107, 0, 0, 3, 1)
+        Enemy(90, 107, 0, 0, 10, 1)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
