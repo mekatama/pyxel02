@@ -291,6 +291,7 @@ class App:
         #ENTERでゲーム画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)    #BGM再生
+            self.player.is_right = True
             self.scene = SCENE_PLAY
 
     #ゲーム画面処理用update
