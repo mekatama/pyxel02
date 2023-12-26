@@ -11,7 +11,7 @@ PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
 PLAYER_X = 32
-PLAYER_Y = 80
+PLAYER_Y = 91
 #list用意
 bullets = []
 enemies = []
@@ -191,11 +191,16 @@ class Enemy:
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.enemyType = type   #0:移動敵 1:固定敵
+        self.countAnim = 0
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #移動
-        pass
+        if self.enemyType == 1:
+            self.countAnim += 1
+            if self.countAnim < 5:
+                self.y -=4
+                pass
     def draw(self):
         if self.enemyType == 0:
             pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
@@ -271,7 +276,7 @@ class App:
         self.player = Player(PLAYER_X, PLAYER_Y)
 
         #仮配置
-        Enemy(90, 80, 0, 0, 3, 1)
+        Enemy(90, 107, 0, 0, 3, 1)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -428,6 +433,9 @@ class App:
         draw_list(bullets)
         self.player.draw()
         draw_list(enemies)
+        #BG描画
+        pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
+
         draw_list(enemiesUI)
         draw_list(blasts)
         draw_list(items)
