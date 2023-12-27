@@ -207,7 +207,7 @@ class Enemy:
         if self.enemyType == 0:
             pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
         elif self.enemyType == 1:
-            pyxel.blt(self.x, self.y, 0, 40, 0, 16, 16, 0)
+            pyxel.blt(self.x, self.y, 0, 40, 0, 16 * self.direction, 16, 0)
 
 #■Enemy_UI
 class EnemyUI:
@@ -319,11 +319,13 @@ class App:
             spawn_side = pyxel.rndi(0, 1)
             #生成座標ランダム
             if spawn_side == 0: #右
-                spawn_x = 98
+                spawn_x = 108
+                dir = 1
             if spawn_side == 1: #左
-                spawn_x = 30
+                spawn_x = 5
+                dir = -1
             #enemy配置
-            Enemy(spawn_x, 107, 0, 0, 10, 1)
+            Enemy(spawn_x, 107, 0, dir, 10, 1)
 
         #Player制御
         self.player.update()
