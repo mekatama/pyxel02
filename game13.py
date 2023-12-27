@@ -10,7 +10,7 @@ WINDOW_W = 128
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
-PLAYER_X = 32
+PLAYER_X = 64
 PLAYER_Y = 91
 #list用意
 bullets = []
@@ -315,8 +315,15 @@ class App:
         spawntime = 90
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
+            #生成位置ランダム
+            spawn_side = pyxel.rndi(0, 1)
+            #生成座標ランダム
+            if spawn_side == 0: #右
+                spawn_x = 98
+            if spawn_side == 1: #左
+                spawn_x = 30
             #enemy配置
-            Enemy(90, 107, 0, 0, 10, 1)
+            Enemy(spawn_x, 107, 0, 0, 10, 1)
 
         #Player制御
         self.player.update()
