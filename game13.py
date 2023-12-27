@@ -278,7 +278,7 @@ class App:
         self.player = Player(PLAYER_X, PLAYER_Y)
 
         #仮配置
-        Enemy(90, 107, 0, 0, 10, 1)
+#        Enemy(90, 107, 0, 0, 10, 1)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -304,12 +304,19 @@ class App:
     #ゲーム画面処理用update
     def update_play_scene(self):
         #scoreで生成間隔を制御
+        '''
         if self.score < 30:
             spawntime = 30
         elif self.score >= 30 and self.score < 70:
             spawntime = 25
         elif self.score >= 70:
             spawntime = 20
+        '''
+        spawntime = 90
+        #一定時間でenemy出現判定
+        if pyxel.frame_count % spawntime == 0:
+            #enemy配置
+            Enemy(90, 107, 0, 0, 10, 1)
 
         #Player制御
         self.player.update()
