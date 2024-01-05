@@ -14,6 +14,7 @@ PLAYER_X = 64
 PLAYER_Y = 91
 #list用意
 bullets = []
+bulletsEnemy = []
 enemies = []
 enemiesUI = []
 blasts = []
@@ -183,6 +184,31 @@ class Bullet:
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
 
+class Bullet_Enemy:
+    def __init__(self, x, y, speed, dir):
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.direction = dir
+        self.size = 1
+        self.color = 10 #colorは0～15
+        self.count = 0
+        self.is_alive = True
+        bulletsEnemy.append(self)
+    def update(self):
+        if self.direction == 1:
+            #左
+            self.x -= self.speed
+        if self.direction == -1:
+            #右
+            self.x += self.speed
+        self.count += 1
+        #一定時間で消去
+        if self.count > 30:            
+            self.is_alive = False   #消去
+    def draw(self):
+        pyxel.circ(self.x, self.y, self.size, self.color)
+
 #■Enemy
 class Enemy:
     def __init__(self, x, y, speed, dir, hp, type):
@@ -192,17 +218,29 @@ class Enemy:
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.enemyType = type   #0:移動敵 1:固定敵
         self.countAnim = 0
+        self.isAttack = False
         self.is_alive = True
         enemies.append(self)
     def update(self):
-        #移動
+        #出現演出(enemyType:1)
         if self.enemyType == 1:
             self.countAnim += 1
             if self.countAnim < 2:
                 self.y -=4
             elif self.countAnim > 4 and self.countAnim < 8:
                 self.y -=4
+            elif self.countAnim >= 8:
+                self.isAttack = True
                 pass
+        #一定時間で自動射撃(enemyType:1)
+        if self.enemyType == 1:
+            if self.isAttack == True:
+                if pyxel.frame_count % 8 == 0:
+                    #弾生成
+                    if self.direction == 1:     #右
+                        Bullet_Enemy(self.x + 5, self.y + 8, PLAYER_BULLET_SPEED, self.direction)
+                    if self.direction == -1:   #左
+                        Bullet_Enemy(self.x + 1, self.y + 8, PLAYER_BULLET_SPEED, self.direction)
     def draw(self):
         if self.enemyType == 0:
             pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
@@ -398,12 +436,14 @@ class App:
 
         #list実行
         update_list(bullets)
+        update_list(bulletsEnemy)
         update_list(enemies)
         update_list(enemiesUI)
         update_list(blasts)
         update_list(items)
         #list更新
         cleanup_list(bullets)
+        cleanup_list(bulletsEnemy)
         cleanup_list(enemies)
         cleanup_list(enemiesUI)
         cleanup_list(blasts)
@@ -449,6 +489,7 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         draw_list(bullets)
+        draw_list(bulletsEnemy)
         self.player.draw()
         draw_list(enemies)
         #BG描画
