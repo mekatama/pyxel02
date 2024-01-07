@@ -412,21 +412,22 @@ class App:
 
         #Bullet_EnemyとPlayerの当たり判定
         for bulletsEnemies in bulletsEnemy:
-            if (self.player.x + 12  > bulletsEnemies.x and
-                self.player.x + 4   < bulletsEnemies.x + 2 and
-                self.player.y + 12  > bulletsEnemies.y and
-                self.player.y + 4   < bulletsEnemies.y + 2):
-                #Hit時の処理
-                self.player.hp -= 1
-                bulletsEnemies.is_alive = False
-#                pyxel.play(3, 1, loop=False)    #SE再生
-                #player残りHP判定
-                if self.player.hp <= 0:
-                    blasts.append(
-                        Blast(enemy.x, enemy.y)
-                    )
-                    pyxel.stop()
-                    self.scene = SCENE_GAMEOVER
+            if self.player.is_down == False:
+                if (self.player.x + 10  > bulletsEnemies.x + 6 and
+                    self.player.x + 6   < bulletsEnemies.x + 10 and
+                    self.player.y + 16  > bulletsEnemies.y + 6 and
+                    self.player.y + 0   < bulletsEnemies.y + 10):
+                    #Hit時の処理
+                    self.player.hp -= 1
+                    bulletsEnemies.is_alive = False
+    #                pyxel.play(3, 1, loop=False)    #SE再生
+                    #player残りHP判定
+                    if self.player.hp <= 0:
+                        blasts.append(
+                            Blast(enemy.x, enemy.y)
+                        )
+                        pyxel.stop()
+                        self.scene = SCENE_GAMEOVER
 
         #ItemとPlayerの処理
         for item in items:
