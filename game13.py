@@ -215,8 +215,9 @@ class Enemy:
         self.x = x
         self.y = y
         self.hp = hp
+        self.speed = speed
         self.direction = dir    #移動方向flag(右:1 左:-1)
-        self.enemyType = type   #0:移動敵 1:固定敵
+        self.enemyType = type   #0:前進移動敵 1:固定大型敵 2:ジャンプ移動敵
         self.countAnim = 0
         self.isAttack = False
         self.is_alive = True
@@ -241,9 +242,15 @@ class Enemy:
                         Bullet_Enemy(self.x + 5, self.y + 8, PLAYER_BULLET_SPEED, self.direction)
                     if self.direction == -1:   #左
                         Bullet_Enemy(self.x + 1, self.y + 8, PLAYER_BULLET_SPEED, self.direction)
+        #左右前進(enemyType:0)
+        if self.enemyType == 0:
+            if self.direction == 1:    #右
+                self.x -= self.speed
+            if self.direction == -1:   #左
+                self.x += self.speed
     def draw(self):
         if self.enemyType == 0:
-            pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+            pyxel.blt(self.x, self.y, 0, 16, 16, 8 * self.direction, 16, 0)
         elif self.enemyType == 1:
             pyxel.blt(self.x, self.y, 0, 40, 0, 16 * self.direction, 16, 0)
 
@@ -363,7 +370,7 @@ class App:
                 spawn_x = 5
                 dir = -1
             #enemy配置
-            Enemy(spawn_x, 107, 0, dir, 10, 1)
+            Enemy(spawn_x, 91, 2, dir, 1, 0)
 
         #Player制御
         self.player.update()
