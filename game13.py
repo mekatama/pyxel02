@@ -377,27 +377,50 @@ class App:
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
-                if (enemy.x + 8 + (8 * enemy.enemyType) > bullet.x and
-                enemy.x                                 < bullet.x + 2 and
-                    enemy.y + 8 + (8 * enemy.enemyType) > bullet.y and
-                enemy.y                                 < bullet.y + 2):
-                    #Hit時の処理
-                    enemy.hp -= 1
-                    bullet.is_alive = False
-                    #残りHP判定
-                    if enemy.hp <= 0:
-                        enemy.is_alive = False
-                        enemiesUI.append(
-                            EnemyUI(enemy.x, enemy.y, 10)
-                        )
-                        blasts.append(
-                            Blast(enemy.x, enemy.y)
-                        )
-                        items.append(
-                            Item(enemy.x, enemy.y)
-                        )
-                        self.score += 10
-#                        pyxel.play(1, 0, loop=False)    #SE再生
+                if enemy.enemyType == 0:
+                    if (enemy.x + 12 > bullet.x + 6 and
+                        enemy.x + 4  < bullet.x + 10 and
+                        enemy.y + 16    > bullet.y + 6 and
+                        enemy.y + 0 < bullet.y + 10):
+                        #Hit時の処理
+                        enemy.hp -= 1
+                        bullet.is_alive = False
+                        #残りHP判定
+                        if enemy.hp <= 0:
+                            enemy.is_alive = False
+                            enemiesUI.append(
+                                EnemyUI(enemy.x, enemy.y, 10)
+                            )
+                            blasts.append(
+                                Blast(enemy.x, enemy.y)
+                            )
+                            items.append(
+                                Item(enemy.x, enemy.y)
+                            )
+                            self.score += 10
+    #                        pyxel.play(1, 0, loop=False)    #SE再生
+                if enemy.enemyType == 1:
+                    if (enemy.x + 8 + (8 * enemy.enemyType) > bullet.x and
+                        enemy.x                             < bullet.x + 2 and
+                        enemy.y + 8 + (8 * enemy.enemyType) > bullet.y and
+                        enemy.y                             < bullet.y + 2):
+                        #Hit時の処理
+                        enemy.hp -= 1
+                        bullet.is_alive = False
+                        #残りHP判定
+                        if enemy.hp <= 0:
+                            enemy.is_alive = False
+                            enemiesUI.append(
+                                EnemyUI(enemy.x, enemy.y, 10)
+                            )
+                            blasts.append(
+                                Blast(enemy.x, enemy.y)
+                            )
+                            items.append(
+                                Item(enemy.x, enemy.y)
+                            )
+                            self.score += 10
+    #                        pyxel.play(1, 0, loop=False)    #SE再生
 
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
