@@ -219,6 +219,7 @@ class Enemy:
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.enemyType = type   #0:前進移動敵 1:固定大型敵 2:ジャンプ移動敵
         self.countAnim = 0
+        self.isJumpTop = False
         self.isAttack = False
         self.is_alive = True
         enemies.append(self)
@@ -248,8 +249,26 @@ class Enemy:
                 self.x -= self.speed
             if self.direction == -1:   #左
                 self.x += self.speed
+        #左右jump前進(enemyType:2)
+        if self.enemyType == 2:
+            if self.direction == 1:    #右
+                self.x -= self.speed
+            if self.direction == -1:   #左
+                self.x += self.speed
+            #y座標の動きは共通
+            if self.y > 30 and self.isJumpTop == False:
+                self.y -= self.speed
+                if self.y <= 30:
+                    self.isJumpTop = True
+                    print("0")
+            if self.isJumpTop == True:
+                self.y += self.speed
+                print("1")
+            if self.y >= 91:
+                self.y = 91
+                print("2")
     def draw(self):
-        if self.enemyType == 0:
+        if self.enemyType == 0 or self.enemyType == 2:
             pyxel.blt(self.x, self.y, 0, 16, 16, 8 * self.direction, 16, 0)
         if self.enemyType == 1:
             pyxel.blt(self.x, self.y, 0, 40, 0, 16 * self.direction, 16, 0)
@@ -361,20 +380,23 @@ class App:
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy typeランダム
-            spawn_type = pyxel.rndi(0, 1)
+#            spawn_type = pyxel.rndi(0, 1)
+            spawn_type = 2
             #生成位置ランダム
             spawn_side = pyxel.rndi(0, 1)
             #生成座標ランダム
             if spawn_side == 0: #右
                 dir = 1
-                if spawn_type == 0:
-                    spawn_x = 128
+                if spawn_type == 0 or spawn_type == 2:
+#                    spawn_x = 128
+                    spawn_x = 110
                 elif spawn_type == 1:
                     spawn_x = 108
             if spawn_side == 1: #左
                 dir = -1
-                if spawn_type == 0:
-                    spawn_x = -8
+                if spawn_type == 0 or spawn_type == 2:
+#                    spawn_x = -8
+                    spawn_x = 10
                 elif spawn_type == 1:
                     spawn_x = 5
             #enemy配置
@@ -382,6 +404,8 @@ class App:
                 Enemy(spawn_x, 91,  2, dir, 1, spawn_type)
             elif spawn_type == 1:
                 Enemy(spawn_x, 107, 2, dir, 6, spawn_type)
+            elif spawn_type == 2:
+                Enemy(spawn_x, 60,  2, dir, 1, spawn_type)
 
         #Player制御
         self.player.update()
