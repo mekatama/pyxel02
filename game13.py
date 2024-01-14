@@ -366,11 +366,17 @@ class App:
             spawn_side = pyxel.rndi(0, 1)
             #生成座標ランダム
             if spawn_side == 0: #右
-                spawn_x = 108
                 dir = 1
+                if spawn_type == 0:
+                    spawn_x = 128
+                elif spawn_type == 1:
+                    spawn_x = 108
             if spawn_side == 1: #左
-                spawn_x = 5
                 dir = -1
+                if spawn_type == 0:
+                    spawn_x = -8
+                elif spawn_type == 1:
+                    spawn_x = 5
             #enemy配置
             if spawn_type == 0:
                 Enemy(spawn_x, 91,  2, dir, 1, spawn_type)
@@ -383,10 +389,10 @@ class App:
         for enemy in enemies:
             for bullet in bullets:
                 if enemy.enemyType == 0:
-                    if (enemy.x + 12 > bullet.x + 6 and
-                        enemy.x + 4  < bullet.x + 10 and
-                        enemy.y + 16    > bullet.y + 6 and
-                        enemy.y + 0 < bullet.y + 10):
+                    if (enemy.x + 8  > bullet.x     and
+                        enemy.x + 0  < bullet.x + 2 and
+                        enemy.y + 16 > bullet.y     and
+                        enemy.y + 0  < bullet.y + 2):
                         #Hit時の処理
                         enemy.hp -= 1
                         bullet.is_alive = False
@@ -511,7 +517,11 @@ class App:
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
-            self.scene = SCENE_TITLE
+            self.playerscene = SCENE_TITLE
+            self.is_right = False
+            self.is_left = False
+            self.is_up = False
+            self.is_down = False
             #list全要素削除
             bullets.clear()                     #list全要素削除
             bulletsEnemy.clear()                     #list全要素削除
