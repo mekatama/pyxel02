@@ -251,7 +251,7 @@ class Enemy:
     def draw(self):
         if self.enemyType == 0:
             pyxel.blt(self.x, self.y, 0, 16, 16, 8 * self.direction, 16, 0)
-        elif self.enemyType == 1:
+        if self.enemyType == 1:
             pyxel.blt(self.x, self.y, 0, 40, 0, 16 * self.direction, 16, 0)
 
 #■Enemy_UI
@@ -360,6 +360,8 @@ class App:
         spawntime = 90
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
+            #enemy typeランダム
+            spawn_type = pyxel.rndi(0, 1)
             #生成位置ランダム
             spawn_side = pyxel.rndi(0, 1)
             #生成座標ランダム
@@ -370,7 +372,10 @@ class App:
                 spawn_x = 5
                 dir = -1
             #enemy配置
-            Enemy(spawn_x, 91, 2, dir, 1, 0)
+            if spawn_type == 0:
+                Enemy(spawn_x, 91,  2, dir, 1, spawn_type)
+            elif spawn_type == 1:
+                Enemy(spawn_x, 107, 2, dir, 6, spawn_type)
 
         #Player制御
         self.player.update()
