@@ -417,7 +417,7 @@ class App:
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
-                if enemy.enemyType == 0:
+                if enemy.enemyType == 0 or enemy.enemyType == 2:
                     if (enemy.x + 8  > bullet.x     and
                         enemy.x + 0  < bullet.x + 2 and
                         enemy.y + 16 > bullet.y     and
@@ -546,7 +546,7 @@ class App:
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
-            self.playerscene = SCENE_TITLE
+            self.scene = SCENE_TITLE
             self.is_right = False
             self.is_left = False
             self.is_up = False
