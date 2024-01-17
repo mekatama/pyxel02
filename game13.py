@@ -219,6 +219,7 @@ class Enemy:
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.enemyType = type   #0:前進移動敵 1:固定大型敵 2:ジャンプ移動敵
         self.countAnim = 0
+        self.isJump = False
         self.isJumpTop = False
         self.isAttack = False
         self.is_alive = True
@@ -256,17 +257,15 @@ class Enemy:
             if self.direction == -1:   #左
                 self.x += self.speed
             #y座標の動きは共通
-            if self.y > 30 and self.isJumpTop == False:
-                self.y -= self.speed
-                if self.y <= 30:
-                    self.isJumpTop = True
-                    print("0")
-            if self.isJumpTop == True:
-                self.y += self.speed
-                print("1")
-            if self.y >= 91:
-                self.y = 91
-                print("2")
+            if self.isJump == True:
+                if self.y > 60 and self.isJumpTop == False:
+                    self.y -= self.speed
+                    if self.y <= 60:
+                        self.isJumpTop = True
+                if self.isJumpTop == True:
+                    self.y += self.speed
+                if self.y >= 91:
+                    self.y = 91
     def draw(self):
         if self.enemyType == 0 or self.enemyType == 2:
             pyxel.blt(self.x, self.y, 0, 16, 16, 8 * self.direction, 16, 0)
@@ -405,10 +404,16 @@ class App:
             elif spawn_type == 1:
                 Enemy(spawn_x, 107, 2, dir, 6, spawn_type)
             elif spawn_type == 2:
-                Enemy(spawn_x, 60,  2, dir, 1, spawn_type)
+                Enemy(spawn_x, 91,  2, dir, 1, spawn_type)
 
         #Player制御
         self.player.update()
+        #PlayerとEnemyの距離
+        for enemy in enemies:
+            if enemy.x < self.player.x + 60 and enemy.isJump == False and enemy.direction == 1:
+                enemy.isJump = True
+            if enemy.x > self.player.x - 60 and enemy.isJump == False and enemy.direction == -1:
+                enemy.isJump = True
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
