@@ -198,7 +198,7 @@ class Bullet_Enemy:
             self.x += self.speed
         self.count += 1
         #一定時間で消去
-        if self.count > 30:            
+        if self.count > 70:            
             self.is_alive = False   #消去
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
@@ -235,9 +235,9 @@ class Enemy:
                 if pyxel.frame_count % 8 == 0:
                     #弾生成
                     if self.direction == 1:     #右
-                        Bullet_Enemy(self.x + 5, self.y + 8, PLAYER_BULLET_SPEED, self.direction)
+                        Bullet_Enemy(self.x + 5, self.y + 8, 2, self.direction)
                     if self.direction == -1:   #左
-                        Bullet_Enemy(self.x + 1, self.y + 8, PLAYER_BULLET_SPEED, self.direction)
+                        Bullet_Enemy(self.x + 1, self.y + 8, 2, self.direction)
         #左右前進(enemyType:0)
         if self.enemyType == 0:
             if self.direction == 1:    #右
