@@ -369,7 +369,7 @@ class App:
         elif self.score >= 70:
             spawntime = 20
         '''
-        spawntime = 50
+        spawntime = 30
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy typeランダム
@@ -487,7 +487,7 @@ class App:
                     #player残りHP判定
                     if self.player.hp <= 0:
                         blasts.append(
-                            Blast(enemy.x, enemy.y)
+                            Blast(self.player.x, self.player.y)
                         )
                         pyxel.stop()
                         self.scene = SCENE_GAMEOVER
