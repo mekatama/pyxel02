@@ -73,10 +73,8 @@ class Player:
 
         #ボタン入力終了判定
         if pyxel.btnr(pyxel.KEY_RIGHT) == True:
-#           self.is_right = False
             pass
         if pyxel.btnr(pyxel.KEY_LEFT) == True:
-#            self.is_left = False
             pass
         if pyxel.btnr(pyxel.KEY_UP) == True:
             self.is_up = False
@@ -106,12 +104,8 @@ class Player:
         #右向き方向入力
         elif self.is_right == True:
             self.direction = 1  #右向き
-#        print(self.is_right, self.is_left, self.is_down, self.is_up)
-#        print(self.is_down)
-#        print(self.is_up)
-#        print(self.direction)
         #一定時間で自動射撃
-        if pyxel.frame_count % 8 == 0:
+        if pyxel.frame_count % 6 == 0:
             #弾生成
             if self.direction == 1:     #右
                 Bullet(self.x + 5, self.y + 8, PLAYER_BULLET_SPEED, self.direction)
@@ -375,12 +369,11 @@ class App:
         elif self.score >= 70:
             spawntime = 20
         '''
-        spawntime = 90
+        spawntime = 50
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy typeランダム
-#            spawn_type = pyxel.rndi(0, 1)
-            spawn_type = 2
+            spawn_type = pyxel.rndi(0, 2)
             #生成位置ランダム
             spawn_side = pyxel.rndi(0, 1)
             #生成座標ランダム
@@ -402,7 +395,7 @@ class App:
             if spawn_type == 0:
                 Enemy(spawn_x, 91,  2, dir, 1, spawn_type)
             elif spawn_type == 1:
-                Enemy(spawn_x, 107, 2, dir, 6, spawn_type)
+                Enemy(spawn_x, 107, 2, dir, 3, spawn_type)
             elif spawn_type == 2:
                 Enemy(spawn_x, 91,  2, dir, 1, spawn_type)
 
