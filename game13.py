@@ -393,11 +393,11 @@ class App:
                     spawn_x = 5
             #enemy配置
             if spawn_type == 0:
-                Enemy(spawn_x, 91,  2, dir, 1, spawn_type)
+                Enemy(spawn_x, 91,  1, dir, 2, spawn_type)
             elif spawn_type == 1:
-                Enemy(spawn_x, 107, 2, dir, 3, spawn_type)
+                Enemy(spawn_x, 107, 0, dir, 3, spawn_type)
             elif spawn_type == 2:
-                Enemy(spawn_x, 91,  2, dir, 1, spawn_type)
+                Enemy(spawn_x, 91,  1, dir, 1, spawn_type)
 
         #Player制御
         self.player.update()
