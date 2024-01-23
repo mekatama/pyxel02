@@ -364,15 +364,23 @@ class App:
         #scoreで生成間隔を制御
         if self.score < 100:
             spawntime = 30
+            spawn_pattern = 0
         elif self.score >= 100 and self.score < 200:
             spawntime = 25
+            spawn_pattern = 1
         elif self.score >= 200:
             spawntime = 20
+            spawn_pattern = 2
 #        spawntime = 30
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy typeランダム
-            spawn_type = pyxel.rndi(0, 2)
+            if spawn_pattern == 0:
+                spawn_type = 0
+            elif spawn_pattern == 1:
+                spawn_type = pyxel.rndi(0, 1)
+            elif spawn_pattern == 2:
+                spawn_type = pyxel.rndi(0, 2)
             #生成位置ランダム
             spawn_side = pyxel.rndi(0, 1)
             #生成座標ランダム
