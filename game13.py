@@ -12,6 +12,7 @@ PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
 PLAYER_X = 64
 PLAYER_Y = 91
+SCORE_ITEM = 10
 #list用意
 bullets = []
 bulletsEnemy = []
@@ -361,15 +362,13 @@ class App:
     #ゲーム画面処理用update
     def update_play_scene(self):
         #scoreで生成間隔を制御
-        '''
-        if self.score < 30:
+        if self.score < 100:
             spawntime = 30
-        elif self.score >= 30 and self.score < 70:
+        elif self.score >= 100 and self.score < 200:
             spawntime = 25
-        elif self.score >= 70:
+        elif self.score >= 200:
             spawntime = 20
-        '''
-        spawntime = 30
+#        spawntime = 30
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy typeランダム
@@ -508,7 +507,7 @@ class App:
                 self.player.y + 12  > item.y + 4 and
                 self.player.y + 4   < item.y + 12):
                 #Hit時の処理
-                self.score += 10
+                self.score += SCORE_ITEM
                 item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
@@ -540,10 +539,12 @@ class App:
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.scene = SCENE_TITLE
-            self.is_right = False
-            self.is_left = False
-            self.is_up = False
-            self.is_down = False
+            self.player.is_right = False
+            self.player.is_left = False
+            self.player.is_up = False
+            self.player.is_down = False
+            self.player.direction = 1
+            self.player.directionMove = 1
             #list全要素削除
             bullets.clear()                     #list全要素削除
             bulletsEnemy.clear()                     #list全要素削除
@@ -571,7 +572,10 @@ class App:
     #タイトル画面描画用update
     def draw_title_scene(self):
         pyxel.text(0, 20, "01234567890123456789012345678901", 7)
-        pyxel.text(0, 32, "TITLE", 7)
+        pyxel.text(48, 28, "________", 7)
+        pyxel.text(32, 58, "- PRESS  ENTER -", 7)
+        pyxel.text(0, 76, "--------------------------------", 7)
+        pyxel.text(40, 82, "HOW TO PLAY", 7)
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
