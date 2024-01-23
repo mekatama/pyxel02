@@ -330,6 +330,7 @@ class App:
         pyxel.load("my_resource13.pyxres")
         self.score = 0
         self.highScore = 0
+        self.is_type2 = False
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
@@ -402,7 +403,9 @@ class App:
             if spawn_type == 0:
                 Enemy(spawn_x, 91,  1, dir, 2, spawn_type)
             elif spawn_type == 1:
-                Enemy(spawn_x, 107, 0, dir, 3, spawn_type)
+                if self.is_type2 == False:
+                    Enemy(spawn_x, 107, 0, dir, 3, spawn_type)
+                    self.is_type2 = True
             elif spawn_type == 2:
                 Enemy(spawn_x, 91,  1, dir, 1, spawn_type)
 
@@ -449,6 +452,7 @@ class App:
                         bullet.is_alive = False
                         #残りHP判定
                         if enemy.hp <= 0:
+                            self.is_type2 = False
                             enemy.is_alive = False
                             enemiesUI.append(
                                 EnemyUI(enemy.x, enemy.y, 10)
