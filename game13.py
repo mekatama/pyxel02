@@ -191,6 +191,7 @@ class Bullet_Enemy:
         self.is_alive = True
         bulletsEnemy.append(self)
     def update(self):
+        #移動
         if self.direction == 1:
             #左
             self.x -= self.speed
@@ -214,9 +215,11 @@ class Enemy:
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.enemyType = type   #0:前進移動敵 1:固定大型敵 2:ジャンプ移動敵
         self.countAnim = 0
+        self.count2 = 0
         self.isJump = False
         self.isJumpTop = False
         self.isAttack = False
+        self.isAttack2 = False
         self.is_alive = True
         enemies.append(self)
     def update(self):
@@ -229,11 +232,21 @@ class Enemy:
                 self.y -=4
             elif self.countAnim >= 8:
                 self.isAttack = True
-                pass
         #一定時間で自動射撃(enemyType:1)
         if self.enemyType == 1:
             if self.isAttack == True:
-                if pyxel.frame_count % 8 == 0:
+                #shot用flag判定
+                if self.count2 <= 30:
+                    self.isAttack2 = True
+                    self.count2 += 1
+                elif self.count2 > 30 and self.count2 <= 50:
+                    self.isAttack2 = False
+                    self.count2 += 1
+                if self.count2 > 50:
+                    self.count2 = 0
+                print(self.count2)
+                #等間隔
+                if pyxel.frame_count % 8 == 0 and self.isAttack2 == True:
                     #弾生成
                     if self.direction == 1:     #右
                         Bullet_Enemy(self.x + 5, self.y + 8, 2, self.direction)
