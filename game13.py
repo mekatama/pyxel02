@@ -596,11 +596,14 @@ class App:
 
     #タイトル画面描画用update
     def draw_title_scene(self):
-        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
-        pyxel.text(48, 28, "________", 7)
-        pyxel.text(32, 58, "- PRESS  ENTER -", 7)
-        pyxel.text(0, 76, "--------------------------------", 7)
-        pyxel.text(40, 82, "HOW TO PLAY", 7)
+        pyxel.text(32, 28, "TAMASHII--TORA", 7)
+        pyxel.text(32, 48, "- PRESS  ENTER -", 7)
+        pyxel.text( 0, 58, "--------------------------------", 7)
+        pyxel.text(40, 63, "HOW TO PLAY", 7)
+        pyxel.text( 4, 73, "MOVE        : LEFT , RIGHT KEY", 7)
+        pyxel.text( 4, 79, "LAY DOWN    : DOWN KEY", 7)
+        pyxel.text( 4, 85, "AIM OVERHEAD: UP KEY", 7)
+        pyxel.text(36, 97, "AUTOMATIC ATTACK", 7)
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
