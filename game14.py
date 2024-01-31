@@ -11,11 +11,9 @@ PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
 #list用意
-bullets = []
 enemies = []
 enemiesUI = []
 blasts = []
-items = []
 
 #関数(List実行)
 def update_list(list):
@@ -48,7 +46,7 @@ class Player:
         self.direction = 1
         self.is_alive = True
     def update(self):
-        #saiz入力
+        #size入力
         if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
             self.size += 1
         if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
@@ -56,40 +54,19 @@ class Player:
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
 
-class Bullet:
-    def __init__(self, x, y, speed, dir):
-        self.x = x
-        self.y = y
-        self.speed = speed
-        self.direction = dir
-        self.size = 1
-        self.color = 10 #colorは0～15
-        self.count = 0
-        self.is_alive = True
-        bullets.append(self)
-    def update(self):
-        self.x += self.speed * self.direction        #弾移動
-        self.count += 1
-        #一定時間で消去
-        if self.count > 30:            
-            self.is_alive = False   #消去
-    def draw(self):
-        pyxel.circ(self.x, self.y, self.size, self.color)
-
 #■Enemy
 class Enemy:
-    def __init__(self, x, y, speed, dir, hp):
+    def __init__(self, x, y, speed, size,):
         self.x = x
         self.y = y
-        self.hp = hp
-        self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.size = size
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #移動
         pass
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        pyxel.rect(self.x, self.y, 8, self.size, 3)
 
 #■Enemy_UI
 class EnemyUI:
@@ -127,25 +104,6 @@ class Blast:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
 
-#■Item
-class Item:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.vec = 0
-        self.count = 0
-        self.motion = 0         #アニメ切り替え用
-        self.is_alive = True
-        blasts.append(self)
-    def update(self):
-        self.x = self.x
-        self.y = self.y
-        self.count += 1
-        if self.count >= 5 and self.count < 10:
-            self.motion = 1
-    def draw(self):
-        pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
-
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
@@ -160,7 +118,7 @@ class App:
         self.player = Player(pyxel.width / 2, pyxel.height / 2, 10)
 
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, 0,3)
+        Enemy(32, pyxel.height / 2, 0, 10)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -194,31 +152,6 @@ class App:
 
         #Player制御
         self.player.update()
-        #EnemyとBulletの当たり判定
-        for enemy in enemies:
-            for bullet in bullets:
-                if (enemy.x + 8    > bullet.x and
-                    enemy.x         < bullet.x + 2 and
-                    enemy.y + 8    > bullet.y and
-                    enemy.y         < bullet.y + 2):
-                    #Hit時の処理
-                    enemy.hp -= 1
-                    bullet.is_alive = False
-                    #残りHP判定
-                    if enemy.hp <= 0:
-                        enemy.is_alive = False
-                        enemiesUI.append(
-                            EnemyUI(enemy.x, enemy.y, 10)
-                        )
-                        blasts.append(
-                            Blast(enemy.x, enemy.y)
-                        )
-                        items.append(
-                            Item(enemy.x, enemy.y)
-                        )
-                        self.score += 10
-#                        pyxel.play(1, 0, loop=False)    #SE再生
-
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
             if (self.player.x + 12  > enemy.x + 4 and
@@ -237,42 +170,18 @@ class App:
                     pyxel.stop()
                     self.scene = SCENE_GAMEOVER
 
-        #ItemとPlayerの処理
-        for item in items:
-            #Itemの動き
-            ex = (self.player.x - item.x)
-            ey = (self.player.y - item.y)
-            Kp = 0.2
-            if ex != 0 or ey != 0:
-                item.x = item.x + ex * Kp
-                item.y = item.y + ey * Kp
-
-            #ItemとPlayerの当たり判定
-            if (self.player.x + 12  > item.x + 4 and
-                self.player.x + 4   < item.x + 12 and
-                self.player.y + 12  > item.y + 4 and
-                self.player.y + 4   < item.y + 12):
-                #Hit時の処理
-                self.score += 10
-                item.is_alive = False
-#                pyxel.play(3, 1, loop=False)    #SE再生
-
         #High Score
         if self.score >= self.highScore:
             self.highScore = self.score
 
         #list実行
-        update_list(bullets)
         update_list(enemies)
         update_list(enemiesUI)
         update_list(blasts)
-        update_list(items)
         #list更新
-        cleanup_list(bullets)
         cleanup_list(enemies)
         cleanup_list(enemiesUI)
         cleanup_list(blasts)
-        cleanup_list(items)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -284,11 +193,9 @@ class App:
             self.score = 0
             self.scene = SCENE_TITLE
             #list全要素削除
-            bullets.clear()                     #list全要素削除
             enemies.clear()                     #list全要素削除
             enemiesUI.clear()                     #list全要素削除
             blasts.clear()                     #list全要素削除
-            items.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -317,11 +224,9 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         self.player.draw()
-        draw_list(bullets)
         draw_list(enemies)
         draw_list(enemiesUI)
         draw_list(blasts)
-        draw_list(items)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
