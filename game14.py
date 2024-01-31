@@ -59,12 +59,13 @@ class Enemy:
     def __init__(self, x, y, speed, size,):
         self.x = x
         self.y = y
+        self.speed = speed
         self.size = size
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #移動
-        pass
+        self.x -= self.speed
     def draw(self):
         pyxel.rect(self.x, self.y, 8, self.size, 3)
 
@@ -118,7 +119,7 @@ class App:
         self.player = Player(pyxel.width / 2, pyxel.height / 2, 10)
 
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, 10)
+        Enemy(130, pyxel.height / 2, 1, 10)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
