@@ -52,7 +52,7 @@ class Player:
         if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
             self.size -= 1
     def draw(self):
-        pyxel.circ(self.x, self.y, self.size, self.color)
+        pyxel.rect(self.x - self.size / 2, self.y - self.size / 2, self.size, self.size, self.color)
 
 #■Enemy
 class Enemy:
@@ -162,7 +162,7 @@ class App:
                 self.player.y + 4   < enemy.y + 12):
                 #Hit時の処理
                 self.player.hp -= 1
-                enemy.is_alive = False
+#                enemy.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
                 #player残りHP判定
                 if self.player.hp <= 0:
