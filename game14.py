@@ -68,6 +68,7 @@ class Enemy:
         self.x -= self.speed
     def draw(self):
         pyxel.rect(self.x, self.y, 8, self.size, 3)
+        pyxel.rect(self.x, self.y + 52, 8, self.size, 3)
 
 #■Enemy_UI
 class EnemyUI:
@@ -119,7 +120,7 @@ class App:
         self.player = Player(pyxel.width / 2, pyxel.height / 2, 10)
 
         #仮配置
-        Enemy(130, pyxel.height / 2, 1, 10)
+        Enemy(130, 30, 1, 20)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
