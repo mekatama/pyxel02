@@ -58,7 +58,6 @@ class Player:
                 self.size = 4
     def draw(self):
         pyxel.rect(self.x, self.y - self.size / 2, PlAYER_W, self.size, self.color)
-#        pyxel.rect(self.x - self.size / 2, self.y - self.size / 2, self.size, self.size, self.color)
 
 #■Enemy
 class Enemy:
@@ -73,7 +72,6 @@ class Enemy:
         #移動
         self.x -= self.speed
     def draw(self):
-        #最終的に+52の部分は計算式にする
         pyxel.rect(self.x, self.y,                      8, self.size, 3)
         pyxel.rect(self.x, self.y + 100 - self.size,    8, self.size, 3)
 
@@ -126,10 +124,7 @@ class App:
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2, 60, 10)
 
-        #仮配置
-        Enemy(130, 10, 1, 48)
-
-        #実行開始 更新関数 描画関数
+       #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
 	#更新関数
@@ -158,6 +153,14 @@ class App:
             spawntime = 25
         elif self.score >= 70:
             spawntime = 20
+
+
+        #一定時間でenemy出現判定
+        if pyxel.frame_count % 60 == 0:
+            #enemy sizeランダム
+            spawn_size = pyxel.rndi(2, 48)
+            #仮配置
+            Enemy(130, 10, 1, spawn_size)
 
         #Player制御
         self.player.update()
