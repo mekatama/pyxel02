@@ -48,9 +48,9 @@ class Player:
     def update(self):
         #size入力
         if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
-            self.size += 1
+            self.size += 2
         if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
-            self.size -= 1
+            self.size -= 2
     def draw(self):
         pyxel.rect(self.x - self.size / 2, self.y - self.size / 2, self.size, self.size, self.color)
 
@@ -67,7 +67,8 @@ class Enemy:
         #移動
         self.x -= self.speed
     def draw(self):
-        pyxel.rect(self.x, self.y, 8, self.size, 3)
+        #最終的に+52の部分は計算式にする
+        pyxel.rect(self.x, self.y,      8, self.size, 3)
         pyxel.rect(self.x, self.y + 52, 8, self.size, 3)
 
 #■Enemy_UI
@@ -156,13 +157,12 @@ class App:
         self.player.update()
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
-            if (self.player.x + 12  > enemy.x + 4 and
-                self.player.x + 4   < enemy.x + 12 and
-                self.player.y + 12  > enemy.y + 4 and
-                self.player.y + 4   < enemy.y + 12):
+            if (self.player.x + self.player.size / 2 > enemy.x and
+                self.player.x - self.player.size / 2 < enemy.x + 8 and
+                self.player.y + self.player.size / 2 > enemy.y and
+                self.player.y - self.player.size / 2 < enemy.y + 20):
                 #Hit時の処理
                 self.player.hp -= 1
-#                enemy.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
                 #player残りHP判定
                 if self.player.hp <= 0:
