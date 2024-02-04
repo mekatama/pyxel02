@@ -74,8 +74,8 @@ class Enemy:
         self.x -= self.speed
     def draw(self):
         #最終的に+52の部分は計算式にする
-        pyxel.rect(self.x, self.y,      8, self.size, 3)
-#        pyxel.rect(self.x, self.y + 52, 8, self.size, 3)
+        pyxel.rect(self.x, self.y,                      8, self.size, 3)
+        pyxel.rect(self.x, self.y + 100 - self.size,    8, self.size, 3)
 
 #■Enemy_UI
 class EnemyUI:
@@ -124,10 +124,10 @@ class App:
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
-        self.player = Player(pyxel.width / 2, 70, 10)
+        self.player = Player(pyxel.width / 2, 60, 10)
 
         #仮配置
-        Enemy(130, 20, 1, 20)
+        Enemy(130, 10, 1, 48)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
