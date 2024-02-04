@@ -7,6 +7,7 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 #定数
 WINDOW_H = 128
 WINDOW_W = 128
+PlAYER_W = 10
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
@@ -49,10 +50,15 @@ class Player:
         #size入力
         if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
             self.size += 2
+            if self.size >= 80:
+                self.size = 80
         if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
             self.size -= 2
+            if self.size <= 4:
+                self.size = 4
     def draw(self):
-        pyxel.rect(self.x - self.size / 2, self.y - self.size / 2, self.size, self.size, self.color)
+        pyxel.rect(self.x, self.y - self.size / 2, PlAYER_W, self.size, self.color)
+#        pyxel.rect(self.x - self.size / 2, self.y - self.size / 2, self.size, self.size, self.color)
 
 #■Enemy
 class Enemy:
@@ -69,7 +75,7 @@ class Enemy:
     def draw(self):
         #最終的に+52の部分は計算式にする
         pyxel.rect(self.x, self.y,      8, self.size, 3)
-        pyxel.rect(self.x, self.y + 52, 8, self.size, 3)
+#        pyxel.rect(self.x, self.y + 52, 8, self.size, 3)
 
 #■Enemy_UI
 class EnemyUI:
@@ -118,10 +124,10 @@ class App:
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
-        self.player = Player(pyxel.width / 2, pyxel.height / 2, 10)
+        self.player = Player(pyxel.width / 2, 70, 10)
 
         #仮配置
-        Enemy(130, 30, 1, 20)
+        Enemy(130, 20, 1, 20)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -157,10 +163,10 @@ class App:
         self.player.update()
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
-            if (self.player.x + self.player.size / 2 > enemy.x and
-                self.player.x - self.player.size / 2 < enemy.x + 8 and
-                self.player.y + self.player.size / 2 > enemy.y and
-                self.player.y - self.player.size / 2 < enemy.y + 20):
+            if (self.player.x + PlAYER_W                > enemy.x and
+                self.player.x                           < enemy.x + 8 and
+                self.player.y + self.player.size / 2    > enemy.y and
+                self.player.y - self.player.size / 2    < enemy.y + 20):
                 #Hit時の処理
                 self.player.hp -= 1
 #                pyxel.play(3, 1, loop=False)    #SE再生
