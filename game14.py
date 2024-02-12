@@ -7,7 +7,8 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 #定数
 WINDOW_H = 128
 WINDOW_W = 128
-PlAYER_W = 10
+PlAYER_W = 4
+ENEMY_W = 2
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
@@ -59,7 +60,7 @@ class Player:
                 self.size -= 2
                 if self.size <= 4:
                     self.size = 4
-            print(self.y - self.size / 2)
+#            print(self.y - self.size / 2)
     def draw(self):
         pyxel.rect(self.x, self.y - self.size / 2, PlAYER_W, self.size, self.color)
 
@@ -76,8 +77,8 @@ class Enemy:
         #移動
         self.x -= self.speed
     def draw(self):
-        pyxel.rect(self.x, self.y,                      8, self.size, 3)
-#        pyxel.rect(self.x, self.y + 100 - self.size,    8, self.size, 3)
+        pyxel.rect(self.x, self.y,                      ENEMY_W, self.size, 3)
+        pyxel.rect(self.x, self.y + 100 - self.size,    ENEMY_W, self.size, 3)
 
 #■Enemy_UI
 class EnemyUI:
@@ -140,9 +141,8 @@ class App:
         elif self.score >= 70:
             spawntime = 20
 
-
         #一定時間でenemy出現判定
-        if pyxel.frame_count % 30 == 0:
+        if pyxel.frame_count % 90 == 0:
             #enemy sizeランダム
             spawn_size = pyxel.rndi(2, 48)
             #仮配置
@@ -155,7 +155,7 @@ class App:
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
             if (self.player.x + PlAYER_W                > enemy.x and
-                self.player.x                           < enemy.x + 8 and
+                self.player.x                           < enemy.x + ENEMY_W and
                 self.player.y + self.player.size / 2    > enemy.y and
                 self.player.y - self.player.size / 2    < enemy.y + enemy.size):
                 #Hit時の処理
@@ -165,6 +165,13 @@ class App:
                 if self.player.hp <= 0:
                     pyxel.stop()
                     self.scene = SCENE_GAMEOVER
+
+        #EnemyとPlayerの距離判定
+        for enemy in enemies:
+            if (self.player.x + PlAYER_W                > enemy.x and
+                self.player.x                           < enemy.x + ENEMY_W):
+                score = (enemy.y + enemy.size) - (self.player.y - self.player.size / 2)
+                self.score += (30 + score)
 
         #High Score
         if self.score >= self.highScore:
