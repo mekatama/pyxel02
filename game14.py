@@ -172,9 +172,9 @@ class App:
                 self.count_score += 1
                 if self.count_score >= 4:
                     score = (enemy.y + enemy.size) - (self.player.y - self.player.size / 2)
-                    self.score += (30 + score)
+                    self.score += (30 + score + self.player.size)
                     enemiesUI.append(
-                        EnemyUI(self.player.x - 26, self.player.y, 30 + score)
+                        EnemyUI(self.player.x - 26, self.player.y, 30 + score + self.player.size)
                     )
                     self.count_score = 0
 
