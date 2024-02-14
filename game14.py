@@ -91,9 +91,9 @@ class EnemyUI:
         enemiesUI.append(self)
     def update(self):
         self.count += 1
-        if self.count < 10:
+        if self.count < 20:
             self.y -= 1
-        elif self.count >= 10:
+        elif self.count >= 20:
             self.is_alive = False
     def draw(self):
         pyxel.text(self.x, self.y, f"+{self.score:2}", 13)
@@ -146,12 +146,10 @@ class App:
             #enemy sizeランダム
             spawn_size = pyxel.rndi(2, 48)
             #仮配置
-#            Enemy(130, 10, 1, spawn_size)
-            Enemy(130, 10, 1, 20)
+            Enemy(130, 10, 1, spawn_size)
 
         #Player制御
         self.player.update()
-#        print(self.player.y - self.player.size / 2)
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
             if (self.player.x + PlAYER_W                > enemy.x and
@@ -172,6 +170,9 @@ class App:
                 self.player.x                           < enemy.x + ENEMY_W):
                 score = (enemy.y + enemy.size) - (self.player.y - self.player.size / 2)
                 self.score += (30 + score)
+                enemiesUI.append(
+                    EnemyUI(self.player.x - 26, self.player.y, self.score)
+                )
 
         #High Score
         if self.score >= self.highScore:
