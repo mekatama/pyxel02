@@ -82,10 +82,11 @@ class Enemy:
 
 #■Enemy_UI
 class EnemyUI:
-    def __init__(self, x, y, score):
+    def __init__(self, x, y, score, color):
         self.x = x
         self.y = y
         self.score = score
+        self.color =color
         self.count = 0
         self.is_alive = True
         enemiesUI.append(self)
@@ -96,7 +97,7 @@ class EnemyUI:
         elif self.count >= 20:
             self.is_alive = False
     def draw(self):
-        pyxel.text(self.x, self.y, f"+{self.score:2}", 13)
+        pyxel.text(self.x, self.y, f"+{self.score:2}", self.color)
 
 class App:
     def __init__(self):
@@ -145,7 +146,7 @@ class App:
         #一定時間でenemy出現判定
         if pyxel.frame_count % 90 == 0:
             #enemy sizeランダム
-            spawn_size = pyxel.rndi(14, 48)
+            spawn_size = pyxel.rndi(20, 48)
             #仮配置
             Enemy(130, 10, 1, spawn_size)
 
@@ -172,9 +173,15 @@ class App:
                 self.count_score += 1
                 if self.count_score >= 4:
                     score = (enemy.y + enemy.size) - (self.player.y - self.player.size / 2)
-                    self.score += (30 + score + self.player.size)
+                    score_bonus = 0
+                    color = 13
+                    if score == 0:
+                        #ボーナス発生
+                        score_bonus = 50
+                        color = 10
+                    self.score += (30 + score + self.player.size + score_bonus)
                     enemiesUI.append(
-                        EnemyUI(self.player.x - 26, self.player.y, 30 + score + self.player.size)
+                        EnemyUI(self.player.x - 26, self.player.y, 30 + score + self.player.size, color)
                     )
                     self.count_score = 0
 
