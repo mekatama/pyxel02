@@ -108,6 +108,7 @@ class App:
         self.score = 0
         self.highScore = 0
         self.count_score = 0
+        self.spawntime = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
@@ -137,18 +138,28 @@ class App:
     def update_play_scene(self):
         #scoreで生成間隔を制御
         if self.score < 30:
-            spawntime = 30
+            self.spawntime = 30
         elif self.score >= 30 and self.score < 70:
-            spawntime = 25
+            self.spawntime = 25
         elif self.score >= 70:
-            spawntime = 20
+            self.spawntime = 20
+
+        if pyxel.frame_count < 600:
+            self.spawntime = 60
+            speed = 1
+        elif pyxel.frame_count >= 600 and pyxel.frame_count < 1200:
+            self.spawntime = 40
+            speed = 1.5
+        elif self.score >= 1200:
+            self.spawntime = 20
+            speed = 2
 
         #一定時間でenemy出現判定
-        if pyxel.frame_count % 90 == 0:
+        if pyxel.frame_count % self.spawntime == 0:
             #enemy sizeランダム
             spawn_size = pyxel.rndi(20, 48)
             #仮配置
-            Enemy(130, 10, 1, spawn_size)
+            Enemy(130, 10, speed, spawn_size)
 
         #Player制御
         self.player.update()
@@ -205,6 +216,7 @@ class App:
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.scene = SCENE_TITLE
+            self.spawntime = 0
             #list全要素削除
             enemies.clear()                     #list全要素削除
             enemiesUI.clear()                     #list全要素削除
