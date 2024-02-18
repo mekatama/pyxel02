@@ -7,8 +7,8 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 #定数
 WINDOW_H = 128
 WINDOW_W = 128
-PlAYER_W = 1
-ENEMY_W = 8
+PlAYER_W = 2
+ENEMY_W = 2
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
@@ -71,6 +71,7 @@ class Enemy:
         self.y = y
         self.speed = speed
         self.size = size
+        self.is_scoreUI = False
         self.is_alive = True
         enemies.append(self)
     def update(self):
@@ -107,7 +108,6 @@ class App:
         pyxel.load("my_resource10.pyxres")
         self.score = 0
         self.highScore = 0
-        self.count_score = 0
         self.spawntime = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
@@ -181,8 +181,7 @@ class App:
         for enemy in enemies:
             if (self.player.x + PlAYER_W                > enemy.x and
                 self.player.x                           < enemy.x + ENEMY_W):
-                self.count_score += 1
-                if self.count_score >= 4:
+                if enemy.is_scoreUI == False:
                     score = (enemy.y + enemy.size) - (self.player.y - self.player.size / 2)
                     score_bonus = 0
                     color = 13
@@ -194,7 +193,7 @@ class App:
                     enemiesUI.append(
                         EnemyUI(self.player.x - 26, self.player.y, 30 + score + self.player.size, color)
                     )
-                    self.count_score = 0
+                    enemy.is_scoreUI = True
 
         #High Score
         if self.score >= self.highScore:
