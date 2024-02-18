@@ -50,7 +50,7 @@ class Player:
     def update(self):
         self.inputCount += 1
         #入力タイミングに制限入れる
-        if self.inputCount % 3 == 0:
+        if self.inputCount % 1 == 0:
             #size入力
             if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
                 self.size += 2
