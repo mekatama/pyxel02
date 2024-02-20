@@ -15,6 +15,7 @@ PLAYER_BULLET_SPEED = 4
 #list用意
 enemies = []
 enemiesUI = []
+blasts = []
 
 #関数(List実行)
 def update_list(list):
@@ -99,6 +100,21 @@ class EnemyUI:
             self.is_alive = False
     def draw(self):
         pyxel.text(self.x, self.y, f"+{self.score:2}", self.color)
+
+#■Blust
+class Blast:
+    def __init__(self, x, y, r):
+        self.x = x
+        self.y = y
+        self.r = r
+        self.is_alive = True
+        blasts.append(self)
+    def update(self):
+        self.r += 9    #円の半径大きくする用
+        if self.r >= 200:
+            self.is_alive = False
+    def draw(self):
+        pyxel.circb(self.x, self.y, self.r, 10)
 
 class App:
     def __init__(self):
@@ -189,6 +205,11 @@ class App:
                         #ボーナス発生
                         score_bonus = 50
                         color = 10
+                        #bonus effect
+                        blasts.append(
+                            Blast(self.player.x - 1, self.player.y, 0)
+                        )
+
                     self.score += (30 + score + self.player.size + score_bonus)
                     enemiesUI.append(
                         EnemyUI(self.player.x - 26, self.player.y, 30 + score + self.player.size, color)
@@ -202,8 +223,10 @@ class App:
         #list実行
         update_list(enemies)
         update_list(enemiesUI)
+        update_list(blasts)
         #list更新
         cleanup_list(enemies)
+        cleanup_list(blasts)
         cleanup_list(enemiesUI)
 
     #ゲームオーバー画面処理用update
@@ -219,6 +242,7 @@ class App:
             #list全要素削除
             enemies.clear()                     #list全要素削除
             enemiesUI.clear()                     #list全要素削除
+            blasts.clear()
 
 	#描画関数
     def draw(self):
@@ -249,6 +273,7 @@ class App:
         self.player.draw()
         draw_list(enemies)
         draw_list(enemiesUI)
+        draw_list(blasts)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
