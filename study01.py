@@ -16,6 +16,7 @@ class App:
         self.timer = 0
         self.speed = 0.05   #速度
         self.intensity = 40 #揺れ幅
+        self.isPlus = True
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -31,7 +32,19 @@ class App:
         if pyxel.btn(pyxel.KEY_DOWN):
             self.intensity -= 0.4 #揺れ幅down
         
-        self.timer += self.speed
+        #逆転判定
+        if self. timer < 0 and self.isPlus == False:
+            self.timer = 0
+            self.isPlus = True
+        if self.timer > math.pi and self.isPlus == True:
+            self.timer = math.pi
+            self.isPlus = False
+
+        if self.isPlus == True:
+            self.timer += self.speed
+        else:
+            self.timer -= self.speed
+
         #上下往復
         self.y = BASE_Y + self.intensity * math.sin(self.timer)
         #バウンド
