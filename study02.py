@@ -14,12 +14,12 @@ class App:
         self.x3 = BASE_X    #円周上の座標
         self.y3 = BASE_Y    #円周上の座標
         self.timer = 0
-        self.count = 0
         self.speed = 0.05   #速度
         self.bulletSpeed = 1   #速度
         self.intensity = 40 #揺れ幅
         self.isPlus = True
         self.aim = 0
+        self.isShot = False
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -52,37 +52,21 @@ class App:
         self.x3 = BASE_X + self.intensity * math.cos(self.timer)
         self.y3 = BASE_Y + self.intensity * -math.sin(self.timer)
 
-        #
+        #Aボタン入力で角度決定
         if pyxel.btnr(pyxel.KEY_A):
             dx = self.x3 - BASE_X
             dy = self.y3 - BASE_Y
             self.aim = math.atan2(-dy, dx)
+            self.isShot = True
             print(self.aim)
 
-        '''
-        #狙い撃ち角度を求める(ラジアン)
-        self.count += self.speed
-        if self.count > 2:
-            dx = self.x3 - BASE_X
-            dy = self.y3 - BASE_Y
-            self.aim = math.atan2(-dy, dx)
-            self.count = 0
-        
-            #
-            self.bulletSpeed += self.speed
-        '''
-
         #弾用座標
-        self.x += self.bulletSpeed * math.cos(self.aim)
-        self.y += self.bulletSpeed * -math.sin(self.aim)
-
-#        self.x += self.direction[0] * self.speed
-
-#        self.x += self.x3 + self.intensity * self.bulletSpeed * math.cos(self.aim)
-#        self.y += self.y3 + self.intensity * self.bulletSpeed * -math.sin(self.aim)
-#        self.x = BASE_X + self.intensity * self.count * math.cos(self.aim)
-#        self.y = BASE_Y + self.intensity * self.count * -math.sin(self.aim)
-                
+        if self.isShot == True:
+            self.x += self.bulletSpeed * math.cos(self.aim)
+            self.y += self.bulletSpeed * -math.sin(self.aim)
+        else:
+            self.x = self.x3
+            self.y = self.y3
 
 	#描画関数
     def draw(self):
