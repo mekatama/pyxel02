@@ -17,7 +17,6 @@ class App:
         self.speed = 0.05   #速度
         self.intensity = 40 #揺れ幅
         self.isPlus = True
-
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -62,7 +61,7 @@ class App:
         pyxel.circ(self.x3, self.y3, 1, 7)
         pyxel.line(BASE_X, BASE_Y, self.x3,self.y3, 8)
 
-        pyxel.text(0, 0, "SPEED:%f" %self.speed, 7)
-        pyxel.text(0, 8, "intensity:%f" %self.intensity, 7)
+        pyxel.text(0,  0, "SPEED:%f" %self.speed, 7)
+        pyxel.text(0,  8, "intensity:%f" %self.intensity, 7)
 
 App()
