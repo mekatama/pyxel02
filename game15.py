@@ -1,5 +1,6 @@
 #砲台で迎撃
 import pyxel
+import math
 #画面遷移用の変数
 SCENE_TITLE = 0	    #タイトル画面
 SCENE_PLAY = 1	    #ゲーム画面
@@ -8,7 +9,6 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 WINDOW_H = 128
 WINDOW_W = 128
 PLAYER_HP = 1
-PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
 #list用意
 bullets = []
@@ -40,32 +40,16 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.dx = 0
-        self.dy = 0
         self.hp = PLAYER_HP
-        self.direction = 1
         self.is_alive = True
     def update(self):
-        #移動入力
-        if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
-            self.dx = 1
-            self.direction = 1  #右向き
-        if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
-            self.dx = -1
-            self.direction = -1 #左向き
         #攻撃入力
         if pyxel.btnp(pyxel.KEY_A):
-            if self.direction == 1:
-                Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
-            elif self.direction == -1:
-                Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
-        #Playerの位置を更新
-        self.x = self.x + self.dx
-        #移動停止
-        self.dx = 0
+            pass
+#            Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
     def draw(self):
         #editorデータ描画(player)
-        pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
+        pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
 
 class Bullet:
     def __init__(self, x, y, speed, dir):
@@ -168,7 +152,7 @@ class App:
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
-        self.player = Player(pyxel.width / 2, pyxel.height - 16)
+        self.player = Player(pyxel.width / 2 - 4, pyxel.height - 16)
 
         #仮配置
         Enemy(32, pyxel.height / 2, 0, 0,3)
