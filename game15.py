@@ -8,6 +8,7 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 #定数
 WINDOW_H = 128
 WINDOW_W = 128
+PLAYER_HW = 8
 PLAYER_HP = 1
 PLAYER_BULLET_SPEED = 4
 #list用意
@@ -40,9 +41,41 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.x3 = x
+        self.y3 = y
         self.hp = PLAYER_HP
+        self.speed = 0.05   #速度
+        self.intensity = 40 #揺れ幅
+        self.timer = 0
+        self.isPlus = True  #反転flag
         self.is_alive = True
     def update(self):
+        #debug
+        if pyxel.btn(pyxel.KEY_LEFT):
+            self.speed -= 0.001 #速度down
+        if pyxel.btn(pyxel.KEY_RIGHT):
+            self.speed += 0.001 #速度up
+        if pyxel.btn(pyxel.KEY_UP):
+            self.intensity += 0.4 #揺れ幅up
+        if pyxel.btn(pyxel.KEY_DOWN):
+            self.intensity -= 0.4 #揺れ幅down
+        #角度で反転判定
+        if self. timer < 0 and self.isPlus == False:
+            self.timer = 0
+            self.isPlus = True
+        if self.timer > math.pi and self.isPlus == True:
+            self.timer = math.pi
+            self.isPlus = False
+        #移動方向判定
+        if self.isPlus == True:
+            self.timer += self.speed
+        else:
+            self.timer -= self.speed
+        #円周上の座標
+        ##マイナスかけるのは、下方向がプラスだから
+        self.x3 = self.x + self.intensity * math.cos(self.timer)
+        self.y3 = self.y + self.intensity * -math.sin(self.timer)
+
         #攻撃入力
         if pyxel.btnp(pyxel.KEY_A):
             pass
@@ -50,6 +83,10 @@ class Player:
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
+        #debugg
+        pyxel.circ(self.x + PLAYER_HW / 2, self.y, 1, 8)
+        pyxel.circ(self.x3 + PLAYER_HW / 2, self.y3, 1, 7)
+        pyxel.line(self.x + PLAYER_HW / 2, self.y, self.x3 + PLAYER_HW / 2, self.y3, 8)
 
 class Bullet:
     def __init__(self, x, y, speed, dir):
@@ -317,6 +354,9 @@ class App:
         draw_list(enemiesUI)
         draw_list(blasts)
         draw_list(items)
+        #debug
+        pyxel.text(0,  10, "SPEED:%f" %self.player.speed, 7)
+        pyxel.text(0,  18, "intensity:%f" %self.player.intensity, 7)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
