@@ -48,8 +48,10 @@ class Player:
         self.intensity = 40 #揺れ幅
         self.timer = 0
         self.aim = 0        #攻撃角度
+        self.countStop = 0  #攻撃時の往復移動停止用
         self.isPlus = True  #反転flag
         self.isShot = False #弾発射flag
+        self.isStop = False #照準停止用
         self.is_alive = True
     def update(self):
         #debug
@@ -61,6 +63,12 @@ class Player:
             self.intensity += 0.4 #揺れ幅up
         if pyxel.btn(pyxel.KEY_DOWN):
             self.intensity -= 0.4 #揺れ幅down
+        #照準一時停止制御
+        if self.isStop == True:
+            self.countStop += 1
+            if self.countStop > 15:
+                self.isStop = False
+                self.countStop = 0
         #角度で反転判定
         if self. timer < 0 and self.isPlus == False:
             self.timer = 0
@@ -68,11 +76,12 @@ class Player:
         if self.timer > math.pi and self.isPlus == True:
             self.timer = math.pi
             self.isPlus = False
-        #移動方向判定
-        if self.isPlus == True:
-            self.timer += self.speed
-        else:
-            self.timer -= self.speed
+        #照準の往復移動
+        if self.isStop == False:
+            if self.isPlus == True:
+                self.timer += self.speed
+            else:
+                self.timer -= self.speed
         #円周上の座標
         ##マイナスかけるのは、下方向がプラスだから
         self.x3 = self.x + self.intensity * math.cos(self.timer)
@@ -84,8 +93,9 @@ class Player:
             dy = self.y3 - self.y
             self.aim = math.atan2(-dy, dx)
             self.isShot = True
+            self.isStop = True
             print(self.aim)
-            Bullet(self.x, self.y, self.x3, self.y3, PLAYER_BULLET_SPEED, self.aim)
+            Bullet(self.x + PLAYER_HW / 2, self.y, self.x3 + PLAYER_HW / 2, self.y3, PLAYER_BULLET_SPEED, self.aim)
 
     def draw(self):
         #editorデータ描画(player)
