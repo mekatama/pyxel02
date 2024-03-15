@@ -10,7 +10,7 @@ WINDOW_H = 128
 WINDOW_W = 128
 PLAYER_HW = 8
 PLAYER_HP = 1
-PLAYER_BULLET_SPEED = 4
+PLAYER_BULLET_SPEED = 8
 #list用意
 bullets = []
 enemies = []
@@ -47,7 +47,9 @@ class Player:
         self.speed = 0.05   #速度
         self.intensity = 40 #揺れ幅
         self.timer = 0
+        self.aim = 0        #攻撃角度
         self.isPlus = True  #反転flag
+        self.isShot = False #弾発射flag
         self.is_alive = True
     def update(self):
         #debug
@@ -76,10 +78,14 @@ class Player:
         self.x3 = self.x + self.intensity * math.cos(self.timer)
         self.y3 = self.y + self.intensity * -math.sin(self.timer)
 
-        #攻撃入力
-        if pyxel.btnp(pyxel.KEY_A):
-            pass
-#            Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
+        #Aボタン入力で角度決定
+        if pyxel.btnr(pyxel.KEY_A):
+            dx = self.x3 - self.x
+            dy = self.y3 - self.y
+            self.aim = math.atan2(-dy, dx)
+            self.isShot = True
+            print(self.aim)
+            Bullet(self.x, self.y, self.x3, self.y3, PLAYER_BULLET_SPEED, self.aim)
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
@@ -89,22 +95,29 @@ class Player:
         pyxel.line(self.x + PLAYER_HW / 2, self.y, self.x3 + PLAYER_HW / 2, self.y3, 8)
 
 class Bullet:
-    def __init__(self, x, y, speed, dir):
+#    def __init__(self, x, y, speed, dir):
+    def __init__(self, x, y, x3, y3, speed, aim):
         self.x = x
         self.y = y
         self.speed = speed
-        self.direction = dir
+        self.aim = aim
         self.size = 1
         self.color = 10 #colorは0～15
         self.count = 0
         self.is_alive = True
         bullets.append(self)
     def update(self):
+        #弾用座標
+        self.x += self.speed * math.cos(self.aim)
+        self.y += self.speed * -math.sin(self.aim)
+        '''
         self.x += self.speed * self.direction        #弾移動
         self.count += 1
         #一定時間で消去
         if self.count > 30:            
             self.is_alive = False   #消去
+        '''
+        pass
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
 
