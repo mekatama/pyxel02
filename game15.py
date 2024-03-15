@@ -78,7 +78,7 @@ class Player:
         self.x3 = self.x + self.intensity * math.cos(self.timer)
         self.y3 = self.y + self.intensity * -math.sin(self.timer)
 
-        #Aボタン入力で角度決定
+        #Aボタン入力で角度決定→弾生成
         if pyxel.btnr(pyxel.KEY_A):
             dx = self.x3 - self.x
             dy = self.y3 - self.y
@@ -86,6 +86,7 @@ class Player:
             self.isShot = True
             print(self.aim)
             Bullet(self.x, self.y, self.x3, self.y3, PLAYER_BULLET_SPEED, self.aim)
+
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
@@ -95,7 +96,6 @@ class Player:
         pyxel.line(self.x + PLAYER_HW / 2, self.y, self.x3 + PLAYER_HW / 2, self.y3, 8)
 
 class Bullet:
-#    def __init__(self, x, y, speed, dir):
     def __init__(self, x, y, x3, y3, speed, aim):
         self.x = x
         self.y = y
@@ -110,14 +110,6 @@ class Bullet:
         #弾用座標
         self.x += self.speed * math.cos(self.aim)
         self.y += self.speed * -math.sin(self.aim)
-        '''
-        self.x += self.speed * self.direction        #弾移動
-        self.count += 1
-        #一定時間で消去
-        if self.count > 30:            
-            self.is_alive = False   #消去
-        '''
-        pass
     def draw(self):
         pyxel.circ(self.x, self.y, self.size, self.color)
 
