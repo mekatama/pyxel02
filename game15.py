@@ -125,18 +125,30 @@ class Bullet:
 
 #■Enemy
 class Enemy:
-    def __init__(self, x, y, speed, dir, hp):
+    def __init__(self, x, y, speed, type, hp):
         self.x = x
         self.y = y
+        self.x3 = x
+        self.y3 = y
+        self.speed = speed
         self.hp = hp
-        self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.timer = 0          #円運動の半径
+        self.r = 20             #円運動の半径
+        self.type = type        #移動type 0:停止　1:円運動 2:往復
         self.is_alive = True
         enemies.append(self)
     def update(self):
-        #移動
-        pass
+        #type=1円移動
+        #円運動
+        ##マイナスかけるのは、下方向がプラスだから
+        self.timer += self.speed
+        self.x3 = self.x + self.r * math.cos(self.timer)
+        self.y3 = self.y + self.r * -math.sin(self.timer)
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        if self.type == 0:
+            pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        elif self.type == 1:
+            pyxel.blt(self.x3, self.y3, 0, 24, 0, 8, 8, 0)
 
 #■Enemy_UI
 class EnemyUI:
@@ -206,9 +218,6 @@ class App:
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2 - 4, pyxel.height - 16)
 
-        #仮配置
-        Enemy(32, pyxel.height / 2, 0, 0,3)
-
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -231,6 +240,17 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
+        #enemyのtype設定
+        #debug
+        enemyType = 1
+        spawntime = 60
+
+        #一定時間でenemy出現判定
+        if pyxel.frame_count % spawntime == 0:
+            #enemy生成
+            Enemy(pyxel.rndi(8, 112), pyxel.rndi(20, 60), 0.1, enemyType,3)
+
+        '''
         #scoreで生成間隔を制御
         if self.score < 30:
             spawntime = 30
@@ -238,6 +258,7 @@ class App:
             spawntime = 25
         elif self.score >= 70:
             spawntime = 20
+        '''
 
         #Player制御
         self.player.update()
