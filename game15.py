@@ -131,24 +131,32 @@ class Enemy:
         self.x3 = x
         self.y3 = y
         self.speed = speed
+        self.type = type        #移動type 0:停止　1:円運動 2:往復
         self.hp = hp
         self.timer = 0          #円運動の半径
         self.r = 20             #円運動の半径
-        self.type = type        #移動type 0:停止　1:円運動 2:往復
         self.is_alive = True
         enemies.append(self)
     def update(self):
-        #type=1円移動
-        #円運動
-        ##マイナスかけるのは、下方向がプラスだから
-        self.timer += self.speed
-        self.x3 = self.x + self.r * math.cos(self.timer)
-        self.y3 = self.y + self.r * -math.sin(self.timer)
+        if self.type == 1:
+            #type=1円移動
+            ##マイナスかけるのは、下方向がプラスだから
+            self.timer += self.speed
+            self.x3 = self.x + self.r * math.cos(self.timer)
+            self.y3 = self.y + self.r * -math.sin(self.timer)
+        elif self.type == 2:
+            #type=2横往復移動
+            ##マイナスかけるのは、下方向がプラスだから
+            self.timer += self.speed
+            self.x3 = self.x + self.r * math.cos(self.timer)
+
     def draw(self):
         if self.type == 0:
             pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
         elif self.type == 1:
             pyxel.blt(self.x3, self.y3, 0, 24, 0, 8, 8, 0)
+        elif self.type == 2:
+            pyxel.blt(self.x3, self.y, 0, 24, 0, 8, 8, 0)
 
 #■Enemy_UI
 class EnemyUI:
@@ -243,6 +251,7 @@ class App:
         #enemyのtype設定
         #debug
         enemyType = 1
+#        enemyType = pyxel.rndi(0, 2)
         spawntime = 60
 
         #一定時間でenemy出現判定
