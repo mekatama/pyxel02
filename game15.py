@@ -11,6 +11,7 @@ WINDOW_W = 128
 PLAYER_HW = 8
 PLAYER_HP = 1
 PLAYER_BULLET_SPEED = 8
+BOM_TIME = 30
 #list用意
 bullets = []
 enemies = []
@@ -52,6 +53,7 @@ class Player:
         self.isPlus = True  #反転flag
         self.isShot = False #弾発射flag
         self.isStop = False #照準停止用
+        self.isBom = False  #bom発射flag
         self.is_alive = True
     def update(self):
         #debug
@@ -96,6 +98,12 @@ class Player:
             self.isStop = True
             print(self.aim)
             Bullet(self.x + PLAYER_HW / 2, self.y, self.x3 + PLAYER_HW / 2, self.y3, PLAYER_BULLET_SPEED, self.aim)
+        #debug
+        #Zボタン入力で一時停止ボム
+        if pyxel.btnp(pyxel.KEY_Z):
+            self.isBom = True
+        if pyxel.btnr(pyxel.KEY_Z):
+            self.isBom = False
 
     def draw(self):
         #editorデータ描画(player)
@@ -135,20 +143,28 @@ class Enemy:
         self.hp = hp
         self.timer = 0          #円運動の半径
         self.r = 20             #円運動の半径
+        self.countStop = 0      #一時停止count
+        self.isStop = False     #一時停止flag
         self.is_alive = True
         enemies.append(self)
     def update(self):
-        if self.type == 1:
-            #type=1円移動
-            ##マイナスかけるのは、下方向がプラスだから
-            self.timer += self.speed
-            self.x3 = self.x + self.r * math.cos(self.timer)
-            self.y3 = self.y + self.r * -math.sin(self.timer)
-        elif self.type == 2:
-            #type=2横往復移動
-            ##マイナスかけるのは、下方向がプラスだから
-            self.timer += self.speed
-            self.x3 = self.x + self.r * math.cos(self.timer)
+        if self.isStop == False:
+            if self.type == 1:
+                #type=1円移動
+                ##マイナスかけるのは、下方向がプラスだから
+                self.timer += self.speed
+                self.x3 = self.x + self.r * math.cos(self.timer)
+                self.y3 = self.y + self.r * -math.sin(self.timer)
+            elif self.type == 2:
+                #type=2横往復移動
+                ##マイナスかけるのは、下方向がプラスだから
+                self.timer += self.speed
+                self.x3 = self.x + self.r * math.cos(self.timer)
+        else:
+            self.countStop += 1
+            if self.countStop > BOM_TIME:
+                self.countStop = 0
+                self.isStop = False
 
     def draw(self):
         if self.type == 0:
@@ -271,6 +287,12 @@ class App:
 
         #Player制御
         self.player.update()
+        #一時停止処理
+        if self.player.isBom == True:
+            #Enemy全部処理
+            for enemy in enemies:
+                enemy.isStop = True
+
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
