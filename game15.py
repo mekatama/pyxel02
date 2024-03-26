@@ -161,6 +161,7 @@ class Enemy:
                 self.timer += self.speed
                 self.x3 = self.x + self.r * math.cos(self.timer)
         else:
+            #一時停止
             self.countStop += 1
             if self.countStop > BOM_TIME:
                 self.countStop = 0
@@ -266,7 +267,7 @@ class App:
     def update_play_scene(self):
         #enemyのtype設定
         #debug
-        enemyType = 1
+        enemyType = 0
 #        enemyType = pyxel.rndi(0, 2)
         spawntime = 60
 
@@ -296,10 +297,18 @@ class App:
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
-                if (enemy.x + 8    > bullet.x and
-                    enemy.x         < bullet.x + 2 and
-                    enemy.y + 8    > bullet.y and
-                    enemy.y         < bullet.y + 2):
+                if((enemy.x + 8    > bullet.x - 1 and
+                    enemy.x        < bullet.x + 1 and
+                    enemy.y + 8    > bullet.y - 1 and
+                    enemy.y        < bullet.y + 1 and enemy.type == 0) or
+                   (enemy.x3 + 8   > bullet.x - 1 and
+                    enemy.x3       < bullet.x + 1 and
+                    enemy.y3 + 8   > bullet.y - 1 and
+                    enemy.y3       < bullet.y + 1 and enemy.type == 1) or
+                   (enemy.x3 + 8   > bullet.x - 1 and
+                    enemy.x3       < bullet.x + 1 and
+                    enemy.y + 8    > bullet.y - 1 and
+                    enemy.y        < bullet.y + 1 and enemy.type == 2)):
                     #Hit時の処理
                     enemy.hp -= 1
                     bullet.is_alive = False
