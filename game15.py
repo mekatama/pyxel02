@@ -424,6 +424,9 @@ class App:
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
+        pyxel.text(4, 26, "STOP", 7)
+        pyxel.rect(20, 26, 100, 5, 7)
+#        pyxel.rect(20, 16, self.player.fuel, 5, 7)
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
