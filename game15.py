@@ -50,6 +50,7 @@ class Player:
         self.timer = 0
         self.aim = 0        #攻撃角度
         self.countStop = 0  #攻撃時の往復移動停止用
+        self.stopPower = 50 #一時停止発動用のpower
         self.isPlus = True  #反転flag
         self.isShot = False #弾発射flag
         self.isStop = False #照準停止用
@@ -425,8 +426,7 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         pyxel.text(4, 26, "STOP", 7)
-        pyxel.rect(20, 26, 100, 5, 7)
-#        pyxel.rect(20, 16, self.player.fuel, 5, 7)
+        pyxel.rect(20, 26, self.player.stopPower, 5, 7)
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
