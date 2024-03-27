@@ -12,6 +12,7 @@ PLAYER_HW = 8
 PLAYER_HP = 1
 PLAYER_BULLET_SPEED = 8
 BOM_TIME = 30
+STOP_POWER = 10
 #list用意
 bullets = []
 enemies = []
@@ -362,7 +363,9 @@ class App:
                 self.player.y + 12  > item.y + 4 and
                 self.player.y + 4   < item.y + 12):
                 #Hit時の処理
-                self.score += 10
+                self.player.stopPower += STOP_POWER
+                if self.player.stopPower > 100:
+                    self.player.stopPower = 100
                 item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
@@ -426,7 +429,7 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         pyxel.text(4, 26, "STOP", 7)
-        pyxel.rect(20, 26, self.player.stopPower, 5, 7)
+        pyxel.rect(22, 26, self.player.stopPower, 5, 7)
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
