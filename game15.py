@@ -12,7 +12,8 @@ PLAYER_HW = 8
 PLAYER_HP = 1
 PLAYER_BULLET_SPEED = 8
 BOM_TIME = 30
-STOP_POWER = 10
+STOP_POWER = 2
+USE_POWER = 15
 #list用意
 bullets = []
 enemies = []
@@ -103,7 +104,9 @@ class Player:
         #debug
         #Zボタン入力で一時停止ボム
         if pyxel.btnp(pyxel.KEY_Z):
-            self.isBom = True
+            if self.stopPower >= 10:
+                self.isBom = True
+                self.stopPower -= USE_POWER
         if pyxel.btnr(pyxel.KEY_Z):
             self.isBom = False
 
@@ -269,8 +272,8 @@ class App:
     def update_play_scene(self):
         #enemyのtype設定
         #debug
-        enemyType = 0
-#        enemyType = pyxel.rndi(0, 2)
+#        enemyType = 0
+        enemyType = pyxel.rndi(0, 2)
         spawntime = 60
 
         #一定時間でenemy出現判定
