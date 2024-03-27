@@ -432,7 +432,10 @@ class App:
     #ゲーム画面描画用update
     def draw_play_scene(self):
         pyxel.text(4, 26, "STOP", 7)
-        pyxel.rect(22, 26, self.player.stopPower, 5, 7)
+        if self.player.stopPower < 10:
+            pyxel.rect(22, 26, self.player.stopPower, 5, 4)
+        else:
+            pyxel.rect(22, 26, self.player.stopPower, 5, 7)
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
