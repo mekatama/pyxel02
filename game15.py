@@ -14,6 +14,7 @@ PLAYER_BULLET_SPEED = 8
 BOM_TIME = 30
 STOP_POWER = 2
 USE_POWER = 15
+ENEMY_MOVECOUNT =60 
 #list用意
 bullets = []
 enemies = []
@@ -149,12 +150,20 @@ class Enemy:
         self.timer = 0          #円運動の半径
         self.r = 20             #円運動の半径
         self.countStop = 0      #一時停止count
+        self.countMove = 0      #前進用のcount
         self.isStop = False     #一時停止flag
         self.is_alive = True
         enemies.append(self)
     def update(self):
+        self.countMove += 1
         if self.isStop == False:
-            if self.type == 1:
+            #前進判定
+            if self.countMove > ENEMY_MOVECOUNT:
+                self.y += 1
+                self.countMove = 0
+            if self.type == 0:
+                pass
+            elif self.type == 1:
                 #type=1円移動
                 ##マイナスかけるのは、下方向がプラスだから
                 self.timer += self.speed
@@ -272,8 +281,8 @@ class App:
     def update_play_scene(self):
         #enemyのtype設定
         #debug
-#        enemyType = 0
-        enemyType = pyxel.rndi(0, 2)
+        enemyType = 2
+#        enemyType = pyxel.rndi(0, 2)
         spawntime = 60
 
         #一定時間でenemy出現判定
