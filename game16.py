@@ -55,7 +55,8 @@ class Player:
         if (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
             self.dy = PLAYER_SPEED
         #攻撃入力
-        if pyxel.btnp(pyxel.KEY_A):
+        #一定時間で自動射撃
+        if pyxel.frame_count % 6 == 0:
             Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8)
         #Playerの位置を更新
         self.x = self.x + self.dx
@@ -168,7 +169,7 @@ class Item:
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
-        pyxel.init(WINDOW_W, WINDOW_H, title="Pyxel Base")
+        pyxel.init(WINDOW_W, WINDOW_H, title="TATE STG", fps = 60)
         #editorデータ読み込み(コードと同じフォルダにある)
         pyxel.load("my_resource10.pyxres")
         self.score = 0
