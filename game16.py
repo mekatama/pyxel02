@@ -104,13 +104,20 @@ class Enemy:
         self.y = y
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.isDamage = False
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #移動
         pass
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        if self.isDamage == False:
+            #通常
+            pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        else:
+            #ダメージ発生
+            pyxel.blt(self.x, self.y, 0, 24, 8, 8, 8, 0)
+            self.isDamage = False
 
 #■Enemy_UI
 class EnemyUI:
@@ -172,7 +179,7 @@ class App:
         #画面サイズの設定　titleはwindow枠にtext出せる
         pyxel.init(WINDOW_W, WINDOW_H, title="TATE STG", fps = 60)
         #editorデータ読み込み(コードと同じフォルダにある)
-        pyxel.load("my_resource10.pyxres")
+        pyxel.load("my_resource16.pyxres")
         self.score = 0
         self.highScore = 0
         #画面遷移の初期化
@@ -224,6 +231,7 @@ class App:
                     enemy.y         < bullet.y + 2):
                     #Hit時の処理
                     enemy.hp -= 1
+                    enemy.isDamage = True
                     bullet.is_alive = False
                     #残りHP判定
                     if enemy.hp <= 0:
