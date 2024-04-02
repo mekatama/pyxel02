@@ -43,6 +43,7 @@ class Player:
         self.dx = 0
         self.dy = 0
         self.hp = PLAYER_HP
+        self.shotType = 1
         self.is_alive = True
     def update(self):
         #移動入力
@@ -57,7 +58,11 @@ class Player:
         #攻撃入力
         #一定時間で自動射撃
         if pyxel.frame_count % 6 == 0:
-            Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8)
+            if self.shotType == 0:
+                Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8, 0)
+            elif self.shotType == 1:
+                Bullet(self.x + 6, self.y + 2, PLAYER_BULLET_SPEED, 8, 0)
+                Bullet(self.x + 2, self.y + 2, PLAYER_BULLET_SPEED, 8, 0)
         #Playerの位置を更新
         self.x = self.x + self.dx
         self.y = self.y + self.dy
@@ -69,11 +74,12 @@ class Player:
             pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
 
 class Bullet:
-    def __init__(self, x, y, speed, dir):
+    def __init__(self, x, y, speed, dir, type):
         self.x = x
         self.y = y
-        self.speed = speed
         self.direction = dir
+        self.speed = speed
+        self.type = type
         self.size = 1
         self.color = 10 #colorは0～15
         self.count = 0
@@ -81,16 +87,11 @@ class Bullet:
         bullets.append(self)
     def update(self):
         #弾移動
-        if self.direction == 6:     #右向き
-            self.x += self.speed
-        elif self.direction == 4:   #左向き
-            self.x -= self.speed
-        elif self.direction == 8:   #上向き
+        if self.type == 0 or self.type == 1:
             self.y -= self.speed
-        elif self.direction == 2:   #下向き
-            self.y += self.speed
-        self.count += 1
+
         #一定時間で消去
+        self.count += 1
         if self.count > 30:            
             self.is_alive = False   #消去
     def draw(self):
@@ -180,7 +181,7 @@ class App:
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
 
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, 0,3)
+        Enemy(32, pyxel.height / 2, 0, 0,20)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
