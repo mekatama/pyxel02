@@ -1,5 +1,6 @@
 #縦STGmaster
 import pyxel
+import math
 #画面遷移用の変数
 SCENE_TITLE = 0	    #タイトル画面
 SCENE_PLAY = 1	    #ゲーム画面
@@ -16,6 +17,7 @@ enemies = []
 enemiesUI = []
 blasts = []
 items = []
+particles = []
 
 #関数(List実行)
 def update_list(list):
@@ -155,6 +157,32 @@ class Blast:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
 
+#■Particle
+class Particle:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.timer = 0
+        self.count = 0
+        self.speed = 0.5     #速度
+        self.aim = 0        #攻撃角度
+        self.is_alive = True
+        particles.append(self)
+    def update(self):
+        #一定間隔で角度決定→消滅
+        self.count += 1
+        if self.count == 2:
+            self.aim = pyxel.rndf(0, 2 * math.pi)
+            print(self.aim)
+        if self.count >= 180:
+            self.is_alive = False
+        #弾用aim移動
+        self.x += self.speed * math.cos(self.aim)
+        self.y += self.speed * -math.sin(self.aim)
+    def draw(self):
+        pyxel.circ(self.x, self.y, 1, 7)
+#        pyxel.blt(self.x, self.y, 0, 16, 0 + 8, 8, 8, 0)
+
 #■Item
 class Item:
     def __init__(self, x, y):
@@ -189,7 +217,7 @@ class App:
 
         #仮配置
         Enemy(32, pyxel.height / 2, 0, 0,20)
-
+        Particle(64,64)
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -296,12 +324,14 @@ class App:
         update_list(enemiesUI)
         update_list(blasts)
         update_list(items)
+        update_list(particles)
         #list更新
         cleanup_list(bullets)
         cleanup_list(enemies)
         cleanup_list(enemiesUI)
         cleanup_list(blasts)
         cleanup_list(items)
+        cleanup_list(particles)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -318,6 +348,7 @@ class App:
             enemiesUI.clear()                     #list全要素削除
             blasts.clear()                     #list全要素削除
             items.clear()                     #list全要素削除
+            particles.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -351,6 +382,7 @@ class App:
         draw_list(enemiesUI)
         draw_list(blasts)
         draw_list(items)
+        draw_list(particles)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
