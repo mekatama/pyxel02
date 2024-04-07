@@ -150,10 +150,10 @@ class Blast:
         blasts.append(self)
     def update(self):
         self.count += 1
-        if self.count >= 10:
+        if self.count >= 13:
             self.is_alive = False
     def draw(self):
-        pyxel.circb(self.x + 4, self.y + 4, 2, 7)
+        pyxel.circb(self.x + 4, self.y + 4, self.count, 7)
 
 #■Particle
 class Particle:
@@ -228,7 +228,9 @@ class App:
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
 
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, 0,20)
+        Enemy(30, 50, 0, 0,20)
+        Enemy(45, 50, 0, 0,20)
+        Enemy(60, 50, 0, 0,20)
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
