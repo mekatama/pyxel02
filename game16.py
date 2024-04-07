@@ -164,7 +164,7 @@ class Particle:
         self.y = y
         self.timer = 0
         self.count = 0
-        self.speed = 0.5     #速度
+        self.speed = 2     #速度
         self.aim = 0        #攻撃角度
         self.is_alive = True
         particles.append(self)
@@ -174,14 +174,18 @@ class Particle:
         if self.count == 2:
             self.aim = pyxel.rndf(0, 2 * math.pi)
             print(self.aim)
-        if self.count >= 180:
+        if self.count >= 15:
             self.is_alive = False
         #弾用aim移動
         self.x += self.speed * math.cos(self.aim)
         self.y += self.speed * -math.sin(self.aim)
     def draw(self):
-        pyxel.circ(self.x, self.y, 1, 7)
-#        pyxel.blt(self.x, self.y, 0, 16, 0 + 8, 8, 8, 0)
+        if self.count < 5:
+            pyxel.circb(self.x, self.y, 5, 7)
+        elif self.count >= 5 and self.count < 10:
+            pyxel.circb(self.x, self.y, 2, 7)
+        elif self.count > 10:
+            pyxel.circb(self.x, self.y, 1, 7)
 
 #■Item
 class Item:
@@ -217,7 +221,6 @@ class App:
 
         #仮配置
         Enemy(32, pyxel.height / 2, 0, 0,20)
-        Particle(64,64)
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -273,6 +276,10 @@ class App:
                         items.append(
                             Item(enemy.x, enemy.y)
                         )
+#                        for i in range(12):
+#                            particles.append(
+#                                Particle(enemy.x, enemy.y)
+#                            )
                         self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 
