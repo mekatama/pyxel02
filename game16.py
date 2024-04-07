@@ -146,17 +146,14 @@ class Blast:
         self.x = x
         self.y = y
         self.count = 0
-        self.motion = 0         #アニメ切り替え用
         self.is_alive = True
         blasts.append(self)
     def update(self):
         self.count += 1
-        if self.count >= 5 and self.count < 10:
-            self.motion = 1
-        elif self.count >= 10:
+        if self.count >= 10:
             self.is_alive = False
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
+        pyxel.circb(self.x + 4, self.y + 4, 2, 7)
 
 #■Particle
 class Particle:
@@ -165,28 +162,23 @@ class Particle:
         self.y = y
         self.timer = 0
         self.count = 0
-        self.speed = 2     #速度
+        self.speed = 0.2     #速度
         self.aim = 0        #攻撃角度
         self.is_alive = True
         particles.append(self)
     def update(self):
         #一定間隔で角度決定→消滅
         self.count += 1
-        if self.count == 2:
+        if self.count == 1:
             self.aim = pyxel.rndf(0, 2 * math.pi)
             print(self.aim)
-        if self.count >= 15:
+        if self.count >= 30 + pyxel.rndi(1, 50):
             self.is_alive = False
-        #弾用aim移動
+        #弾用aim移動ヒットeffectは円表示
         self.x += self.speed * math.cos(self.aim)
         self.y += self.speed * -math.sin(self.aim)
     def draw(self):
-        if self.count < 5:
-            pyxel.circb(self.x, self.y, 5, 7)
-        elif self.count >= 5 and self.count < 10:
-            pyxel.circb(self.x, self.y, 2, 7)
-        elif self.count > 10:
-            pyxel.circb(self.x, self.y, 1, 7)
+        pyxel.pset(self.x + 4, self.y + 4, 7)
 
 #■HitParticle
 class HitParticle:
@@ -295,10 +287,10 @@ class App:
                         items.append(
                             Item(enemy.x, enemy.y)
                         )
-#                        for i in range(12):
-#                            particles.append(
-#                                Particle(enemy.x, enemy.y)
-#                            )
+                        for i in range(10):
+                            particles.append(
+                                Particle(enemy.x, enemy.y)
+                            )
                         self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 
