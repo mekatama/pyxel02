@@ -18,6 +18,7 @@ enemiesUI = []
 blasts = []
 items = []
 particles = []
+hitparticles = []
 
 #関数(List実行)
 def update_list(list):
@@ -187,6 +188,21 @@ class Particle:
         elif self.count > 10:
             pyxel.circb(self.x, self.y, 1, 7)
 
+#■HitParticle
+class HitParticle:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.count = 0
+        self.is_alive = True
+        hitparticles.append(self)
+    def update(self):
+        self.count += 1
+        if self.count >= 10:
+            self.is_alive = False
+    def draw(self):
+        pyxel.circb(self.x - 1, self.y + 2, 2, 7)
+
 #■Item
 class Item:
     def __init__(self, x, y):
@@ -263,6 +279,9 @@ class App:
                     #Hit時の処理
                     enemy.hp -= 1
                     enemy.isDamage = True
+                    hitparticles.append(
+                        HitParticle(bullet.x + 1, bullet.y)
+                    )
                     bullet.is_alive = False
                     #残りHP判定
                     if enemy.hp <= 0:
@@ -332,6 +351,7 @@ class App:
         update_list(blasts)
         update_list(items)
         update_list(particles)
+        update_list(hitparticles)
         #list更新
         cleanup_list(bullets)
         cleanup_list(enemies)
@@ -339,6 +359,7 @@ class App:
         cleanup_list(blasts)
         cleanup_list(items)
         cleanup_list(particles)
+        cleanup_list(hitparticles)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -356,6 +377,7 @@ class App:
             blasts.clear()                     #list全要素削除
             items.clear()                     #list全要素削除
             particles.clear()                     #list全要素削除
+            hitparticles.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -390,6 +412,7 @@ class App:
         draw_list(blasts)
         draw_list(items)
         draw_list(particles)
+        draw_list(hitparticles)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
