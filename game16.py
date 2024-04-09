@@ -46,7 +46,7 @@ class Player:
         self.dx = 0
         self.dy = 0
         self.hp = PLAYER_HP
-        self.shotType = 2
+        self.shotType = 0
         self.is_alive = True
     def update(self):
         #移動入力
@@ -282,6 +282,12 @@ class App:
                     hitparticles.append(
                         HitParticle(bullet.x + 1, bullet.y)
                     )
+                    #HitParticle
+                    for i in range(2):
+                        particles.append(
+                            Particle(enemy.x, enemy.y)
+                        )
+                    #レーザーは貫通する
                     if bullet.type != 2:
                         bullet.is_alive = False
                     #残りHP判定
