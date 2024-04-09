@@ -46,7 +46,7 @@ class Player:
         self.dx = 0
         self.dy = 0
         self.hp = PLAYER_HP
-        self.shotType = 1
+        self.shotType = 2
         self.is_alive = True
     def update(self):
         #移動入力
@@ -64,8 +64,11 @@ class Player:
             if self.shotType == 0:
                 Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8, 0)
             elif self.shotType == 1:
-                Bullet(self.x + 6, self.y + 2, PLAYER_BULLET_SPEED, 8, 0)
-                Bullet(self.x + 2, self.y + 2, PLAYER_BULLET_SPEED, 8, 0)
+                Bullet(self.x + 6, self.y + 2, PLAYER_BULLET_SPEED, 8, 1)
+                Bullet(self.x + 2, self.y + 2, PLAYER_BULLET_SPEED, 8, 1)
+            elif self.shotType == 2:
+                Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8, 2)
+
         #Playerの位置を更新
         self.x = self.x + self.dx
         self.y = self.y + self.dy
@@ -90,7 +93,7 @@ class Bullet:
         bullets.append(self)
     def update(self):
         #弾移動
-        if self.type == 0 or self.type == 1:
+        if self.type == 0 or self.type == 1 or self.type == 2:
             self.y -= self.speed
 
         #一定時間で消去
@@ -98,7 +101,10 @@ class Bullet:
         if self.count > 30:            
             self.is_alive = False   #消去
     def draw(self):
-        pyxel.circ(self.x, self.y, self.size, self.color)
+        if self.type == 0 or self.type == 1:
+            pyxel.pset(self.x, self.y, self.color)
+        elif self.type == 2:
+            pyxel.pset(self.x, self.y, self.color)
 
 #■Enemy
 class Enemy:
@@ -276,7 +282,8 @@ class App:
                     hitparticles.append(
                         HitParticle(bullet.x + 1, bullet.y)
                     )
-                    bullet.is_alive = False
+                    if bullet.type != 2:
+                        bullet.is_alive = False
                     #残りHP判定
                     if enemy.hp <= 0:
                         enemy.is_alive = False
