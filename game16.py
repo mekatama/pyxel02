@@ -46,7 +46,7 @@ class Player:
         self.dx = 0
         self.dy = 0
         self.hp = PLAYER_HP
-        self.shotType = 0
+        self.shotType = 3   #0:シングル 1:ダブル 2:レーザー 3:3way
         self.is_alive = True
     def update(self):
         #移動入力
@@ -62,12 +62,16 @@ class Player:
         #一定時間で自動射撃
         if pyxel.frame_count % 6 == 0:
             if self.shotType == 0:
-                Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8, 0)
+                Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8, 0, 1)
             elif self.shotType == 1:
-                Bullet(self.x + 6, self.y + 2, PLAYER_BULLET_SPEED, 8, 1)
-                Bullet(self.x + 2, self.y + 2, PLAYER_BULLET_SPEED, 8, 1)
+                Bullet(self.x + 6, self.y + 2, PLAYER_BULLET_SPEED, 8, 1, 1)
+                Bullet(self.x + 2, self.y + 2, PLAYER_BULLET_SPEED, 8, 1, 1)
             elif self.shotType == 2:
-                Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8, 2)
+                Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8, 2, 1)
+            elif self.shotType == 3:
+                Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8, 3, 1)
+                Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8, 3, 2)
+                Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, 8, 3, 3)
 
         #Playerの位置を更新
         self.x = self.x + self.dx
@@ -80,12 +84,13 @@ class Player:
             pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
 
 class Bullet:
-    def __init__(self, x, y, speed, dir, type):
+    def __init__(self, x, y, speed, dir, type, way):
         self.x = x
         self.y = y
         self.direction = dir
         self.speed = speed
         self.type = type
+        self.way = way
         self.size = 1
         self.color = 10 #colorは0～15
         self.count = 0
@@ -95,15 +100,27 @@ class Bullet:
         #弾移動
         if self.type == 0 or self.type == 1 or self.type == 2:
             self.y -= self.speed
+        elif self.type == 3:
+            self.y -= self.speed
+            if self.way == 1:
+                self.x -= 1
+            elif self.way == 2:
+                self.x += 1
+            elif self.way == 3:
+                pass
 
         #一定時間で消去
         self.count += 1
         if self.count > 30:            
             self.is_alive = False   #消去
     def draw(self):
-        if self.type == 0 or self.type == 1:
+        if self.type == 0:
+            pyxel.pset(self.x, self.y, self.color)
+        elif self.type == 1:
             pyxel.pset(self.x, self.y, self.color)
         elif self.type == 2:
+            pyxel.pset(self.x, self.y, self.color)
+        elif self.type == 3:
             pyxel.pset(self.x, self.y, self.color)
 
 #■Enemy
