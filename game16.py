@@ -47,7 +47,7 @@ class Player:
         self.dx = 0
         self.dy = 0
         self.hp = PLAYER_HP
-        self.shotType = 3   #0:シングル 1:ダブル 2:レーザー 3:3way
+        self.shotType = 0   #0:シングル 1:ダブル 2:レーザー 3:3way
         self.is_alive = True
     def update(self):
         #移動入力
@@ -83,6 +83,28 @@ class Player:
     def draw(self):
         #editorデータ描画(player)
             pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
+
+#■Option
+class Option:
+    def __init__(self, x, y):
+        self.x1 = x
+        self.x2 = x
+        self.y = y
+        self.is_alive = True
+        options.append(self)
+    def update(self):
+        #移動
+        self.x1 = self.x
+        self.x2 = self.x
+        self.y = self.y
+        #攻撃入力
+        #一定時間で自動射撃
+        if pyxel.frame_count % 6 == 0:
+            Bullet(self.x1 + 12, self.y + 2, PLAYER_BULLET_SPEED, 7, 0, 1)
+            Bullet(self.x2 -  5, self.y + 2, PLAYER_BULLET_SPEED, 7, 0, 1)
+    def draw(self):
+        pyxel.circb(self.x1 + 12, self.y + 4, 2, 7)
+        pyxel.circb(self.x2 -  5, self.y + 4, 2, 7)
 
 class Bullet:
     def __init__(self, x, y, speed, dir, type, way):
@@ -237,22 +259,6 @@ class Item:
             self.motion = 1
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
-
-#■Option
-class Option:
-    def __init__(self, x, y):
-        self.x1 = x
-        self.x2 = x
-        self.y = y
-        self.is_alive = True
-        options.append(self)
-    def update(self):
-        self.x1 = self.x
-        self.x2 = self.x
-        self.y = self.y
-    def draw(self):
-        pyxel.circb(self.x1 + 12, self.y + 4, 2, 7)
-        pyxel.circb(self.x2 -  5, self.y + 4, 2, 7)
 
 class App:
     def __init__(self):
