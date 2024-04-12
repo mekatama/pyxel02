@@ -19,6 +19,7 @@ blasts = []
 items = []
 particles = []
 hitparticles = []
+options = []
 
 #関数(List実行)
 def update_list(list):
@@ -237,6 +238,22 @@ class Item:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
 
+#■Option
+class Option:
+    def __init__(self, x, y):
+        self.x1 = x
+        self.x2 = x
+        self.y = y
+        self.is_alive = True
+        options.append(self)
+    def update(self):
+        self.x1 = self.x
+        self.x2 = self.x
+        self.y = self.y
+    def draw(self):
+        pyxel.circb(self.x1 + 12, self.y + 4, 2, 7)
+        pyxel.circb(self.x2 -  5, self.y + 4, 2, 7)
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
@@ -249,6 +266,13 @@ class App:
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
+        #[]Option表示
+        options.append(
+            Option(self.player.x + 8, self.player.y)
+        )
+        options.append(
+            Option(self.player.x - 8, self.player.y)
+        )
 
         #仮配置
         Enemy(30, 50, 0, 0,20)
@@ -286,6 +310,7 @@ class App:
 
         #Player制御
         self.player.update()
+
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
@@ -325,6 +350,11 @@ class App:
                             )
                         self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
+
+        #option制御
+        for option in options:
+            option.x = self.player.x
+            option.y = self.player.y
 
         #EnemyとPlayerの当たり判定
         for enemy in enemies:
@@ -376,6 +406,7 @@ class App:
         update_list(items)
         update_list(particles)
         update_list(hitparticles)
+        update_list(options)
         #list更新
         cleanup_list(bullets)
         cleanup_list(enemies)
@@ -384,6 +415,7 @@ class App:
         cleanup_list(items)
         cleanup_list(particles)
         cleanup_list(hitparticles)
+        cleanup_list(options)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -402,6 +434,7 @@ class App:
             items.clear()                     #list全要素削除
             particles.clear()                     #list全要素削除
             hitparticles.clear()                     #list全要素削除
+            options.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -437,6 +470,7 @@ class App:
         draw_list(items)
         draw_list(particles)
         draw_list(hitparticles)
+        draw_list(options)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
