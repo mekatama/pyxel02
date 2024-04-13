@@ -11,6 +11,7 @@ WINDOW_W = 128
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
+BG_SCROLL = 1
 #list用意
 bullets = []
 enemies = []
@@ -20,6 +21,7 @@ items = []
 particles = []
 hitparticles = []
 options = []
+bgs = []
 
 #関数(List実行)
 def update_list(list):
@@ -82,7 +84,7 @@ class Player:
         self.dy = 0
     def draw(self):
         #editorデータ描画(player)
-            pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
+        pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8, 0)
 
 #■Option
 class Option:
@@ -217,7 +219,7 @@ class Particle:
         self.count += 1
         if self.count == 1:
             self.aim = pyxel.rndf(0, 2 * math.pi)
-            print(self.aim)
+#            print(self.aim)
         if self.count >= 30 + pyxel.rndi(1, 50):
             self.is_alive = False
         #弾用aim移動ヒットeffectは円表示
@@ -260,6 +262,30 @@ class Item:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
 
+#■BG
+class Bg:
+    def __init__(self, x, y, side):
+        self.x = x
+        self.y = y
+        self.side = side
+        self.is_nextBG = False
+        self.is_alive = True
+        bgs.append(self)
+    def update(self):
+        #BGスクロール
+        self.y += BG_SCROLL
+        if self.y == 0:
+            self.is_nextBG = True
+        if self.y >= 128:
+            self.is_nextBG = False
+            self.is_alive = False
+    def draw(self):
+        if self.side == 0:
+            pyxel.blt(self.x, self.y, 0, 40, 0, -8, 128, 0)
+        elif self.side == 1:
+            pyxel.blt(self.x, self.y, 0, 40, 0, 8, 128, 0)
+            
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
@@ -272,14 +298,20 @@ class App:
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
-        #[]Option表示
+        #[debug]Option表示
         options.append(
             Option(self.player.x + 8, self.player.y)
         )
         options.append(
             Option(self.player.x - 8, self.player.y)
         )
-
+        #BGs初期化
+        bgs.append(
+            Bg(0, -128, 0)
+        )
+        bgs.append(
+            Bg(120, -128, 1)
+        )
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -320,6 +352,18 @@ class App:
 
         #Player制御
         self.player.update()
+        #BG制御 表示するグループ単位で判定する
+        for bg in bgs:
+            if bg.is_nextBG == True and bg.is_alive == True and bg.side == 0:
+                bgs.append(
+                    Bg(0, -128, 0)
+                )
+                bg.is_nextBG = False
+            if bg.is_nextBG == True and bg.is_alive == True and bg.side == 1:
+                bgs.append(
+                    Bg(120, -128, 1)
+                )
+                bg.is_nextBG = False
 
         #EnemyとBulletの当たり判定
         for enemy in enemies:
@@ -417,6 +461,7 @@ class App:
         update_list(particles)
         update_list(hitparticles)
         update_list(options)
+        update_list(bgs)
         #list更新
         cleanup_list(bullets)
         cleanup_list(enemies)
@@ -426,6 +471,7 @@ class App:
         cleanup_list(particles)
         cleanup_list(hitparticles)
         cleanup_list(options)
+        cleanup_list(bgs)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -445,6 +491,7 @@ class App:
             particles.clear()                     #list全要素削除
             hitparticles.clear()                     #list全要素削除
             options.clear()                     #list全要素削除
+            bgs.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -481,6 +528,7 @@ class App:
         draw_list(particles)
         draw_list(hitparticles)
         draw_list(options)
+        draw_list(bgs)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
