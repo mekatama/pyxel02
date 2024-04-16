@@ -14,6 +14,7 @@ PLAYER_BULLET_SPEED = 4
 BG_SCROLL = 1
 #list用意
 bullets = []
+enemybullets = []
 enemies = []
 enemiesUI = []
 blasts = []
@@ -161,6 +162,10 @@ class Enemy:
     def update(self):
         #移動
         pass
+        #一定時間で自動射撃
+        if pyxel.frame_count % 60 == 0:
+            EnemyBullet(self.x, self.y, 2, 0, 0, 1)
+
     def draw(self):
         if self.isDamage == False:
             #通常
@@ -169,6 +174,32 @@ class Enemy:
             #ダメージ発生
             pyxel.blt(self.x, self.y, 0, 24, 8, 8, 8, 0)
             self.isDamage = False
+
+#■EnemyBullet
+class EnemyBullet:
+    def __init__(self, x, y, speed, dir, type, way):
+        self.x = x
+        self.y = y
+        self.direction = dir
+        self.speed = speed
+        self.type = type
+        self.way = way
+        self.size = 1
+        self.color = 10 #colorは0～15
+        self.count = 0
+        self.is_alive = True
+        enemybullets.append(self)
+    def update(self):
+        #弾移動
+        if self.type == 0:
+            self.y += self.speed
+        #一定時間で消去
+        self.count += 1
+        if self.count > 30:            
+            self.is_alive = False   #消去
+    def draw(self):
+        if self.type == 0:
+            pyxel.pset(self.x + 4, self.y + 8, self.color)
 
 #■Enemy_UI
 class EnemyUI:
@@ -454,6 +485,7 @@ class App:
 
         #list実行
         update_list(bullets)
+        update_list(enemybullets)
         update_list(enemies)
         update_list(enemiesUI)
         update_list(blasts)
@@ -464,6 +496,7 @@ class App:
         update_list(bgs)
         #list更新
         cleanup_list(bullets)
+        cleanup_list(enemybullets)
         cleanup_list(enemies)
         cleanup_list(enemiesUI)
         cleanup_list(blasts)
@@ -484,6 +517,7 @@ class App:
             self.scene = SCENE_TITLE
             #list全要素削除
             bullets.clear()                     #list全要素削除
+            enemybullets.clear()                     #list全要素削除
             enemies.clear()                     #list全要素削除
             enemiesUI.clear()                     #list全要素削除
             blasts.clear()                     #list全要素削除
@@ -519,8 +553,10 @@ class App:
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
+        draw_list(bgs)
         self.player.draw()
         draw_list(bullets)
+        draw_list(enemybullets)
         draw_list(enemies)
         draw_list(enemiesUI)
         draw_list(blasts)
@@ -528,7 +564,6 @@ class App:
         draw_list(particles)
         draw_list(hitparticles)
         draw_list(options)
-        draw_list(bgs)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
