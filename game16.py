@@ -11,6 +11,7 @@ WINDOW_W = 128
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
+ENEMY_BULLET_SPEED = 0.5
 BG_SCROLL = 1
 #list用意
 bullets = []
@@ -167,7 +168,9 @@ class Enemy:
         #一定時間で自動射撃
         if pyxel.frame_count % 60 == 0:
             if self.atkType == 0:
-                EnemyBullet(self.x, self.y, 2, 0, self.atkType, 1)
+                enemybullets.append(
+                    EnemyBullet(self.x, self.y, ENEMY_BULLET_SPEED, 0, self.atkType, 1)
+                )
             elif self.atkType == 1:
                 self.isFire = True 
 
@@ -206,11 +209,12 @@ class EnemyBullet:
             pass
         #一定時間で消去
         self.count += 1
-        if self.count > 60:            
+        if self.count > 180:            
             self.is_alive = False   #消去
     def draw(self):
         if self.type == 0 or self.type == 1:
-            pyxel.pset(self.x + 4, self.y + 8, self.color)
+#            pyxel.pset(self.x + 4, self.y + 8, self.color)
+            pyxel.circb(self.x + 4, self.y + 8, 1, self.color)
 
 #■Enemy_UI
 class EnemyUI:
@@ -479,7 +483,7 @@ class App:
 #N                print(self.aim)
                 #敵弾生成
                 enemybullets.append(
-                    EnemyBullet(enemy.x, enemy.y, 2, enemy.aim, 1, 1)
+                    EnemyBullet(enemy.x, enemy.y, ENEMY_BULLET_SPEED, enemy.aim, 0, 1)
                 )
                 enemy.isFire = False
 
