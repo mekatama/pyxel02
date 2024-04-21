@@ -214,7 +214,7 @@ class EnemyBullet:
     def draw(self):
         if self.type == 0 or self.type == 1:
 #            pyxel.pset(self.x + 4, self.y + 8, self.color)
-            pyxel.circb(self.x + 4, self.y + 8, 1, self.color)
+            pyxel.circb(self.x, self.y, 1, self.color)
 
 #■Enemy_UI
 class EnemyUI:
@@ -394,7 +394,7 @@ class App:
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy生成
-            Enemy(pyxel.rndi(8, 112), pyxel.rndi(20, 60), 0, 0, 10, 1)
+            Enemy(pyxel.rndi(8, 112), pyxel.rndi(20, 60), 0, 0, 10, 0)
 
         #Player制御
         self.player.update()
@@ -474,6 +474,24 @@ class App:
                     pyxel.stop()
                     self.scene = SCENE_GAMEOVER
 
+        #EnemyBulletとPlayerの当たり判定
+        for enemybullet in enemybullets:
+            if (self.player.x + 6  > enemybullet.x - 0 and
+                self.player.x + 2   < enemybullet.x + 2 and
+                self.player.y + 6  > enemybullet.y - 0 and
+                self.player.y + 2  < enemybullet.y + 2):
+                #Hit時の処理
+                self.player.hp -= 1
+                enemybullet.is_alive = False
+#                pyxel.play(3, 1, loop=False)    #SE再生
+                #player残りHP判定
+                if self.player.hp <= 0:
+                    blasts.append(
+                        Blast(enemybullet.x, enemybullet.y)
+                    )
+                    pyxel.stop()
+                    self.scene = SCENE_GAMEOVER
+
         #EnemyのPlayer狙い撃ち処理
         for enemy in enemies:
             if enemy.isFire == True:    #攻撃タイミング
@@ -483,7 +501,7 @@ class App:
 #N                print(self.aim)
                 #敵弾生成
                 enemybullets.append(
-                    EnemyBullet(enemy.x, enemy.y, ENEMY_BULLET_SPEED, enemy.aim, 0, 1)
+                    EnemyBullet(enemy.x, enemy.y, ENEMY_BULLET_SPEED, enemy.aim, enemy.atkType, 1)
                 )
                 enemy.isFire = False
 
