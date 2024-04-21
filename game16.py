@@ -152,11 +152,10 @@ class Bullet:
 
 #■Enemy
 class Enemy:
-    def __init__(self, x, y, speed, dir, hp, atkType):
+    def __init__(self, x, y, speed, hp, atkType):
         self.x = x
         self.y = y
         self.hp = hp
-        self.direction = dir    #移動方向flag(右:1 左:-1)
         self.atkType = atkType  #攻撃type 0:真下 1:player狙う
         self.isDamage = False
         self.isFire = False     #攻撃flag
@@ -169,7 +168,7 @@ class Enemy:
         if pyxel.frame_count % 60 == 0:
             if self.atkType == 0:
                 enemybullets.append(
-                    EnemyBullet(self.x, self.y, ENEMY_BULLET_SPEED, 0, self.atkType, 1)
+                    EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, self.atkType, 1)
                 )
             elif self.atkType == 1:
                 self.isFire = True 
@@ -188,7 +187,6 @@ class EnemyBullet:
     def __init__(self, x, y, speed, aim, type, way):
         self.x = x
         self.y = y
-#        self.direction = dir
         self.speed = speed
         self.type = type    #0:真下 1:player狙う
         self.way = way
@@ -394,7 +392,7 @@ class App:
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy生成
-            Enemy(pyxel.rndi(8, 112), pyxel.rndi(20, 60), 0, 0, 10, 0)
+            Enemy(pyxel.rndi(8, 112), pyxel.rndi(20, 60), 0, 10, 1)
 
         #Player制御
         self.player.update()
@@ -501,7 +499,7 @@ class App:
 #N                print(self.aim)
                 #敵弾生成
                 enemybullets.append(
-                    EnemyBullet(enemy.x, enemy.y, ENEMY_BULLET_SPEED, enemy.aim, enemy.atkType, 1)
+                    EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, enemy.atkType, 1)
                 )
                 enemy.isFire = False
 
