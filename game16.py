@@ -11,6 +11,7 @@ WINDOW_W = 128
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
+ENEMY_SPEED = 1
 ENEMY_BULLET_SPEED = 0.5
 BG_SCROLL = 1
 #list用意
@@ -152,18 +153,46 @@ class Bullet:
 
 #■Enemy
 class Enemy:
-    def __init__(self, x, y, speed, hp, atkType):
+    def __init__(self, x, y, speed, hp, atkType, moveType, isMoveStart):
         self.x = x
         self.y = y
+        self.speed = speed
         self.hp = hp
-        self.atkType = atkType  #攻撃type 0:真下 1:player狙う
+        self.count = 0
+        self.aim = 0
+        self.aim2 = 0
+        self.atkType = atkType      #攻撃type 0:真下 1:player狙う
+        self.moveType = moveType    #移動Type 0:固定 1:真下 2:player狙う
         self.isDamage = False
         self.isFire = False     #攻撃flag
+        self.isMoveStart = isMoveStart  #生成時に指定位置まで移動するかどうかflag
+        self.isMove = False             #通常移動開始flag
+        self.isMoveSeach = False        #player狙う移動flag
         self.is_alive = True
         enemies.append(self)
     def update(self):
-        #移動
-        pass
+        #初期位置への移動
+        if self.isMoveStart == True:    #初期位置への移動
+            if self.y <= 32:            #初期y座標判定
+                self.y += self.speed
+            else:
+                self.count += 1         #一時停止時間の設定
+                if self.count >= 60:
+                    self.isMove = True
+        else:
+            self.isMove = True
+
+        #移動処理
+        if self.isMove == True:         #通常移動の処理
+            if self.moveType == 0:
+                pass
+            elif self.moveType == 1:
+                self.y += self.speed
+            elif self.moveType == 2:
+                self.x += self.speed * math.cos(self.aim2)
+                self.y += self.speed * -math.sin(self.aim2)
+
+        
         #一定時間で自動射撃
         if pyxel.frame_count % 60 == 0:
             if self.atkType == 0:
@@ -171,7 +200,7 @@ class Enemy:
                     EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, self.atkType, 1)
                 )
             elif self.atkType == 1:
-                self.isFire = True 
+                self.isFire = True
 
     def draw(self):
         if self.isDamage == False:
@@ -392,7 +421,7 @@ class App:
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy生成
-            Enemy(pyxel.rndi(8, 112), pyxel.rndi(20, 60), 0, 10, 1)
+            Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 10, 1, 2, True)
 
         #Player制御
         self.player.update()
@@ -490,18 +519,25 @@ class App:
                     pyxel.stop()
                     self.scene = SCENE_GAMEOVER
 
-        #EnemyのPlayer狙い撃ち処理
+        #EnemyのPlayer狙い処理
         for enemy in enemies:
-            if enemy.isFire == True:    #攻撃タイミング
+            #攻撃タイミング
+            if enemy.isFire == True:
                 dx = self.player.x - enemy.x
                 dy = self.player.y - enemy.y
                 enemy.aim = math.atan2(-dy, dx)
-#N                print(self.aim)
+#                print(self.aim)
                 #敵弾生成
                 enemybullets.append(
                     EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, enemy.atkType, 1)
                 )
                 enemy.isFire = False
+            #移動タイミング
+            if enemy.isMoveSeach == False:
+                dx = self.player.x - enemy.x
+                dy = self.player.y - enemy.y
+                enemy.aim2 = math.atan2(-dy, dx)
+                enemy.isMoveSeach = True    #Falseだとずーっと追いかけてくる
 
         #ItemとPlayerの処理
         for item in items:
