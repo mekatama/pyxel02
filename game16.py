@@ -427,7 +427,7 @@ class App:
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy生成
-            Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 10, 1, 3, True)
+            Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 10, 1, 1, True)
 
         #Player制御
         self.player.update()
@@ -529,15 +529,17 @@ class App:
         for enemy in enemies:
             #攻撃タイミング
             if enemy.isFire == True:
-                dx = self.player.x - enemy.x
-                dy = self.player.y - enemy.y
-                enemy.aim = math.atan2(-dy, dx)
-#                print(self.aim)
-                #敵弾生成
-                enemybullets.append(
-                    EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, enemy.atkType, 1)
-                )
-                enemy.isFire = False
+                #playerのy座標より小さく and 画面中央より上で攻撃
+                if enemy.y < self.player.y and enemy.y < WINDOW_H / 2:
+                    dx = self.player.x - enemy.x
+                    dy = self.player.y - enemy.y
+                    enemy.aim = math.atan2(-dy, dx)
+    #                print(self.aim)
+                    #敵弾生成
+                    enemybullets.append(
+                        EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, enemy.atkType, 1)
+                    )
+                    enemy.isFire = False
             #移動タイミング
             if enemy.isMoveSeach == False:
                 dx = self.player.x - enemy.x
