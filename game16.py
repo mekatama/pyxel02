@@ -161,8 +161,10 @@ class Enemy:
         self.count = 0
         self.aim = 0
         self.aim2 = 0
+        self.timer = 0              #円運動の
+        self.r = 5                 #円運動の
         self.atkType = atkType      #攻撃type 0:真下 1:player狙う
-        self.moveType = moveType    #移動Type 0:固定 1:真下 2:player狙う
+        self.moveType = moveType    #移動Type 0:固定 1:真下 2:player狙う 3:三角関数
         self.isDamage = False
         self.isFire = False     #攻撃flag
         self.isMoveStart = isMoveStart  #生成時に指定位置まで移動するかどうかflag
@@ -191,6 +193,10 @@ class Enemy:
             elif self.moveType == 2:
                 self.x += self.speed * math.cos(self.aim2)
                 self.y += self.speed * -math.sin(self.aim2)
+            elif self.moveType == 3:
+                self.timer += 0.15
+                self.x = self.x + self.r * math.cos(self.timer)
+                self.y += self.speed
 
         
         #一定時間で自動射撃
@@ -421,7 +427,7 @@ class App:
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy生成
-            Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 10, 1, 2, True)
+            Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 10, 1, 3, True)
 
         #Player制御
         self.player.update()
