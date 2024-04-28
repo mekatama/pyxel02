@@ -168,6 +168,7 @@ class Enemy:
         self.isDamage = False
         self.isFire = False     #攻撃flag
         self.isMoveStart = isMoveStart  #生成時に指定位置まで移動するかどうかflag
+        self.isMoveStop = False         #生成して移動後に停止したflag
         self.isMove = False             #通常移動開始flag
         self.isMoveSeach = False        #player狙う移動flag
         self.is_alive = True
@@ -178,6 +179,8 @@ class Enemy:
             if self.y <= 32:            #初期y座標判定
                 self.y += self.speed
             else:
+                if self.count == 0:
+                    self.isMoveStop = True
                 self.count += 1         #一時停止時間の設定
                 if self.count >= 60:
                     self.isMove = True
@@ -201,12 +204,13 @@ class Enemy:
         
         #一定時間で自動射撃
         if pyxel.frame_count % 60 == 0:
-            if self.atkType == 0:
-                enemybullets.append(
-                    EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, self.atkType, 1)
-                )
-            elif self.atkType == 1:
-                self.isFire = True
+            if self.isMoveStop == True:
+                if self.atkType == 0:
+                    enemybullets.append(
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, self.atkType, 1)
+                    )
+                elif self.atkType == 1:
+                    self.isFire = True
 
     def draw(self):
         if self.isDamage == False:
