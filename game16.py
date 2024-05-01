@@ -162,8 +162,8 @@ class Enemy:
         self.aim = 0
         self.aim2 = 0
         self.timer = 0              #円運動の
-        self.r = 5                 #円運動の
-        self.atkType = atkType      #攻撃type 0:真下 1:player狙う
+        self.r = 5                  #円運動の
+        self.atkType = atkType      #攻撃type 0:真下 1:player狙う 2:途中で変化
         self.moveType = moveType    #移動Type 0:固定 1:真下 2:player狙う 3:三角関数
         self.isDamage = False
         self.isFire = False     #攻撃flag
@@ -211,6 +211,13 @@ class Enemy:
                     )
                 elif self.atkType == 1:
                     self.isFire = True
+                elif self.atkType == 2:
+                    if self.hp > 100:
+                        enemybullets.append(
+                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1)
+                        )
+                    elif self.hp <= 100:
+                        self.isFire = True
 
     def draw(self):
         if self.isDamage == False:
@@ -395,6 +402,8 @@ class App:
         bgs.append(
             Bg(120, -128, 1)
         )
+        #仮
+        Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 200, 2, 0, True)
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -431,7 +440,8 @@ class App:
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy生成
-            Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 10, 1, 1, True)
+#            Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 10, 1, 1, True)
+            pass
 
         #Player制御
         self.player.update()
@@ -540,9 +550,14 @@ class App:
                     enemy.aim = math.atan2(-dy, dx)
     #                print(self.aim)
                     #敵弾生成
-                    enemybullets.append(
-                        EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, enemy.atkType, 1)
-                    )
+                    if enemy.atkType == 2:
+                        enemybullets.append(
+                            EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, 1, 1)
+                        )
+                    else:
+                        enemybullets.append(
+                            EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, enemy.atkType, 1)
+                        )
                     enemy.isFire = False
             #移動タイミング
             if enemy.isMoveSeach == False:
