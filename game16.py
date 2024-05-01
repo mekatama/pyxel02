@@ -25,6 +25,7 @@ particles = []
 hitparticles = []
 options = []
 bgs = []
+bosses = []
 
 #関数(List実行)
 def update_list(list):
@@ -228,6 +229,82 @@ class Enemy:
             pyxel.blt(self.x, self.y, 0, 24, 8, 8, 8, 0)
             self.isDamage = False
 
+#■Boss
+class Boss:
+    def __init__(self, x, y, speed, hp, atkType, moveType, isMoveStart):
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.hp = hp
+        self.count = 0
+        self.aim = 0
+        self.aim2 = 0
+        self.timer = 0              #円運動の
+        self.r = 5                  #円運動の
+        self.atkType = atkType      #攻撃type 0:真下 1:player狙う 2:途中で変化
+        self.moveType = moveType    #移動Type 0:固定 1:真下 2:player狙う 3:三角関数
+        self.isDamage = False
+        self.isFire = False     #攻撃flag
+        self.isMoveStart = isMoveStart  #生成時に指定位置まで移動するかどうかflag
+        self.isMoveStop = False         #生成して移動後に停止したflag
+        self.isMove = False             #通常移動開始flag
+        self.isMoveSeach = False        #player狙う移動flag
+        self.is_alive = True
+        bosses.append(self)
+    def update(self):
+        #初期位置への移動
+        if self.isMoveStart == True:    #初期位置への移動
+            if self.y <= 32:            #初期y座標判定
+                self.y += self.speed
+            else:
+                if self.count == 0:
+                    self.isMoveStop = True
+                self.count += 1         #一時停止時間の設定
+                if self.count >= 60:
+                    self.isMove = True
+        else:
+            self.isMove = True
+
+        #移動処理
+        if self.isMove == True:         #通常移動の処理
+            if self.moveType == 0:
+                pass
+            elif self.moveType == 1:
+                self.y += self.speed
+            elif self.moveType == 2:
+                self.x += self.speed * math.cos(self.aim2)
+                self.y += self.speed * -math.sin(self.aim2)
+            elif self.moveType == 3:
+                self.timer += 0.15
+                self.x = self.x + self.r * math.cos(self.timer)
+                self.y += self.speed
+        
+        #一定時間で自動射撃
+        if pyxel.frame_count % 60 == 0:
+            if self.isMoveStop == True:
+                if self.atkType == 0:
+                    enemybullets.append(
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1)
+                    )
+                elif self.atkType == 1:
+                    self.isFire = True
+                elif self.atkType == 2:
+                    if self.hp > 100:
+                        enemybullets.append(
+                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1)
+                        )
+                    elif self.hp <= 100:
+                        self.isFire = True
+
+    def draw(self):
+        if self.isDamage == False:
+            #通常
+            pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        else:
+            #ダメージ発生
+            pyxel.blt(self.x, self.y, 0, 24, 8, 8, 8, 0)
+            self.isDamage = False
+
 #■EnemyBullet
 class EnemyBullet:
     def __init__(self, x, y, speed, aim, type, way):
@@ -402,8 +479,17 @@ class App:
         bgs.append(
             Bg(120, -128, 1)
         )
-        #仮
-        Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 200, 2, 0, True)
+        #仮BOSS本体
+        bosses.append(
+            Boss(64, -8, ENEMY_SPEED, 200, 2, 0, True)
+        )
+        #仮BOSSパーツ
+        bosses.append(
+            Boss(56, -12, ENEMY_SPEED, 100, 0, 0, True)
+        )
+        bosses.append(
+            Boss(72, -12, ENEMY_SPEED, 100, 0, 0, True)
+        )
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -601,6 +687,7 @@ class App:
         update_list(hitparticles)
         update_list(options)
         update_list(bgs)
+        update_list(bosses)
         #list更新
         cleanup_list(bullets)
         cleanup_list(enemybullets)
@@ -612,6 +699,7 @@ class App:
         cleanup_list(hitparticles)
         cleanup_list(options)
         cleanup_list(bgs)
+        cleanup_list(bosses)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -633,6 +721,7 @@ class App:
             hitparticles.clear()                     #list全要素削除
             options.clear()                     #list全要素削除
             bgs.clear()                     #list全要素削除
+            bosses.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -671,6 +760,7 @@ class App:
         draw_list(particles)
         draw_list(hitparticles)
         draw_list(options)
+        draw_list(bosses)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
