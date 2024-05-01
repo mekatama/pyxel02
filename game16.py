@@ -207,7 +207,7 @@ class Enemy:
             if self.isMoveStop == True:
                 if self.atkType == 0:
                     enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, self.atkType, 1)
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1)
                     )
                 elif self.atkType == 1:
                     self.isFire = True
@@ -556,7 +556,7 @@ class App:
                         )
                     else:
                         enemybullets.append(
-                            EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, enemy.atkType, 1)
+                            EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, 1, 1)
                         )
                     enemy.isFire = False
             #移動タイミング
