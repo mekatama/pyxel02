@@ -584,6 +584,46 @@ class App:
                         self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 
+        #BOSSとBulletの当たり判定
+        for boss in bosses:
+            for bullet in bullets:
+                if (boss.x + 8    > bullet.x and
+                    boss.x         < bullet.x + 2 and
+                    boss.y + 8    > bullet.y and
+                    boss.y         < bullet.y + 2):
+                    #Hit時の処理
+                    boss.hp -= 1
+                    boss.isDamage = True
+                    hitparticles.append(
+                        HitParticle(bullet.x + 1, bullet.y)
+                    )
+                    #HitParticle
+                    for i in range(2):
+                        particles.append(
+                            Particle(boss.x, boss.y)
+                        )
+                    #レーザーは貫通する
+                    if bullet.type != 2:
+                        bullet.is_alive = False
+                    #残りHP判定
+                    if boss.hp <= 0:
+                        boss.is_alive = False
+                        enemiesUI.append(
+                            EnemyUI(boss.x, boss.y, 10)
+                        )
+                        blasts.append(
+                            Blast(boss.x, boss.y)
+                        )
+                        items.append(
+                            Item(boss.x, boss.y)
+                        )
+                        for i in range(10):
+                            particles.append(
+                                Particle(boss.x, boss.y)
+                            )
+                        self.score += 100
+#                        pyxel.play(1, 0, loop=False)    #SE再生
+
         #option制御
         for option in options:
             option.x = self.player.x
@@ -753,6 +793,7 @@ class App:
         self.player.draw()
         draw_list(bullets)
         draw_list(enemybullets)
+        draw_list(bosses)
         draw_list(enemies)
         draw_list(enemiesUI)
         draw_list(blasts)
@@ -760,8 +801,7 @@ class App:
         draw_list(particles)
         draw_list(hitparticles)
         draw_list(options)
-        draw_list(bosses)
-
+    
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
         pyxel.text(0, 20, "01234567890123456789012345678901", 7)
