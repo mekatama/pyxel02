@@ -557,15 +557,15 @@ class App:
         )
         #仮BOSS本体
         bosses.append(
-            Boss(64, -8, ENEMY_SPEED, 200, 2, 0, True)
+            Boss(64, -8, ENEMY_SPEED, 100, 2, 0, True)
         )
         #仮BOSSパーツ
         subbosses.append(
-            SubBoss(56, -12, ENEMY_SPEED, 100, 0, 0, True)
+            SubBoss(56, -12, ENEMY_SPEED, 200, 0, 0, True)
         )
-        subbosses.append(
-            SubBoss(72, -12, ENEMY_SPEED, 100, 0, 0, True)
-        )
+#        subbosses.append(
+#            SubBoss(72, -12, ENEMY_SPEED, 200, 0, 0, True)
+#        )
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -642,7 +642,7 @@ class App:
                     if bullet.type != 2:
                         bullet.is_alive = False
                     #残りHP判定
-                    if enemy.hp <= 0:
+                    if enemy.hp <= 0 and enemy.is_alive == True:
                         enemy.is_alive = False
                         enemiesUI.append(
                             EnemyUI(enemy.x, enemy.y, 10)
@@ -682,7 +682,7 @@ class App:
                     if bullet.type != 2:
                         bullet.is_alive = False
                     #残りHP判定
-                    if boss.hp <= 0:
+                    if boss.hp <= 0 and boss.is_alive == True:
                         boss.is_alive = False
                         enemiesUI.append(
                             EnemyUI(boss.x, boss.y, 10)
@@ -690,9 +690,9 @@ class App:
                         blasts.append(
                             Blast(boss.x, boss.y)
                         )
-                        items.append(
-                            Item(boss.x, boss.y)
-                        )
+#                        items.append(
+#                            Item(boss.x, boss.y)
+#                        )
                         for i in range(10):
                             particles.append(
                                 Particle(boss.x, boss.y)
@@ -720,8 +720,11 @@ class App:
                     #レーザーは貫通する
                     if bullet.type != 2:
                         bullet.is_alive = False
+#                    for boss in bosses:
+#                        if boss.is_alive == False:
+#                            print("ok")
                     #残りHP判定
-                    if subboss.hp <= 0:
+                    if subboss.hp <= 0 and subboss.is_alive == True:
                         subboss.is_alive = False
                         enemiesUI.append(
                             EnemyUI(subboss.x, subboss.y, 10)
@@ -729,14 +732,14 @@ class App:
                         blasts.append(
                             Blast(subboss.x, subboss.y)
                         )
-                        items.append(
-                            Item(subboss.x, subboss.y)
-                        )
+#                        items.append(
+#                            Item(subboss.x, subboss.y)
+#                        )
                         for i in range(7):
                             particles.append(
                                 Particle(subboss.x, subboss.y)
                             )
-                        self.score += 100
+                        self.score += 50
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 
         #option制御
