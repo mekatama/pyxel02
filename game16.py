@@ -699,6 +699,45 @@ class App:
                             )
                         self.score += 100
 #                        pyxel.play(1, 0, loop=False)    #SE再生
+        #SubBOSSとBulletの当たり判定
+        for subboss in subbosses:
+            for bullet in bullets:
+                if (subboss.x + 8    > bullet.x and
+                    subboss.x         < bullet.x + 2 and
+                    subboss.y + 8    > bullet.y and
+                    subboss.y         < bullet.y + 2):
+                    #Hit時の処理
+                    subboss.hp -= 1
+                    subboss.isDamage = True
+                    hitparticles.append(
+                        HitParticle(bullet.x + 1, bullet.y)
+                    )
+                    #HitParticle
+                    for i in range(2):
+                        particles.append(
+                            Particle(subboss.x, subboss.y)
+                        )
+                    #レーザーは貫通する
+                    if bullet.type != 2:
+                        bullet.is_alive = False
+                    #残りHP判定
+                    if subboss.hp <= 0:
+                        subboss.is_alive = False
+                        enemiesUI.append(
+                            EnemyUI(subboss.x, subboss.y, 10)
+                        )
+                        blasts.append(
+                            Blast(subboss.x, subboss.y)
+                        )
+                        items.append(
+                            Item(subboss.x, subboss.y)
+                        )
+                        for i in range(7):
+                            particles.append(
+                                Particle(subboss.x, subboss.y)
+                            )
+                        self.score += 100
+#                        pyxel.play(1, 0, loop=False)    #SE再生
 
         #option制御
         for option in options:
