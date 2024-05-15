@@ -97,7 +97,7 @@ class Option:
         self.x2 = x
         self.y = y
         self.is_alive = True
-        options.append(self)
+#        options.append(self)
     def update(self):
         #移動
         self.x1 = self.x
@@ -250,7 +250,7 @@ class Boss:
         self.isMove = False             #通常移動開始flag
         self.isMoveSeach = False        #player狙う移動flag
         self.is_alive = True
-        bosses.append(self)
+#        bosses.append(self)
     def update(self):
         #初期位置への移動
         if self.isMoveStart == True:    #初期位置への移動
@@ -326,7 +326,7 @@ class SubBoss:
         self.isMove = False             #通常移動開始flag
         self.isMoveSeach = False        #player狙う移動flag
         self.is_alive = True
-        subbosses.append(self)
+#        subbosses.append(self)
     def update(self):
         #初期位置への移動
         if self.isMoveStart == True:    #初期位置への移動
@@ -548,6 +548,8 @@ class App:
         options.append(
             Option(self.player.x - 8, self.player.y)
         )
+        print(len(options))
+
         #BGs初期化
         bgs.append(
             Bg(0, -128, 0)
@@ -557,15 +559,17 @@ class App:
         )
         #仮BOSS本体
         bosses.append(
-            Boss(64, -8, ENEMY_SPEED, 100, 2, 0, True)
+            Boss(64, -8, ENEMY_SPEED, 50, 2, 0, True)
         )
         #仮BOSSパーツ
         subbosses.append(
-            SubBoss(56, -12, ENEMY_SPEED, 200, 0, 0, True)
+            SubBoss(56, -12, ENEMY_SPEED, 100, 0, 0, True)
         )
-#        subbosses.append(
-#            SubBoss(72, -12, ENEMY_SPEED, 200, 0, 0, True)
-#        )
+        subbosses.append(
+            SubBoss(72, -12, ENEMY_SPEED, 100, 0, 0, True)
+        )
+        print(len(bosses))
+        print(len(subbosses))
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -597,7 +601,6 @@ class App:
         elif self.score >= 70:
             spawntime = 20
         '''
-
         spawntime = 60
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
@@ -684,6 +687,11 @@ class App:
                     #残りHP判定
                     if boss.hp <= 0 and boss.is_alive == True:
                         boss.is_alive = False
+                        #
+                        print("dead")
+                        for subboss in subbosses:
+                            subboss.is_alive = False
+
                         enemiesUI.append(
                             EnemyUI(boss.x, boss.y, 10)
                         )
@@ -720,9 +728,7 @@ class App:
                     #レーザーは貫通する
                     if bullet.type != 2:
                         bullet.is_alive = False
-#                    for boss in bosses:
-#                        if boss.is_alive == False:
-#                            print("ok")
+                    #
                     #残りHP判定
                     if subboss.hp <= 0 and subboss.is_alive == True:
                         subboss.is_alive = False
