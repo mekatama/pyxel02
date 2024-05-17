@@ -559,7 +559,7 @@ class App:
         )
         #仮BOSS本体
         bosses.append(
-            Boss(64, -8, ENEMY_SPEED, 50, 2, 0, True)
+            Boss(64, -8, ENEMY_SPEED, 20, 2, 0, True)
         )
         #仮BOSSパーツ
         subbosses.append(
@@ -687,10 +687,31 @@ class App:
                     #残りHP判定
                     if boss.hp <= 0 and boss.is_alive == True:
                         boss.is_alive = False
-                        #
-                        print("dead")
+                        #subbossもdead
                         for subboss in subbosses:
                             subboss.is_alive = False
+                            #弾消し
+                            for enemybullet in enemybullets:
+                                blasts.append(
+                                    Blast(enemybullet.x, enemybullet.y)
+                                )
+                                enemybullet.is_alive = False
+
+                            enemiesUI.append(
+                                EnemyUI(subboss.x, subboss.y, 10)
+                            )
+                            blasts.append(
+                                Blast(subboss.x, subboss.y)
+                            )
+    #                        items.append(
+    #                            Item(subboss.x, subboss.y)
+    #                        )
+                            for i in range(7):
+                                particles.append(
+                                    Particle(subboss.x, subboss.y)
+                                )
+                            self.score += 50
+    #                        pyxel.play(1, 0, loop=False)    #SE再生
 
                         enemiesUI.append(
                             EnemyUI(boss.x, boss.y, 10)
@@ -732,6 +753,13 @@ class App:
                     #残りHP判定
                     if subboss.hp <= 0 and subboss.is_alive == True:
                         subboss.is_alive = False
+                        #弾消し
+                        for enemybullet in enemybullets:
+                            blasts.append(
+                                Blast(enemybullet.x, enemybullet.y)
+                            )
+                            enemybullet.is_alive = False
+
                         enemiesUI.append(
                             EnemyUI(subboss.x, subboss.y, 10)
                         )
