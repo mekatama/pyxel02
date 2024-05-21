@@ -559,14 +559,14 @@ class App:
         )
         #仮BOSS本体
         bosses.append(
-            Boss(64, -8, ENEMY_SPEED, 20, 2, 0, True)
+            Boss(64, -8, ENEMY_SPEED, 50, 2, 0, True)
         )
         #仮BOSSパーツ
         subbosses.append(
-            SubBoss(56, -12, ENEMY_SPEED, 100, 0, 0, True)
+            SubBoss(56, -12, ENEMY_SPEED, 50, 0, 0, True)
         )
         subbosses.append(
-            SubBoss(72, -12, ENEMY_SPEED, 100, 0, 0, True)
+            SubBoss(72, -12, ENEMY_SPEED, 50, 0, 0, True)
         )
         print(len(bosses))
         print(len(subbosses))
@@ -752,6 +752,15 @@ class App:
                     #
                     #残りHP判定
                     if subboss.hp <= 0 and subboss.is_alive == True:
+                        self.temp = pyxel.rndi(-8, 8)
+                        #subbossちょっと動く
+                        for subboss in subbosses:
+                            subboss.x += self.temp
+                            subboss.y += self.temp
+                        #bossちょっと動く
+                        for boss in bosses:
+                            boss.x += self.temp
+                            boss.y += self.temp
                         subboss.is_alive = False
                         #弾消し
                         for enemybullet in enemybullets:
