@@ -208,14 +208,14 @@ class Enemy:
             if self.isMoveStop == True:
                 if self.atkType == 0:
                     enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1)
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1, 1)
                     )
                 elif self.atkType == 1:
                     self.isFire = True
                 elif self.atkType == 2:
                     if self.hp > 100:
                         enemybullets.append(
-                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1)
+                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1, 1)
                         )
                     elif self.hp <= 100:
                         self.isFire = True
@@ -284,14 +284,26 @@ class Boss:
             if self.isMoveStop == True:
                 if self.atkType == 0:
                     enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1)
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1, 5)
+                    )
+                    enemybullets.append(
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 2, 5)
+                    )
+                    enemybullets.append(
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 3, 5)
+                    )
+                    enemybullets.append(
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 4, 5)
+                    )
+                    enemybullets.append(
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 5, 5)
                     )
                 elif self.atkType == 1:
                     self.isFire = True
                 elif self.atkType == 2:
                     if self.hp > 100:
                         enemybullets.append(
-                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1)
+                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1, 1)
                         )
                     elif self.hp <= 100:
                         self.isFire = True
@@ -360,14 +372,14 @@ class SubBoss:
             if self.isMoveStop == True:
                 if self.atkType == 0:
                     enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1)
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1, 1)
                     )
                 elif self.atkType == 1:
                     self.isFire = True
                 elif self.atkType == 2:
                     if self.hp > 100:
                         enemybullets.append(
-                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1)
+                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1, 1)
                         )
                     elif self.hp <= 100:
                         self.isFire = True
@@ -383,12 +395,13 @@ class SubBoss:
 
 #■EnemyBullet
 class EnemyBullet:
-    def __init__(self, x, y, speed, aim, type, way):
+    def __init__(self, x, y, speed, aim, type, way, waytype):
         self.x = x
         self.y = y
         self.speed = speed
-        self.type = type    #0:真下 1:player狙う
-        self.way = way
+        self.type = type        #0:真下 1:player狙う
+        self.way = way          #弾指定用
+        self.waytype = waytype  #1:1way 3:3way 5:5way
         self.size = 1
         self.color = 10 #colorは0～15
         self.count = 0
@@ -398,7 +411,20 @@ class EnemyBullet:
     def update(self):
         #弾移動
         if self.type == 0:      #真下
-            self.y += self.speed
+            if self.waytype == 1:
+                self.y += self.speed
+            elif self.waytype == 5:
+                self.y += self.speed
+                if self.way == 1:
+                    self.x -= 0.2
+                elif self.way == 2:
+                    self.x += 0.2
+                elif self.way == 3:
+                    self.x -= 0.4
+                elif self.way == 4:
+                    self.x += 0.4
+                elif self.way == 5:
+                    pass
         elif self.type == 1:   #player狙う
             #弾用座標
             self.x += self.speed * math.cos(self.aim)
@@ -410,8 +436,21 @@ class EnemyBullet:
             self.is_alive = False   #消去
     def draw(self):
         if self.type == 0 or self.type == 1:
-#            pyxel.pset(self.x + 4, self.y + 8, self.color)
-            pyxel.circb(self.x, self.y, 1, self.color)
+            if self.waytype == 1:
+#               pyxel.pset(self.x + 4, self.y + 8, self.color)
+                pyxel.circb(self.x, self.y, 1, self.color)
+            if self.waytype == 5:
+#                pyxel.circb(self.x, self.y, 1, self.color)
+                if self.way == 1:
+                    pyxel.circb(self.x, self.y, 1, self.color)
+                elif self.way == 2:
+                    pyxel.circb(self.x, self.y, 1, self.color)
+                elif self.way == 3:
+                    pyxel.circb(self.x, self.y, 1, self.color)
+                elif self.way == 4:
+                    pyxel.circb(self.x, self.y, 1, self.color)
+                elif self.way == 5:
+                    pyxel.circb(self.x, self.y, 1, self.color)
 
 #■Enemy_UI
 class EnemyUI:
@@ -559,7 +598,7 @@ class App:
         )
         #仮BOSS本体
         bosses.append(
-            Boss(64, -8, ENEMY_SPEED, 50, 2, 0, True)
+            Boss(64, -8, ENEMY_SPEED, 50, 0, 0, True)
         )
         #仮BOSSパーツ
         subbosses.append(
@@ -839,11 +878,11 @@ class App:
                     #敵弾生成
                     if enemy.atkType == 2:
                         enemybullets.append(
-                            EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, 1, 1)
+                            EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, 1, 1, 1)
                         )
                     else:
                         enemybullets.append(
-                            EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, 1, 1)
+                            EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, 1, 1, 1)
                         )
                     enemy.isFire = False
             #移動タイミング
