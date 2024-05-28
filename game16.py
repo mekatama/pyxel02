@@ -732,6 +732,13 @@ class App:
                     #残りHP判定
                     if boss.hp <= 0 and boss.is_alive == True:
                         boss.is_alive = False
+                        #弾消し
+                        for enemybullet in enemybullets:
+                            blasts.append(
+                                Blast(enemybullet.x, enemybullet.y)
+                            )
+                            enemybullet.is_alive = False
+
                         #subbossもdead
                         for subboss in subbosses:
                             subboss.is_alive = False
