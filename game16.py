@@ -284,26 +284,29 @@ class Boss:
             if self.isMoveStop == True:
                 if self.atkType == 0:
                     enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.5 * math.pi, 0, 1, 5)
-                    )
-                    enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.4 * math.pi, 0, 2, 5)
-                    )
-                    enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.6 * math.pi, 0, 3, 5)
-                    )
-                    enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.3 * math.pi, 0, 4, 5)
-                    )
-                    enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.7 * math.pi, 0, 5, 5)
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.5 * math.pi, 0, 1, 1)
                     )
                 elif self.atkType == 1:
                     self.isFire = True
                 elif self.atkType == 2:
                     if self.hp > 100:
+#                        enemybullets.append(
+#                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1, 1)
+#                        )
                         enemybullets.append(
-                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1, 1)
+                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.5 * math.pi, 0, 1, 5)
+                        )
+                        enemybullets.append(
+                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.4 * math.pi, 0, 2, 5)
+                        )
+                        enemybullets.append(
+                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.6 * math.pi, 0, 3, 5)
+                        )
+                        enemybullets.append(
+                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.3 * math.pi, 0, 4, 5)
+                        )
+                        enemybullets.append(
+                            EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.7 * math.pi, 0, 5, 5)
                         )
                     elif self.hp <= 100:
                         self.isFire = True
@@ -602,7 +605,7 @@ class App:
         )
         #仮BOSS本体
         bosses.append(
-            Boss(64, -8, ENEMY_SPEED, 50, 0, 0, True)
+            Boss(64, -8, ENEMY_SPEED, 200, 2, 0, True)
         )
         #仮BOSSパーツ
         subbosses.append(
@@ -611,8 +614,7 @@ class App:
         subbosses.append(
             SubBoss(72, -12, ENEMY_SPEED, 50, 0, 0, True)
         )
-        print(len(bosses))
-        print(len(subbosses))
+
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -889,12 +891,33 @@ class App:
                             EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, 1, 1, 1)
                         )
                     enemy.isFire = False
+        #BossのPlayer狙い処理
+        for boss in bosses:
+            #攻撃タイミング
+            if boss.isFire == True:
+                #playerのy座標より小さく and 画面中央より上で攻撃
+                if boss.y < self.player.y and boss.y < WINDOW_H / 2:
+                    dx = self.player.x - boss.x
+                    dy = self.player.y - boss.y
+                    boss.aim = math.atan2(-dy, dx)
+    #                print(self.aim)
+                    #敵弾生成
+                    if boss.atkType == 2:
+                        enemybullets.append(
+                            EnemyBullet(boss.x + 4, boss.y + 8, ENEMY_BULLET_SPEED, boss.aim, 1, 1, 1)
+                        )
+                    else:
+                        enemybullets.append(
+                            EnemyBullet(boss.x + 4, boss.y + 8, ENEMY_BULLET_SPEED, boss.aim, 1, 1, 1)
+                        )
+                    boss.isFire = False
+
             #移動タイミング
-            if enemy.isMoveSeach == False:
-                dx = self.player.x - enemy.x
-                dy = self.player.y - enemy.y
-                enemy.aim2 = math.atan2(-dy, dx)
-                enemy.isMoveSeach = True    #Falseだとずーっと追いかけてくる
+            if boss.isMoveSeach == False:
+                dx = self.player.x - boss.x
+                dy = self.player.y - boss.y
+                boss.aim2 = math.atan2(-dy, dx)
+                boss.isMoveSeach = True    #Falseだとずーっと追いかけてくる
 
         #ItemとPlayerの処理
         for item in items:
