@@ -284,19 +284,19 @@ class Boss:
             if self.isMoveStop == True:
                 if self.atkType == 0:
                     enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 1, 5)
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.5 * math.pi, 0, 1, 5)
                     )
                     enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 2, 5)
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.4 * math.pi, 0, 2, 5)
                     )
                     enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 3, 5)
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.6 * math.pi, 0, 3, 5)
                     )
                     enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 4, 5)
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.3 * math.pi, 0, 4, 5)
                     )
                     enemybullets.append(
-                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 0, 0, 5, 5)
+                        EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 1.7 * math.pi, 0, 5, 5)
                     )
                 elif self.atkType == 1:
                     self.isFire = True
@@ -414,17 +414,21 @@ class EnemyBullet:
             if self.waytype == 1:
                 self.y += self.speed
             elif self.waytype == 5:
-                self.y += self.speed
                 if self.way == 1:
-                    self.x -= 0.2
+                    self.x += self.speed * math.cos(self.aim)
+                    self.y += self.speed * -math.sin(self.aim)
                 elif self.way == 2:
-                    self.x += 0.2
+                    self.x += self.speed * math.cos(self.aim)
+                    self.y += self.speed * -math.sin(self.aim)
                 elif self.way == 3:
-                    self.x -= 0.4
+                    self.x += self.speed * math.cos(self.aim)
+                    self.y += self.speed * -math.sin(self.aim)
                 elif self.way == 4:
-                    self.x += 0.4
+                    self.x += self.speed * math.cos(self.aim)
+                    self.y += self.speed * -math.sin(self.aim)
                 elif self.way == 5:
-                    pass
+                    self.x += self.speed * math.cos(self.aim)
+                    self.y += self.speed * -math.sin(self.aim)
         elif self.type == 1:   #player狙う
             #弾用座標
             self.x += self.speed * math.cos(self.aim)
