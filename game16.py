@@ -154,7 +154,7 @@ class Bullet:
 
 #■Enemy
 class Enemy:
-    def __init__(self, x, y, speed, hp, atkType, moveType, isMoveStart):
+    def __init__(self, x, y, speed, hp, atkType, moveType, isMoveStart, exitType):
         self.x = x
         self.y = y
         self.speed = speed
@@ -166,6 +166,7 @@ class Enemy:
         self.r = 5                  #円運動の
         self.atkType = atkType      #攻撃type 0:真下 1:player狙う 2:途中で変化
         self.moveType = moveType    #移動Type 0:固定 1:真下 2:player狙う 3:三角関数
+        self.exitType = exitType    #退場type 0:無し 1:上に戻る
         self.isDamage = False
         self.isFire = False     #攻撃flag
         self.isMoveStart = isMoveStart  #生成時に指定位置まで移動するかどうかflag
@@ -603,6 +604,7 @@ class App:
         bgs.append(
             Bg(120, -128, 1)
         )
+        """
         #仮BOSS本体
         bosses.append(
             Boss(64, -8, ENEMY_SPEED, 200, 2, 0, True)
@@ -614,7 +616,7 @@ class App:
         subbosses.append(
             SubBoss(72, -12, ENEMY_SPEED, 50, 0, 0, True)
         )
-
+        """
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -650,7 +652,7 @@ class App:
         #一定時間でenemy出現判定
         if pyxel.frame_count % spawntime == 0:
             #enemy生成
-#            Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 10, 1, 1, True)
+            Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 10, 1, 1, True, 0)
             pass
 
         #Player制御
