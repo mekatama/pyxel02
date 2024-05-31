@@ -202,7 +202,6 @@ class Enemy:
                 self.timer += 0.15
                 self.x = self.x + self.r * math.cos(self.timer)
                 self.y += self.speed
-
         
         #一定時間で自動射撃
         if pyxel.frame_count % 60 == 0:
@@ -584,18 +583,20 @@ class App:
         pyxel.load("my_resource16.pyxres")
         self.score = 0
         self.highScore = 0
+        self.gameCount = 0  #game進行用count
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
         #[debug]Option表示
+        """
         options.append(
             Option(self.player.x + 8, self.player.y)
         )
         options.append(
             Option(self.player.x - 8, self.player.y)
         )
-        print(len(options))
+        """
 
         #BGs初期化
         bgs.append(
@@ -648,12 +649,23 @@ class App:
         elif self.score >= 70:
             spawntime = 20
         '''
+
+        #ゲーム用のcount(1s単位のはず)
+        gametime = 60
+        if pyxel.frame_count % gametime == 0:
+            self.gameCount += 1
+            print(self.gameCount)
+
+        #enemy出現判定
         spawntime = 60
-        #一定時間でenemy出現判定
-        if pyxel.frame_count % spawntime == 0:
-            #enemy生成
-            Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 10, 1, 1, True, 0)
-            pass
+        if self.gameCount <= 10:
+            if pyxel.frame_count % spawntime == 0:
+                #enemy生成
+                Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED, 3, 1, 1, True, 0)
+        elif self.gameCount > 10 and self.gameCount <= 20:
+            if pyxel.frame_count % spawntime == 0:
+                #enemy生成
+                Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED * 2, 2, 1, 1, True, 0)
 
         #Player制御
         self.player.update()
@@ -988,6 +1000,7 @@ class App:
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.scene = SCENE_TITLE
+            self.gameCount = 0
             #list全要素削除
             bullets.clear()                     #list全要素削除
             enemybullets.clear()                     #list全要素削除
