@@ -161,7 +161,7 @@ class Enemy:
         self.hp = hp
         self.count = 0
         self.aim = 0
-        self.aim2 = 0
+        self.aim2 = 0               #player狙う角度
         self.timer = 0              #円運動の
         self.r = 5                  #円運動の
         self.atkType = atkType      #攻撃type 0:真下 1:player狙う 2:途中で変化
@@ -584,6 +584,7 @@ class App:
         self.score = 0
         self.highScore = 0
         self.gameCount = 0  #game進行用count
+        self.isBoss = False #BOSS出現flag
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
@@ -665,7 +666,24 @@ class App:
         elif self.gameCount > 10 and self.gameCount <= 20:
             if pyxel.frame_count % spawntime == 0:
                 #enemy生成
-                Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED * 2, 2, 1, 1, True, 0)
+                Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED * 1.5, 2, 1, 1, True, 0)
+        elif self.gameCount > 20 and self.gameCount <= 30:
+            if pyxel.frame_count % spawntime == 0:
+                #enemy生成
+                Enemy(pyxel.rndi(8, 112), -8, ENEMY_SPEED * 1.5, 2, 1, 2, False, 0)
+        elif self.gameCount > 30 and self.isBoss == False:
+                #仮BOSS本体
+                bosses.append(
+                    Boss(64, -8, ENEMY_SPEED, 200, 2, 0, True)
+                )
+                #仮BOSSパーツ
+                subbosses.append(
+                    SubBoss(56, -12, ENEMY_SPEED, 50, 0, 0, True)
+                )
+                subbosses.append(
+                    SubBoss(72, -12, ENEMY_SPEED, 50, 0, 0, True)
+                )
+                self.isBoss = True
 
         #Player制御
         self.player.update()
@@ -901,7 +919,6 @@ class App:
                     dx = self.player.x - enemy.x
                     dy = self.player.y - enemy.y
                     enemy.aim = math.atan2(-dy, dx)
-    #                print(self.aim)
                     #敵弾生成
                     if enemy.atkType == 2:
                         enemybullets.append(
@@ -912,6 +929,12 @@ class App:
                             EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, enemy.aim, 1, 1, 1)
                         )
                     enemy.isFire = False
+            #移動タイミング
+            if enemy.isMoveSeach == False:
+                dx = self.player.x - enemy.x
+                dy = self.player.y - enemy.y
+                enemy.aim2 = math.atan2(-dy, dx)
+                enemy.isMoveSeach = True    #Falseだとずーっと追いかけてくる
         #BossのPlayer狙い処理
         for boss in bosses:
             #攻撃タイミング
