@@ -147,7 +147,7 @@ class Item:
         self.count = 0
         self.motion = 0         #アニメ切り替え用
         self.is_alive = True
-        blasts.append(self)
+        items.append(self)
     def update(self):
         self.x = self.x
         self.y = self.y
