@@ -11,6 +11,13 @@ WINDOW_W = 128
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
+STAGE_W = 128 * 2
+SAGE_H = 128 * 1
+LEFT_LIMIT = 40
+RIGHT_LIMIT = WINDOW_W - 40 #調整項目
+TILE_SIZE = 8
+MAP_WIDTH = 16
+MAP_HEIGHT = 16
 #list用意
 bullets = []
 enemies = []
@@ -160,6 +167,14 @@ class Bullet:
         #一定時間で消去
         if self.count > 30:            
             self.is_alive = False   #消去
+        #移動先でtileと当たり判定
+        if check_bullet_collision(self.x, self.y) == True:
+            #HitParticle
+            hitparticles.append(
+                HitParticle(self.x, self.y)
+            )
+
+            self.is_alive = False   #タイル接触なら消去
     def draw(self):
         pyxel.pset(self.x, self.y, self.color)
 
@@ -406,6 +421,18 @@ class App:
         if self.score >= self.highScore:
             self.highScore = self.score
 
+        #画面スクロール処理
+        #左へスクロール
+        if self.player.x < self.scroll_x + LEFT_LIMIT:  #左判定ライン到達
+            self.scroll_x = self.player.x - LEFT_LIMIT  #BG用座標更新
+            if self.scroll_x < 0:                       #BGの端到達判定
+                self.scroll_x = 0                       #スクロール停止
+        #右へスクロール
+        if self.scroll_x + RIGHT_LIMIT < self.player.x: #右判定ライン到達
+            self.scroll_x = self.player.x - RIGHT_LIMIT #BG用座標更新
+            if STAGE_W - pyxel.width < self.scroll_x:   #BGの端到達判定
+                self.scroll_x = STAGE_W - pyxel.width   #スクロール停止
+
         #list実行
         update_list(bullets)
         update_list(enemies)
@@ -445,6 +472,8 @@ class App:
     def draw(self):
         #画面クリア 0は黒
         pyxel.cls(0)
+        #cameraリセット
+        pyxel.camera()  #左上隅の座標を(0, 0)にリセット処理
         #描画の画面分岐
         if self.scene == SCENE_TITLE:
             self.draw_title_scene()
@@ -469,6 +498,8 @@ class App:
     def draw_play_scene(self):
         #BG描画
         pyxel.bltm(0, 0, 0, self.scroll_x, self.scroll_y, 128, 128, 0)
+        #camera再セット
+        pyxel.camera(self.scroll_x, self.scroll_y)
 
         self.player.draw()
         draw_list(bullets)
