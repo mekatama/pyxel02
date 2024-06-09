@@ -20,6 +20,65 @@ items = []
 particles = []
 hitparticles = []
 
+#関数(TileMap(0)のタイルを取得)
+#指定座標のタイルの種類を取得
+def get_tile(tile_x, tile_y):
+    return pyxel.tilemap(0).pget(tile_x, tile_y)
+ 
+#関数(タイルとのコリジョン判定)
+    #//は商を求める(余りは切り捨てる)
+    #8は今回のplayerが8×8ドットサイズだから
+def check_collision(x, y):
+    x1 = x // 8             #キャラx座標左端のTileMapの座標
+    y1 = y // 8             #キャラy座標上端のTileMapの座標
+    x2 = (x + 8 - 1) // 8   #キャラx座標右端のTileMapの座標
+    y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
+    #tileの種類で判定
+    #左上判定
+    if get_tile(x1,y1) == (1,0):
+        isStop = True
+        return isStop
+    #右上判定
+    if get_tile(x2,y1) == (1,0):
+        isStop = True
+        return isStop
+    #左下判定
+    if get_tile(x1,y2) == (1,0):
+        isStop = True
+        return isStop
+    #右下判定
+    if get_tile(x2,y2) == (1,0):
+        isStop = True
+        return isStop
+    return False
+
+#関数(タイルとのBulletコリジョン判定)
+    #//は商を求める(余りは切り捨てる)
+    #2は今回のbulletが2×2ドットサイズだから
+def check_bullet_collision(x, y):
+    x1 = x // 8             #キャラx座標左端のTileMapの座標
+    y1 = y // 8             #キャラy座標上端のTileMapの座標
+    x2 = (x + 2 - 1) // 8   #キャラx座標右端のTileMapの座標
+    y2 = (y + 2 - 1) // 8   #キャラy座標下端のTileMapの座標
+    #tileの種類で判定
+    #左上判定
+    if get_tile(x1,y1) == (1,0):
+        isTileHit = True
+        return isTileHit
+    #右上判定
+    if get_tile(x2,y1) == (1,0):
+        isTileHit = True
+        return isTileHit
+    #左下判定
+    if get_tile(x1,y2) == (1,0):
+        isTileHit = True
+        return isTileHit
+    #右下判定
+    if get_tile(x2,y2) == (1,0):
+        isTileHit = True
+        return isTileHit
+    return False
+
 #関数(List実行)
 def update_list(list):
     for elem in list:
@@ -63,9 +122,23 @@ class Player:
             elif self.direction == -1:
                 Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
         #Playerの位置を更新
-        self.x = self.x + self.dx
+        new_player_x = self.x + self.dx
+        new_player_y = self.y + self.dy
+        #移動先で当たり判定
+        #左右
+        if check_collision(new_player_x, self.y) == False:
+            self.x = new_player_x   #左右に障害物が無いので座標更新
+        #床
+        if check_collision(self.x, new_player_y) == False:
+            self.y = new_player_y   #足元に障害物が無いので座標更新
+#            self.isGround = False   #つまり地面にいない状態
+        else:   #床的なところに接触
+#            self.isGround = True
+#            self.isJump = False
+            pass
         #移動停止
         self.dx = 0
+        self.dy = 1 #重力加速度的な
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
@@ -215,6 +288,9 @@ class App:
         #仮配置
         Enemy(32, pyxel.height / 2, 0, 0,20)
         Enemy(100, pyxel.height / 2, 0, 0,20)
+        #BG表示用の座標
+        self.scroll_x = 0
+        self.scroll_y = 0
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -391,6 +467,9 @@ class App:
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
+        #BG描画
+        pyxel.bltm(0, 0, 0, self.scroll_x, self.scroll_y, 128, 128, 0)
+
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
