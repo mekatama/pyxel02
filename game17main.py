@@ -1,5 +1,6 @@
 #左右移動アクション
 import pyxel
+import math
 #画面遷移用の変数
 SCENE_TITLE = 0	    #タイトル画面
 SCENE_PLAY = 1	    #ゲーム画面
@@ -16,6 +17,8 @@ enemies = []
 enemiesUI = []
 blasts = []
 items = []
+particles = []
+hitparticles = []
 
 #関数(List実行)
 def update_list(list):
@@ -85,7 +88,7 @@ class Bullet:
         if self.count > 30:            
             self.is_alive = False   #消去
     def draw(self):
-        pyxel.circ(self.x, self.y, self.size, self.color)
+        pyxel.pset(self.x, self.y, self.color)
 
 #■Enemy
 class Enemy:
@@ -157,12 +160,51 @@ class Item:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
 
+#■Particle
+class Particle:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.timer = 0
+        self.count = 0
+        self.speed = 0.2     #速度
+        self.aim = 0        #攻撃角度
+        self.is_alive = True
+        particles.append(self)
+    def update(self):
+        #一定間隔で角度決定→消滅
+        self.count += 1
+        if self.count == 1:
+            self.aim = pyxel.rndf(0, 2 * math.pi)
+        if self.count >= 30 + pyxel.rndi(1, 50):
+            self.is_alive = False
+        #弾用aim移動ヒットeffectは円表示
+        self.x += self.speed * math.cos(self.aim)
+        self.y += self.speed * -math.sin(self.aim)
+    def draw(self):
+        pyxel.pset(self.x + 4, self.y + 4, 7)
+
+#■HitParticle
+class HitParticle:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.count = 0
+        self.is_alive = True
+        hitparticles.append(self)
+    def update(self):
+        self.count += 1
+        if self.count >= 10:
+            self.is_alive = False
+    def draw(self):
+        pyxel.circb(self.x, self.y, 2, 7)
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
         pyxel.init(WINDOW_W, WINDOW_H, title="2D ACT", fps = 60)
         #editorデータ読み込み(コードと同じフォルダにある)
-        pyxel.load("my_resource10.pyxres")
+        pyxel.load("my_resource17.pyxres")
         self.score = 0
         self.highScore = 0
         #画面遷移の初期化
@@ -171,7 +213,8 @@ class App:
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
 
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, 0,3)
+        Enemy(32, pyxel.height / 2, 0, 0,20)
+        Enemy(100, pyxel.height / 2, 0, 0,20)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -208,15 +251,24 @@ class App:
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
-                if (enemy.x + 8    > bullet.x and
-                    enemy.x         < bullet.x + 2 and
-                    enemy.y + 8    > bullet.y and
-                    enemy.y         < bullet.y + 2):
+                if (enemy.x + 8    > bullet.x - 2 and
+                    enemy.x        < bullet.x + 2 and
+                    enemy.y + 8    > bullet.y - 2 and
+                    enemy.y        < bullet.y + 2):
                     #Hit時の処理
                     enemy.hp -= 1
+                    #HitParticle
+                    hitparticles.append(
+                        HitParticle(bullet.x, bullet.y)
+                    )
+                    #Particle
+                    for i in range(2):
+                        particles.append(
+                            Particle(enemy.x, enemy.y)
+                        )
                     bullet.is_alive = False
                     #残りHP判定
-                    if enemy.hp <= 0:
+                    if enemy.hp <= 0 and enemy.is_alive == True:
                         enemy.is_alive = False
                         enemiesUI.append(
                             EnemyUI(enemy.x, enemy.y, 10)
@@ -227,6 +279,12 @@ class App:
                         items.append(
                             Item(enemy.x, enemy.y)
                         )
+                        #Particle
+                        for i in range(10):
+                            particles.append(
+                                Particle(enemy.x, enemy.y)
+                            )
+
                         self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 
@@ -278,12 +336,16 @@ class App:
         update_list(enemiesUI)
         update_list(blasts)
         update_list(items)
+        update_list(particles)
+        update_list(hitparticles)
         #list更新
         cleanup_list(bullets)
         cleanup_list(enemies)
         cleanup_list(enemiesUI)
         cleanup_list(blasts)
         cleanup_list(items)
+        cleanup_list(particles)
+        cleanup_list(hitparticles)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -300,6 +362,8 @@ class App:
             enemiesUI.clear()                     #list全要素削除
             blasts.clear()                     #list全要素削除
             items.clear()                     #list全要素削除
+            particles.clear()                     #list全要素削除
+            hitparticles.clear()                     #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -333,6 +397,8 @@ class App:
         draw_list(enemiesUI)
         draw_list(blasts)
         draw_list(items)
+        draw_list(particles)
+        draw_list(hitparticles)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
