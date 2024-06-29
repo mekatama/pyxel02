@@ -25,15 +25,17 @@ MAP_HEIGHT = 16
 def get_tile(tile_x, tile_y):
     return pyxel.tilemap(0).pget(tile_x, tile_y)
  
-#関数(タイルとのコリジョン判定)
+#関数(足元タイルとのコリジョン判定)
     #//は商を求める(余りは切り捨てる)
     #8は今回のplayerが8×8ドットサイズだから
+    #足元の2点だけ判定
 def check_collision_yuka(x, y):
-    x1 = x // 8 + 2             #キャラx座標左端のTileMapの座標
+    x1 = x // (8 + 2)             #キャラx座標左端のTileMapの座標
     y1 = y // 8             #キャラy座標上端のTileMapの座標
     x2 = (x + 8 - 2 - 1) // 8   #キャラx座標右端のTileMapの座標
     y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
     #tileの種類で判定
+    """
     #左上判定
     if get_tile(x1,y1) == (1,0):
         isStop = True
@@ -44,15 +46,47 @@ def check_collision_yuka(x, y):
         isStop = True
         print("右上")
         return isStop
+    """
     #左下判定
     if get_tile(x1,y2) == (1,0):
         isStop = True
-        print("左下")
+#        print("左下")
         return isStop
     #右下判定
     if get_tile(x2,y2) == (1,0):
         isStop = True
-        print("右下")
+#        print("右下")
+        return isStop
+    return False
+
+#関数(左右タイルとのコリジョン判定)
+    #//は商を求める(余りは切り捨てる)
+    #8は今回のplayerが8×8ドットサイズだから
+def check_collision_wall(x, y):
+    x1 = x // 8            #キャラx座標左端のTileMapの座標
+    y1 = y // (8 + 2)            #キャラy座標上端のTileMapの座標
+    x2 = (x + 8 - 1) // 8   #キャラx座標右端のTileMapの座標
+    y2 = (y + 8 - 2 - 1) // 8   #キャラy座標下端のTileMapの座標
+    #tileの種類で判定
+    #左上判定
+    if get_tile(x1,y1) == (1,0):
+        isStop = True
+#        print("wall左上")
+        return isStop
+    #右上判定
+    if get_tile(x2,y1) == (1,0):
+        isStop = True
+#        print("wall右上")
+        return isStop
+    #左下判定
+    if get_tile(x1,y2) == (1,0):
+        isStop = True
+#        print("wall左下")
+        return isStop
+    #右下判定
+    if get_tile(x2,y2) == (1,0):
+        isStop = True
+#        print("wall右下")
         return isStop
     return False
 
@@ -90,94 +124,48 @@ class Player:
         self.direction = 1
         self.isGround = False
         self.isJump = False
-        self.isLRmove = True
+        self.isWall = False
         self.is_alive = True
     def update(self):
         #移動入力
-        if self.isLRmove == True:
-            if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
-                self.dx = 1
-                self.direction = 1  #右向き
-            if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
-                self.dx = -1
-                self.direction = -1 #左向き
+        if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
+            self.dx = PLAYER_SPEED
+            self.direction = 1  #右向き
+        elif (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
+            self.dx = -1 * PLAYER_SPEED
+            self.direction = -1 #左向き
+        else:
+            self.dx = 0
         #jump入力
         if (pyxel.btnp(pyxel.KEY_SPACE) and (self.isJump == False) and (self.isGround == True)):
             self.dy = -1.5
             self.isJump = True
             self.isGround = False
-
         #空中時処理
         if self.isGround == False:
             #加速度更新
             self.dy += self.gravity #重力加速度的な
-            #速度更新
-            self.x += self.dx
-            self.y += self.dy
-            #直前座標
-            self.old_x = self.x
-            self.old_y = self.y
-            #Playerの位置を更新
-            self.new_player_x = self.x + self.dx
-            self.new_player_y = self.y + self.dy
-        #接地時処理
         else:
-            #速度更新
-            self.x += self.dx
-            #直前座標
-            self.old_x = self.x
-            #Playerの位置を更新
-            self.new_player_x = self.x + self.dx
-            self.new_player_y = self.y + self.dy
+            self.dy += 0 #変化なし
+        #playerの位置を更新する前に衝突判定
+        self.new_player_x = self.x + self.dx
+        self.new_player_y = self.y + self.dy
 
         #移動先での当たり判定
+        #wall判定
+        if check_collision_wall(self.new_player_x, self.y) == True:
+            self.isWall = True
+        else:
+            self.isWall = False
+            self.x = self.new_player_x
+
         #床判定
         if check_collision_yuka(self.x, self.new_player_y) == True:
-            self.dy = 0
-            #座標戻す
-#            self.y = self.old_y   #足元に障害物。座標戻す
             self.isGround = True
             self.isJump = False
         else:
-            self.y = self.new_player_y
             self.isGround = False
-        
-        """
-        #左右壁判定
-        if check_collision(self.new_player_x, self.y) == False:
-            self.x = self.new_player_x   #左右に障害物が無いので座標更新
-            print("wall")
-#            self.isLRmove = True
-        else:
-            pass
-#            self.isLRmove = False
-        #床
-        if check_collision(self.x, self.new_player_y) == False:
-            #加速度更新
-#            self.dy += self.gravity #重力加速度的な
-            #速度更新
-#            self.y += self.dy
-#            self.y = new_player_y   #足元に障害物が無いので座標更新
-            #直前座標
-#            self.old_y = self.y
-            self.isGround = False   #つまり地面にいない状態
-            print(self.old_y)
-#            print("sky")
-        else:   #床的なところに接触
-            self.isGround = True
-#            self.isJump = False
-            #加速度更新
-#            self.dy += self.gravity #重力加速度的な
-            #座標戻す
-            self.y = self.old_y   #足元に障害物。座標戻す
-            print(self.y)
-            self.dy = 0
-            print("ground")
-        """
-        #移動停止
-        self.dx = 0
-#        self.dy += self.gravity #重力加速度的な
-#        self.dy = 1 #重力加速度的な
+            self.y = self.new_player_y
 
     def draw(self):
         #editorデータ描画(player)
@@ -195,7 +183,7 @@ class App:
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成(+1は着地座標調整、確定ではない)
-        self.player = Player(pyxel.width / 2, pyxel.height / 2 + 1)
+        self.player = Player(36, pyxel.height / 2 + 1)
 
         #BG表示用の座標
         self.scroll_x = 0
@@ -290,8 +278,11 @@ class App:
         #camera再セット
         pyxel.camera(self.scroll_x, self.scroll_y)
 
-        pyxel.text(0,  0, "PC_dx:%f" %self.player.old_x, 7)
-        pyxel.text(0, 6, f"SCORE {self.player.dx:5}", 7)
+        pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
+        pyxel.text(0,   6, "isGround:%s" %self.player.isGround, 7)
+        pyxel.text(0,  12, "isJump:%s" %self.player.isJump, 7)
+        pyxel.text(0,  18, "new_x:%f" %self.player.new_player_y, 7)
+        pyxel.text(0,  24, "    x:%f" %self.player.y, 7)
 
         self.player.draw()
 
