@@ -30,7 +30,7 @@ def get_tile(tile_x, tile_y):
     #8は今回のplayerが8×8ドットサイズだから
     #足元の2点だけ判定
 def check_collision_yuka(x, y):
-    x1 = x // (8 + 2)             #キャラx座標左端のTileMapの座標
+    x1 = (x + 2) // 8             #キャラx座標左端のTileMapの座標
     y1 = y // 8             #キャラy座標上端のTileMapの座標
     x2 = (x + 8 - 2 - 1) // 8   #キャラx座標右端のTileMapの座標
     y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
@@ -64,7 +64,7 @@ def check_collision_yuka(x, y):
     #8は今回のplayerが8×8ドットサイズだから
 def check_collision_wall(x, y):
     x1 = x // 8            #キャラx座標左端のTileMapの座標
-    y1 = y // (8 + 2)            #キャラy座標上端のTileMapの座標
+    y1 = (y + 2) // 8            #キャラy座標上端のTileMapの座標
     x2 = (x + 8 - 1) // 8   #キャラx座標右端のTileMapの座標
     y2 = (y + 8 - 2 - 1) // 8   #キャラy座標下端のTileMapの座標
     #tileの種類で判定
