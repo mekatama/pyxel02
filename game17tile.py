@@ -163,6 +163,7 @@ class Player:
         if check_collision_yuka(self.x, self.new_player_y) == True:
             self.isGround = True
             self.isJump = False
+            self.y = math.floor(self.y) #小数点以下切り捨てで綺麗に着地
         else:
             self.isGround = False
             self.y = self.new_player_y
