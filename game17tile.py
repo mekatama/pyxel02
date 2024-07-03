@@ -141,6 +141,7 @@ class Player:
             self.dy = -1.5
             self.isJump = True
             self.isGround = False
+
         #空中時処理
         if self.isGround == False:
             #加速度更新
@@ -149,7 +150,9 @@ class Player:
             self.dy += 0 #変化なし
         #playerの位置を更新する前に衝突判定
         self.new_player_x = self.x + self.dx
-        self.new_player_y = self.y + self.dy
+        #y座標のみ空中時に計算
+        if self.isGround == False:
+            self.new_player_y = self.y + self.dy
 
         #移動先での当たり判定
         #wall判定
@@ -161,9 +164,9 @@ class Player:
 
         #床判定
         if check_collision_yuka(self.x, self.new_player_y) == True:
+            self.y = math.floor(self.y) #小数点以下切り捨てで綺麗に着地
             self.isGround = True
             self.isJump = False
-            self.y = math.floor(self.y) #小数点以下切り捨てで綺麗に着地
         else:
             self.isGround = False
             self.y = self.new_player_y
@@ -282,8 +285,9 @@ class App:
         pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
         pyxel.text(0,   6, "isGround:%s" %self.player.isGround, 7)
         pyxel.text(0,  12, "isJump:%s" %self.player.isJump, 7)
-        pyxel.text(0,  18, "new_x:%f" %self.player.new_player_y, 7)
-        pyxel.text(0,  24, "    x:%f" %self.player.y, 7)
+        pyxel.text(0,  18, "new_y:%f" %self.player.new_player_y, 7)
+        pyxel.text(0,  24, "    y:%f" %self.player.y, 7)
+        pyxel.text(0,  30, "   dy:%f" %self.player.dy, 7)
 
         self.player.draw()
 
