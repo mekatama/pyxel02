@@ -30,9 +30,9 @@ def get_tile(tile_x, tile_y):
     #8は今回のplayerが8×8ドットサイズだから
     #足元の2点だけ判定
 def check_collision_yuka(x, y):
-    x1 = (x + 2) // 8             #キャラx座標左端のTileMapの座標
+    x1 = (x + 1) // 8             #キャラx座標左端のTileMapの座標
     y1 = y // 8             #キャラy座標上端のTileMapの座標
-    x2 = (x + 8 - 2 - 1) // 8   #キャラx座標右端のTileMapの座標
+    x2 = (x + 8 - 1 - 1) // 8   #キャラx座標右端のTileMapの座標
     y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
     #tileの種類で判定
     """
@@ -64,9 +64,9 @@ def check_collision_yuka(x, y):
     #8は今回のplayerが8×8ドットサイズだから
     #頭上の2点だけ判定
 def check_collision_head(x, y):
-    x1 = (x + 2) // 8             #キャラx座標左端のTileMapの座標
+    x1 = x // 8             #キャラx座標左端のTileMapの座標
     y1 = y // 8             #キャラy座標上端のTileMapの座標
-    x2 = (x + 8 - 2 - 1) // 8   #キャラx座標右端のTileMapの座標
+    x2 = (x + 8 - 1) // 8   #キャラx座標右端のTileMapの座標
     y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
     #tileの種類で判定
     #左上判定
@@ -190,7 +190,7 @@ class Player:
 
         #床判定
         if check_collision_yuka(self.x, self.new_player_y) == True:
-            self.y = math.floor(self.y) #小数点以下切り捨てで綺麗に着地
+            self.y = round(self.y / 8) * 8 #丸めて着地
             self.isGround = True
             self.isJump = False
         else:
