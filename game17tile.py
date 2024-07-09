@@ -35,18 +35,6 @@ def check_collision_yuka(x, y):
     x2 = (x + 8 - 1 - 1) // 8   #キャラx座標右端のTileMapの座標
     y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
     #tileの種類で判定
-    """
-    #左上判定
-    if get_tile(x1,y1) == (1,0):
-        isStop = True
-        print("左上")
-        return isStop
-    #右上判定
-    if get_tile(x2,y1) == (1,0):
-        isStop = True
-        print("右上")
-        return isStop
-    """
     #左下判定
     if get_tile(x1,y2) == (1,0):
         isStop = True
@@ -72,12 +60,12 @@ def check_collision_head(x, y):
     #左上判定
     if get_tile(x1,y1) == (1,0):
         isStop = True
-        print("左上")
+#        print("左上")
         return isStop
     #右上判定
     if get_tile(x2,y1) == (1,0):
         isStop = True
-        print("右上")
+#        print("右上")
         return isStop
     return False
 
