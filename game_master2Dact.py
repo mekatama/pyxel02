@@ -105,26 +105,13 @@ def check_collision_wall(x, y):
 
 #関数(タイルとのBulletコリジョン判定)
     #//は商を求める(余りは切り捨てる)
+    #//bulletはdotなので、一点だけで判定で良さそう
 def check_bullet_collision(x, y):
     x1 = x // 8             #キャラx座標左端のTileMapの座標
     y1 = y // 8             #キャラy座標上端のTileMapの座標
-    x2 = (x - 1) // 8   #キャラx座標右端のTileMapの座標
-    y2 = (y - 1) // 8   #キャラy座標下端のTileMapの座標
     #tileの種類で判定
     #左上判定
     if get_tile(x1,y1) == (1,0):
-        isTileHit = True
-        return isTileHit
-    #右上判定
-    if get_tile(x2,y1) == (1,0):
-        isTileHit = True
-        return isTileHit
-    #左下判定
-    if get_tile(x1,y2) == (1,0):
-        isTileHit = True
-        return isTileHit
-    #右下判定
-    if get_tile(x2,y2) == (1,0):
         isTileHit = True
         return isTileHit
     return False
@@ -241,6 +228,7 @@ class Bullet:
         self.new_bullet_x = self.x + self.speed * self.direction
         #移動先でtileと当たり判定
         if check_bullet_collision(self.new_bullet_x, self.y) == True:
+            self.x = round(self.x / 8) * 8 #丸めて着地
             #HitParticle
             hitparticles.append(
                 HitParticle(self.x, self.y)
