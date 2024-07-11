@@ -22,6 +22,7 @@ MAP_HEIGHT = 16
 #list用意
 bullets = []
 hitparticles = []
+enemies = []
 
 #関数(TileMap(0)のタイルを取得)
 #指定座標のタイルの種類を取得
@@ -244,6 +245,59 @@ class Bullet:
             self.is_alive = False   #消去
     def draw(self):
         pyxel.pset(self.x, self.y, self.color)
+#■Enemy
+class Enemy:
+    def __init__(self, x, y, speed, dir, hp):
+        self.x = x
+        self.y = y
+        self.dx = 0
+        self.dy = 0
+        self.new_enemy_x = x
+        self.new_enemy_y = y
+        self.gravity = GRAVITY
+        self.hp = hp
+        self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.isGround = False
+        self.isJump = False
+        self.isWall = False
+        self.is_alive = True
+        enemies.append(self)
+    def update(self):
+        #空中時処理
+        if self.isGround == False:
+            #加速度更新
+            self.dy += self.gravity #重力加速度的な
+        else:
+            self.dy += 0 #変化なし
+        #playerの位置を更新する前に衝突判定
+        self.new_enemy_x = self.x + self.dx
+        #y座標のみ空中時に計算
+        if self.isGround == False:
+            self.new_enemy_y = self.y + self.dy
+
+        #移動先での当たり判定
+        #wall判定
+        if check_collision_wall(self.new_enemy_x, self.y) == True:
+            self.isWall = True
+        else:
+            self.isWall = False
+            self.x = self.new_enemy_x
+
+        #頭上判定
+        if check_collision_head(self.x, self.new_enemy_y) == True:
+            self.dy = 1 #下方向に加速させる
+
+        #床判定
+        if check_collision_yuka(self.x, self.new_enemy_y) == True:
+            self.y = round(self.y / 8) * 8 #丸めて着地
+            self.isGround = True
+            self.isJump = False
+        else:
+            self.isGround = False
+            self.y = self.new_enemy_y
+
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 
 #■HitParticle
 class HitParticle:
@@ -276,6 +330,8 @@ class App:
         #BG表示用の座標
         self.scroll_x = 0
         self.scroll_y = 0
+        #仮配置
+        Enemy(32, pyxel.height / 2, 0, 0,20)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -327,9 +383,11 @@ class App:
         #list実行
         update_list(bullets)
         update_list(hitparticles)
+        update_list(enemies)
         #list更新
         cleanup_list(bullets)
         cleanup_list(hitparticles)
+        cleanup_list(enemies)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -341,6 +399,7 @@ class App:
             #list全要素削除
             bullets.clear()         #list全要素削除
             hitparticles.clear()    #list全要素削除
+            enemies.clear()         #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -385,6 +444,7 @@ class App:
         self.player.draw()
         draw_list(bullets)
         draw_list(hitparticles)
+        draw_list(enemies)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
