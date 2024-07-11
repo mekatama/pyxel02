@@ -23,6 +23,8 @@ MAP_HEIGHT = 16
 bullets = []
 hitparticles = []
 enemies = []
+blasts = []
+particles = []
 
 #関数(TileMap(0)のタイルを取得)
 #指定座標のタイルの種類を取得
@@ -314,6 +316,48 @@ class HitParticle:
     def draw(self):
         pyxel.circb(self.x, self.y, 2, 7)
 
+#■Blust
+class Blast:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.count = 0
+        self.motion = 0         #アニメ切り替え用
+        self.is_alive = True
+        blasts.append(self)
+    def update(self):
+        self.count += 1
+        if self.count >= 5 and self.count < 10:
+            self.motion = 1
+        elif self.count >= 10:
+            self.is_alive = False
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
+
+#■Particle
+class Particle:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.timer = 0
+        self.count = 0
+        self.speed = 0.2    #速度
+        self.aim = 0        #攻撃角度
+        self.is_alive = True
+        particles.append(self)
+    def update(self):
+        #一定間隔で角度決定→消滅
+        self.count += 1
+        if self.count == 1:
+            self.aim = pyxel.rndf(0, 2 * math.pi)
+        if self.count >= 30 + pyxel.rndi(1, 50):
+            self.is_alive = False
+        #座標
+        self.x += self.speed * math.cos(self.aim)
+        self.y += self.speed * -math.sin(self.aim)
+    def draw(self):
+        pyxel.pset(self.x + 4, self.y + 4, 7)
+
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
@@ -365,6 +409,39 @@ class App:
 
         #Player制御
         self.player.update()
+        #EnemyとBulletの当たり判定
+        for enemy in enemies:
+            for bullet in bullets:
+                if (enemy.x + 8    > bullet.x - 2 and
+                    enemy.x        < bullet.x + 2 and
+                    enemy.y + 8    > bullet.y - 2 and
+                    enemy.y        < bullet.y + 2):
+                    #Hit時の処理
+                    enemy.hp -= 1
+                    #HitParticle
+                    hitparticles.append(
+                        HitParticle(bullet.x, bullet.y)
+                    )
+                    #Particle
+                    for i in range(2):
+                        particles.append(
+                            Particle(enemy.x, enemy.y)
+                        )
+                    bullet.is_alive = False
+                    #残りHP判定
+                    if enemy.hp <= 0 and enemy.is_alive == True:
+                        enemy.is_alive = False
+                        blasts.append(
+                            Blast(enemy.x, enemy.y)
+                        )
+                        #Particle
+                        for i in range(10):
+                            particles.append(
+                                Particle(enemy.x, enemy.y)
+                            )
+
+                        self.score += 10
+#                        pyxel.play(1, 0, loop=False)    #SE再生
         #High Score
         if self.score >= self.highScore:
             self.highScore = self.score
@@ -384,10 +461,14 @@ class App:
         update_list(bullets)
         update_list(hitparticles)
         update_list(enemies)
+        update_list(blasts)
+        update_list(particles)
         #list更新
         cleanup_list(bullets)
         cleanup_list(hitparticles)
         cleanup_list(enemies)
+        cleanup_list(blasts)
+        cleanup_list(particles)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -400,6 +481,8 @@ class App:
             bullets.clear()         #list全要素削除
             hitparticles.clear()    #list全要素削除
             enemies.clear()         #list全要素削除
+            blasts.clear()          #list全要素削除
+            particles.clear()       #list全要素削除
 
 	#描画関数
     def draw(self):
@@ -443,8 +526,10 @@ class App:
 
         self.player.draw()
         draw_list(bullets)
-        draw_list(hitparticles)
         draw_list(enemies)
+        draw_list(hitparticles)
+        draw_list(blasts)
+        draw_list(particles)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
