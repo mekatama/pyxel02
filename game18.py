@@ -266,12 +266,19 @@ class Enemy:
         self.gravity = GRAVITY
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.speed = speed
         self.isGround = False
         self.isJump = False
         self.isWall = False
         self.is_alive = True
         enemies.append(self)
     def update(self):
+        #移動
+        if self.isGround == True:
+            if self.direction == 1:
+                self.dx = self.speed
+            elif self.direction == -1:
+                self.dx = -1 * self.speed
         #空中時処理
         if self.isGround == False:
             #加速度更新
@@ -288,6 +295,12 @@ class Enemy:
         #wall判定
         if check_collision_wall(self.new_enemy_x, self.y) == True:
             self.isWall = True
+            #壁接触で移動方向反転
+            if self.direction == -1:
+                self.direction = 1
+            elif self.direction == 1:
+                self.direction = -1
+            
         else:
             self.isWall = False
             self.x = self.new_enemy_x
@@ -382,7 +395,7 @@ class App:
         self.scroll_x = 0
         self.scroll_y = 0
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, 0,20)
+        Enemy(32, pyxel.height / 2, 0.5, -1, 20)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
