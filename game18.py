@@ -338,6 +338,10 @@ class Transpoter:
         pass
 #        self.new_enemy_x = self.x + self.dx
 #        self.new_enemy_y = self.y + self.dy
+        #生成
+        if pyxel.frame_count % 120 == 0:
+            Enemy(self.x + 4, self.y, 0.5, -1, 20)
+
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 16 * self.direction, 16, 0)
 
