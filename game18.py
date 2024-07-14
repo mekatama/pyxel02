@@ -25,6 +25,7 @@ hitparticles = []
 enemies = []
 blasts = []
 particles = []
+transpoters = []
 
 #関数(TileMap(0)のタイルを取得)
 #指定座標のタイルの種類を取得
@@ -320,6 +321,25 @@ class Enemy:
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8 * self.direction, 8, 0)
+#■Transpoter
+class Transpoter:
+    def __init__(self, x, y, speed, dir, hp):
+        self.x = x
+        self.y = y
+        self.dx = 0
+        self.dy = 0
+        self.hp = hp
+        self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.speed = speed
+        self.is_alive = True
+        transpoters.append(self)
+    def update(self):
+        #移動
+        pass
+#        self.new_enemy_x = self.x + self.dx
+#        self.new_enemy_y = self.y + self.dy
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 32, 0, 16 * self.direction, 16, 0)
 
 #■HitParticle
 class HitParticle:
@@ -383,7 +403,7 @@ class App:
         #画面サイズの設定　titleはwindow枠にtext出せる
         pyxel.init(WINDOW_W, WINDOW_H, title="2D ACT", fps = 60)
         #editorデータ読み込み(コードと同じフォルダにある)
-        pyxel.load("my_resource17.pyxres")
+        pyxel.load("my_resource18.pyxres")
         self.score = 0
         self.highScore = 0
         #画面遷移の初期化
@@ -396,6 +416,7 @@ class App:
         self.scroll_y = 0
         #仮配置
         Enemy(32, pyxel.height / 2, 0.5, -1, 20)
+        Transpoter(64, pyxel.height / 2, 0, -1, 20)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -483,12 +504,14 @@ class App:
         update_list(enemies)
         update_list(blasts)
         update_list(particles)
+        update_list(transpoters)
         #list更新
         cleanup_list(bullets)
         cleanup_list(hitparticles)
         cleanup_list(enemies)
         cleanup_list(blasts)
         cleanup_list(particles)
+        cleanup_list(transpoters)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -503,7 +526,7 @@ class App:
             enemies.clear()         #list全要素削除
             blasts.clear()          #list全要素削除
             particles.clear()       #list全要素削除
-
+            transpoters.clear()     #list全要素削除
 	#描画関数
     def draw(self):
         #画面クリア 0は黒
@@ -550,6 +573,7 @@ class App:
         draw_list(hitparticles)
         draw_list(blasts)
         draw_list(particles)
+        draw_list(transpoters)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
