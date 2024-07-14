@@ -319,7 +319,7 @@ class Enemy:
             self.y = self.new_enemy_y
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        pyxel.blt(self.x, self.y, 0, 24, 0, 8 * self.direction, 8, 0)
 
 #■HitParticle
 class HitParticle:
