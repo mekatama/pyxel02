@@ -180,9 +180,9 @@ class Player:
         if self.isShot == True:
             if pyxel.frame_count % 12 == 0:
                 if self.direction == 1:
-                    Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
+                    Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction, 1)
                 elif self.direction == -1:
-                    Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
+                    Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction, 1)
 
         #空中時処理
         if self.isGround == False:
@@ -222,7 +222,7 @@ class Player:
         pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
 
 class Bullet:
-    def __init__(self, x, y, speed, dir):
+    def __init__(self, x, y, speed, dir,type):
         self.x = x
         self.y = y
         self.new_bullet_x = x
@@ -232,11 +232,22 @@ class Bullet:
         self.size = 1
         self.color = 10 #colorは0～15
         self.count = 0
+        self.count_missile = 0
+        self.type = type #0:通常 1:ミサイル 2:
         self.is_alive = True
         bullets.append(self)
     def update(self):
         #位置を更新する前に衝突判定
-        self.new_bullet_x = self.x + self.speed * self.direction
+        if self.type == 0:
+            self.new_bullet_x = self.x + self.speed * self.direction
+        elif self.type == 1:
+            #初速と加速で更に判定
+            self.new_bullet_x = self.x + self.speed * self.direction * 0.1
+            self.count_missile += 1
+            #missile加速
+            if self.count_missile >= 20:
+                self.new_bullet_x = self.x + self.speed * self.direction * 1.2
+            pass
         #移動先でtileと当たり判定
         if check_bullet_collision(self.new_bullet_x, self.y) == True:
             self.x = round(self.x / 8) * 8 #丸めて着地
@@ -251,10 +262,13 @@ class Bullet:
 #        self.x += self.speed * self.direction        #弾移動
         self.count += 1
         #一定時間で消去
-        if self.count > 30:            
+        if self.count > 60:
             self.is_alive = False   #消去
     def draw(self):
-        pyxel.pset(self.x, self.y, self.color)
+        if self.type == 0:
+            pyxel.pset(self.x, self.y, self.color)
+        elif self.type == 1:
+            pyxel.blt(self.x, self.y - 4, 0, 0, 8, 8 * self.direction, 8, 0)
 #■Enemy
 class Enemy:
     def __init__(self, x, y, speed, dir, hp):
@@ -321,6 +335,7 @@ class Enemy:
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8 * self.direction, 8, 0)
+
 #■Transpoter
 class Transpoter:
     def __init__(self, x, y, speed, dir, hp):
@@ -420,7 +435,7 @@ class App:
         self.scroll_y = 0
         #仮配置
         Enemy(32, pyxel.height / 2, 0.5, -1, 20)
-        Transpoter(64, pyxel.height / 2, 0, -1, 20)
+#        Transpoter(64, pyxel.height / 2, 0, -1, 20)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
