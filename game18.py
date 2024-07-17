@@ -169,6 +169,11 @@ class Player:
             self.isShot = True
         elif (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
             self.isShot = False
+            #武器チェンジ
+            if self.atk_type == 0:
+                self.atk_type = 1
+            elif self.atk_type == 1:
+                self.atk_type = 0
         else:
             self.isShot = True
             self.dx = 0
