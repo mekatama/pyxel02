@@ -107,7 +107,7 @@ def check_collision_wall(x, y):
         return isStop
     return False
 
-#関数(タイルとのBulletコリジョン判定)
+#関数(タイルとのBullet(dot)コリジョン判定)
     #//は商を求める(余りは切り捨てる)
     #//bulletはdotなので、一点だけで判定で良さそう
 def check_bullet_collision(x, y):
@@ -119,6 +119,7 @@ def check_bullet_collision(x, y):
         isTileHit = True
         return isTileHit
     return False
+
 
 #関数(List実行)
 def update_list(list):
@@ -150,6 +151,7 @@ class Player:
         self.gravity = GRAVITY
         self.hp = PLAYER_HP
         self.direction = 1
+        self.atk_type = 1
         self.isGround = False
         self.isJump = False
         self.isWall = False
@@ -178,11 +180,18 @@ class Player:
         #攻撃入力
         #一定時間で自動射撃
         if self.isShot == True:
-            if pyxel.frame_count % 12 == 0:
-                if self.direction == 1:
-                    Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction, 1)
-                elif self.direction == -1:
-                    Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction, 1)
+            if self.atk_type == 0:
+                if pyxel.frame_count % 12 == 0:
+                    if self.direction == 1:
+                        Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                    elif self.direction == -1:
+                        Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+            elif self.atk_type == 1:
+                if pyxel.frame_count % 30 == 0:
+                    if self.direction == 1:
+                        Bullet(self.x + 5, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                    elif self.direction == -1:
+                        Bullet(self.x + 2, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
 
         #空中時処理
         if self.isGround == False:
@@ -249,15 +258,32 @@ class Bullet:
                 self.new_bullet_x = self.x + self.speed * self.direction * 1.2
             pass
         #移動先でtileと当たり判定
-        if check_bullet_collision(self.new_bullet_x, self.y) == True:
-            self.x = round(self.x / 8) * 8 #丸めて着地
-            #HitParticle
-            hitparticles.append(
-                HitParticle(self.x, self.y)
-            )
-            self.is_alive = False   #タイル接触なら消去
+        #通常弾
+        if self.type == 0:
+            if check_bullet_collision(self.new_bullet_x, self.y) == True:
+                self.x = round(self.x / 8) * 8 #丸めて着地
+                #HitParticle
+                hitparticles.append(
+                    HitParticle(self.x, self.y)
+                )
+                self.is_alive = False   #タイル接触なら消去
+            else:
+                self.x = self.new_bullet_x
         else:
-            self.x = self.new_bullet_x
+            if check_collision_wall(self.new_bullet_x, self.y) == True:
+                self.x = round(self.x / 8) * 8 #丸めて着地
+                #HitParticle
+                if self.direction == 1:
+                    hitparticles.append(
+                        HitParticle(self.x + 8, self.y + 4)
+                    )
+                else:
+                    hitparticles.append(
+                        HitParticle(self.x, self.y + 4)
+                    )
+                self.is_alive = False   #タイル接触なら消去
+            else:
+                self.x = self.new_bullet_x
 
 #        self.x += self.speed * self.direction        #弾移動
         self.count += 1
@@ -268,7 +294,7 @@ class Bullet:
         if self.type == 0:
             pyxel.pset(self.x, self.y, self.color)
         elif self.type == 1:
-            pyxel.blt(self.x, self.y - 4, 0, 0, 8, 8 * self.direction, 8, 0)
+            pyxel.blt(self.x, self.y, 0, 0, 8, 8 * self.direction, 8, 0)
 #■Enemy
 class Enemy:
     def __init__(self, x, y, speed, dir, hp):
