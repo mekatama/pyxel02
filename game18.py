@@ -247,7 +247,7 @@ class Bullet:
         self.color = 10 #colorは0～15
         self.count = 0
         self.count_missile = 0
-        self.type = type #0:通常 1:ミサイル 2:
+        self.type = type #0:通常 1:ミサイル 2:レーザー
         self.is_alive = True
         bullets.append(self)
     def update(self):
