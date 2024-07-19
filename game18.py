@@ -633,7 +633,7 @@ class App:
         draw_list(particles)
         draw_list(transpoters)
 
-#        pyxel.camera()  #左上隅の座標を(0, 0)にリセット処理
+        pyxel.camera()  #左上隅の座標を(0, 0)にリセット処理,UIの位置固定
         pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
         pyxel.text(0,   6, "isGround:%s" %self.player.isGround, 7)
         pyxel.text(0,  12, "isJump:%s" %self.player.isJump, 7)
