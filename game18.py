@@ -151,7 +151,8 @@ class Player:
         self.gravity = GRAVITY
         self.hp = PLAYER_HP
         self.direction = 1
-        self.atk_type = 1
+        self.atk_type = 0
+        self.count_input = 0    #インプット制御
         self.isGround = False
         self.isJump = False
         self.isWall = False
@@ -167,12 +168,15 @@ class Player:
             self.dx = -1 * PLAYER_SPEED
             self.direction = -1 #左向き
             self.isShot = True
+        #武器チェンジ
         elif (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
             self.isShot = False
             #武器チェンジ
             if self.atk_type == 0:
                 self.atk_type = 1
             elif self.atk_type == 1:
+                self.atk_type = 2
+            elif self.atk_type == 2:
                 self.atk_type = 0
         else:
             self.isShot = True
@@ -192,6 +196,12 @@ class Player:
                     elif self.direction == -1:
                         Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
             elif self.atk_type == 1:
+                if pyxel.frame_count % 30 == 0:
+                    if self.direction == 1:
+                        Bullet(self.x + 5, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                    elif self.direction == -1:
+                        Bullet(self.x + 2, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+            elif self.atk_type == 2:
                 if pyxel.frame_count % 30 == 0:
                     if self.direction == 1:
                         Bullet(self.x + 5, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
@@ -247,24 +257,24 @@ class Bullet:
         self.color = 10 #colorは0～15
         self.count = 0
         self.count_missile = 0
-        self.type = type #0:通常 1:ミサイル 2:レーザー
+        self.type = type #0:通常 1:ミサイル 2:レーザー 3:???
         self.is_alive = True
         bullets.append(self)
     def update(self):
         #位置を更新する前に衝突判定
-        if self.type == 0:
+        if self.type == 0:      #通常
             self.new_bullet_x = self.x + self.speed * self.direction
-        elif self.type == 1:
+        elif self.type == 1:    #ミサイル
             #初速と加速で更に判定
             self.new_bullet_x = self.x + self.speed * self.direction * 0.1
             self.count_missile += 1
             #missile加速
             if self.count_missile >= 20:
                 self.new_bullet_x = self.x + self.speed * self.direction * 1.2
-            pass
+        elif self.type == 2:    #レーザー
+            self.new_bullet_x = self.x + self.speed * self.direction * 1.2
         #移動先でtileと当たり判定
-        #通常弾
-        if self.type == 0:
+        if self.type == 0:      #通常弾
             if check_bullet_collision(self.new_bullet_x, self.y) == True:
                 self.x = round(self.x / 8) * 8 #丸めて着地
                 #HitParticle
@@ -274,7 +284,7 @@ class Bullet:
                 self.is_alive = False   #タイル接触なら消去
             else:
                 self.x = self.new_bullet_x
-        else:
+        elif self.type == 1:    #ミサイル
             if check_collision_wall(self.new_bullet_x, self.y) == True:
                 self.x = round(self.x / 8) * 8 #丸めて着地
                 #HitParticle
@@ -289,6 +299,8 @@ class Bullet:
                 self.is_alive = False   #タイル接触なら消去
             else:
                 self.x = self.new_bullet_x
+        elif self.type == 2:    #レーザー
+            self.x = self.new_bullet_x
 
 #        self.x += self.speed * self.direction        #弾移動
         self.count += 1
@@ -300,6 +312,8 @@ class Bullet:
             pyxel.pset(self.x, self.y, self.color)
         elif self.type == 1:
             pyxel.blt(self.x, self.y, 0, 0, 8, 8 * self.direction, 8, 0)
+        elif self.type == 2:
+            pyxel.blt(self.x, self.y, 0, 48, 0, 16 * self.direction, 8, 0)
 #■Enemy
 class Enemy:
     def __init__(self, x, y, speed, dir, hp):
@@ -518,7 +532,8 @@ class App:
                         particles.append(
                             Particle(enemy.x, enemy.y)
                         )
-                    bullet.is_alive = False
+                    if bullet.type != 2:
+                        bullet.is_alive = False
                     #残りHP判定
                     if enemy.hp <= 0 and enemy.is_alive == True:
                         enemy.is_alive = False
@@ -610,13 +625,6 @@ class App:
         #camera再セット
         pyxel.camera(self.scroll_x, self.scroll_y)
 
-        pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
-        pyxel.text(0,   6, "isGround:%s" %self.player.isGround, 7)
-        pyxel.text(0,  12, "isJump:%s" %self.player.isJump, 7)
-        pyxel.text(0,  18, "new_y:%f" %self.player.new_player_y, 7)
-        pyxel.text(0,  24, "    y:%f" %self.player.y, 7)
-        pyxel.text(0,  30, "   dy:%f" %self.player.dy, 7)
-
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
@@ -624,6 +632,14 @@ class App:
         draw_list(blasts)
         draw_list(particles)
         draw_list(transpoters)
+
+#        pyxel.camera()  #左上隅の座標を(0, 0)にリセット処理
+        pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
+        pyxel.text(0,   6, "isGround:%s" %self.player.isGround, 7)
+        pyxel.text(0,  12, "isJump:%s" %self.player.isJump, 7)
+        pyxel.text(0,  18, "new_y:%f" %self.player.new_player_y, 7)
+        pyxel.text(0,  24, "    y:%f" %self.player.y, 7)
+        pyxel.text(0,  30, "   dy:%f" %self.player.dy, 7)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
