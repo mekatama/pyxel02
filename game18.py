@@ -460,7 +460,7 @@ class Particle:
         self.x += self.speed * math.cos(self.aim)
         self.y += self.speed * -math.sin(self.aim)
     def draw(self):
-        pyxel.pset(self.x + 4, self.y + 4, 7)
+        pyxel.pset(self.x, self.y, 7)
 
 class App:
     def __init__(self):
@@ -555,13 +555,18 @@ class App:
                         #Hit時の処理
                         enemy.hp -= 1
                         #HitParticle
-                        hitparticles.append(
-                            HitParticle(bullet.x, bullet.y)
-                        )
+                        if enemy.direction == 1:
+                            hitparticles.append(
+                                HitParticle(bullet.x + 8, bullet.y + 4)
+                            )
+                        else:
+                            hitparticles.append(
+                                HitParticle(bullet.x, bullet.y + 4)
+                            )
                         #Particle
                         for i in range(2):
                             particles.append(
-                                Particle(enemy.x, enemy.y)
+                                Particle(enemy.x + 4, enemy.y + 4)
                             )
                         bullet.is_alive = False
                         #残りHP判定
@@ -586,12 +591,12 @@ class App:
                         enemy.hp -= 1
                         #HitParticle
                         hitparticles.append(
-                            HitParticle(bullet.x, bullet.y)
+                            HitParticle(bullet.x, bullet.y + 4)
                         )
                         #Particle
                         for i in range(2):
                             particles.append(
-                                Particle(enemy.x, enemy.y)
+                                Particle(enemy.x, enemy.y + 4)
                             )
                         #残りHP判定
                         if enemy.hp <= 0 and enemy.is_alive == True:
@@ -602,7 +607,7 @@ class App:
                             #Particle
                             for i in range(10):
                                 particles.append(
-                                    Particle(enemy.x, enemy.y)
+                                    Particle(enemy.x, enemy.y + 4)
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
