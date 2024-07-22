@@ -198,15 +198,15 @@ class Player:
             elif self.atk_type == 1:
                 if pyxel.frame_count % 30 == 0:
                     if self.direction == 1:
-                        Bullet(self.x + 5, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                        Bullet(self.x + 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
                     elif self.direction == -1:
-                        Bullet(self.x + 2, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                        Bullet(self.x - 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
             elif self.atk_type == 2:
                 if pyxel.frame_count % 30 == 0:
                     if self.direction == 1:
-                        Bullet(self.x + 5, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                        Bullet(self.x + 4, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
                     elif self.direction == -1:
-                        Bullet(self.x + 2, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                        Bullet(self.x - 12, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
 
         #空中時処理
         if self.isGround == False:
