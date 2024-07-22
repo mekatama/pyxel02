@@ -517,36 +517,94 @@ class App:
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
-                if (enemy.x + 8    > bullet.x - 2 and
-                    enemy.x        < bullet.x + 2 and
-                    enemy.y + 8    > bullet.y - 2 and
-                    enemy.y        < bullet.y + 2):
-                    #Hit時の処理
-                    enemy.hp -= 1
-                    #HitParticle
-                    hitparticles.append(
-                        HitParticle(bullet.x, bullet.y)
-                    )
-                    #Particle
-                    for i in range(2):
-                        particles.append(
-                            Particle(enemy.x, enemy.y)
-                        )
-                    if bullet.type != 2:
-                        bullet.is_alive = False
-                    #残りHP判定
-                    if enemy.hp <= 0 and enemy.is_alive == True:
-                        enemy.is_alive = False
-                        blasts.append(
-                            Blast(enemy.x, enemy.y)
+                if bullet.type == 0:    #通常弾
+                    if (enemy.x + 8    > bullet.x - 2 and
+                        enemy.x        < bullet.x + 2 and
+                        enemy.y + 8    > bullet.y - 2 and
+                        enemy.y        < bullet.y + 2):
+                        #Hit時の処理
+                        enemy.hp -= 1
+                        #HitParticle
+                        hitparticles.append(
+                            HitParticle(bullet.x, bullet.y)
                         )
                         #Particle
-                        for i in range(10):
+                        for i in range(2):
                             particles.append(
                                 Particle(enemy.x, enemy.y)
                             )
-
-                        self.score += 10
+                        bullet.is_alive = False
+                        #残りHP判定
+                        if enemy.hp <= 0 and enemy.is_alive == True:
+                            enemy.is_alive = False
+                            blasts.append(
+                                Blast(enemy.x, enemy.y)
+                            )
+                            #Particle
+                            for i in range(10):
+                                particles.append(
+                                    Particle(enemy.x, enemy.y)
+                                )
+                            self.score += 10
+#                        pyxel.play(1, 0, loop=False)    #SE再生
+                if bullet.type == 1:    #ミサイル弾
+                    if (enemy.x + 8    > bullet.x and
+                        enemy.x        < bullet.x + 8 and
+                        enemy.y + 8    > bullet.y + 2 and
+                        enemy.y        < bullet.y + 6):
+                        #Hit時の処理
+                        enemy.hp -= 1
+                        #HitParticle
+                        hitparticles.append(
+                            HitParticle(bullet.x, bullet.y)
+                        )
+                        #Particle
+                        for i in range(2):
+                            particles.append(
+                                Particle(enemy.x, enemy.y)
+                            )
+                        bullet.is_alive = False
+                        #残りHP判定
+                        if enemy.hp <= 0 and enemy.is_alive == True:
+                            enemy.is_alive = False
+                            blasts.append(
+                                Blast(enemy.x, enemy.y)
+                            )
+                            #Particle
+                            for i in range(10):
+                                particles.append(
+                                    Particle(enemy.x, enemy.y)
+                                )
+                            self.score += 10
+#                        pyxel.play(1, 0, loop=False)    #SE再生
+                if bullet.type == 2:    #レーザー
+                    if (enemy.x + 8    > bullet.x and
+                        enemy.x        < bullet.x + 16 and
+                        enemy.y + 8    > bullet.y + 2 and
+                        enemy.y        < bullet.y + 6):
+                        #Hit時の処理
+                        enemy.hp -= 1
+                        #HitParticle
+                        hitparticles.append(
+                            HitParticle(bullet.x, bullet.y)
+                        )
+                        #Particle
+                        for i in range(2):
+                            particles.append(
+                                Particle(enemy.x, enemy.y)
+                            )
+                        #残りHP判定
+                        if enemy.hp <= 0 and enemy.is_alive == True:
+                            enemy.is_alive = False
+                            blasts.append(
+                                Blast(enemy.x, enemy.y)
+                            )
+                            #Particle
+                            for i in range(10):
+                                particles.append(
+                                    Particle(enemy.x, enemy.y)
+                                )
+                            self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
         #High Score
         if self.score >= self.highScore:
