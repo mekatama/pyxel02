@@ -703,6 +703,10 @@ class App:
         pyxel.text(0,  18, "new_y:%f" %self.player.new_player_y, 7)
         pyxel.text(0,  24, "    y:%f" %self.player.y, 7)
         pyxel.text(0,  30, "   dy:%f" %self.player.dy, 7)
+        #UI
+        pyxel.blt(50, 120, 0, 32, 16, 8, 8, 0)
+        pyxel.blt(60, 120, 0, 40, 16, 8, 8, 0)
+        pyxel.blt(70, 120, 0, 48, 16, 8, 8, 0)
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
