@@ -169,7 +169,7 @@ class Player:
             self.direction = -1 #左向き
             self.isShot = True
         #武器チェンジ
-        elif (pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
+        elif (pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
             self.isShot = False
             #武器チェンジ
             if self.atk_type == 0:
