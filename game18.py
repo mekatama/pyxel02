@@ -383,14 +383,16 @@ class Enemy:
 
 #■Transpoter
 class Transpoter:
-    def __init__(self, x, y, speed, dir, hp):
+    def __init__(self, x, y, speed, dir, hp, type, spawnNum):
         self.x = x
         self.y = y
         self.dx = 0
         self.dy = 0
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.type = type        #0:空中中型機 1:コンテナ
         self.speed = speed
+        self.spawnNum = spawnNum#生成数
         self.is_alive = True
         transpoters.append(self)
     def update(self):
@@ -399,8 +401,9 @@ class Transpoter:
 #        self.new_enemy_x = self.x + self.dx
 #        self.new_enemy_y = self.y + self.dy
         #生成
-        if pyxel.frame_count % 120 == 0:
+        if pyxel.frame_count % 120 == 0 and self.spawnNum > 0:
             Enemy(self.x + 4, self.y, 0.5, -1, 20)
+            self.spawnNum -= 1
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 16 * self.direction, 16, 0)
@@ -480,7 +483,7 @@ class App:
         self.scroll_y = 0
         #仮配置
         Enemy(32, pyxel.height / 2, 0.5, -1, 20)
-#        Transpoter(64, pyxel.height / 2, 0, -1, 20)
+        Transpoter(64, pyxel.height / 2, 0, -1, 20, 1, 5)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
