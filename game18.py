@@ -37,10 +37,10 @@ def get_tile(tile_x, tile_y):
     #8は今回のplayerが8×8ドットサイズだから
     #足元の2点だけ判定
 def check_collision_yuka(x, y):
-    x1 = (x + 1) // 8             #キャラx座標左端のTileMapの座標
-    y1 = y // 8             #キャラy座標上端のTileMapの座標
+    x1 = (x + 1) // 8           #キャラx座標左端のTileMapの座標
+    y1 = y // 8                 #キャラy座標上端のTileMapの座標
     x2 = (x + 8 - 1 - 1) // 8   #キャラx座標右端のTileMapの座標
-    y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
+    y2 = (y + 8 - 1) // 8       #キャラy座標下端のTileMapの座標
     #tileの種類で判定
     #左下判定
     if get_tile(x1,y2) == (1,0):
@@ -102,9 +102,9 @@ def check_collision_head(x, y):
     #//は商を求める(余りは切り捨てる)
     #8は今回のplayerが8×8ドットサイズだから
 def check_collision_wall(x, y):
-    x1 = x // 8            #キャラx座標左端のTileMapの座標
-    y1 = (y + 1) // 8            #キャラy座標上端のTileMapの座標
-    x2 = (x + 8 - 1) // 8   #キャラx座標右端のTileMapの座標
+    x1 = x // 8                 #キャラx座標左端のTileMapの座標
+    y1 = (y + 1) // 8           #キャラy座標上端のTileMapの座標
+    x2 = (x + 8 - 1) // 8       #キャラx座標右端のTileMapの座標
     y2 = (y + 8 - 1 - 1) // 8   #キャラy座標下端のTileMapの座標
     #tileの種類で判定
     #左上判定
@@ -655,6 +655,103 @@ class App:
                             for i in range(10):
                                 particles.append(
                                     Particle(enemy.x, enemy.y + 4)
+                                )
+                            self.score += 10
+#                        pyxel.play(1, 0, loop=False)    #SE再生
+        #中型機とBulletの当たり判定
+        for transpoter in transpoters:
+            for bullet in bullets:
+                if bullet.type == 0:    #通常弾
+                    if (transpoter.x + 16    > bullet.x - 2 and
+                        transpoter.x        < bullet.x + 2 and
+                        transpoter.y + 16    > bullet.y - 2 and
+                        transpoter.y        < bullet.y + 2):
+                        #Hit時の処理
+                        transpoter.hp -= 1
+                        #HitParticle
+                        hitparticles.append(
+                            HitParticle(bullet.x, bullet.y)
+                        )
+                        #Particle
+                        for i in range(2):
+                            particles.append(
+                                Particle(transpoter.x, transpoter.y)
+                            )
+                        bullet.is_alive = False
+                        #残りHP判定
+                        if transpoter.hp <= 0 and transpoter.is_alive == True:
+                            transpoter.is_alive = False
+                            blasts.append(
+                                Blast(transpoter.x, transpoter.y)
+                            )
+                            #Particle
+                            for i in range(10):
+                                particles.append(
+                                    Particle(transpoter.x, transpoter.y)
+                                )
+                            self.score += 10
+#                        pyxel.play(1, 0, loop=False)    #SE再生
+                if bullet.type == 1:    #ミサイル弾
+                    if (transpoter.x + 16    > bullet.x and
+                        transpoter.x        < bullet.x + 8 and
+                        transpoter.y + 16    > bullet.y + 2 and
+                        transpoter.y        < bullet.y + 6):
+                        #Hit時の処理
+                        transpoter.hp -= 1
+                        #HitParticle
+                        if transpoter.direction == 1:
+                            hitparticles.append(
+                                HitParticle(bullet.x + 8, bullet.y + 4)
+                            )
+                        else:
+                            hitparticles.append(
+                                HitParticle(bullet.x, bullet.y + 4)
+                            )
+                        #Particle
+                        for i in range(2):
+                            particles.append(
+                                Particle(transpoter.x + 4, transpoter.y + 4)
+                            )
+                        bullet.is_alive = False
+                        #残りHP判定
+                        if transpoter.hp <= 0 and transpoter.is_alive == True:
+                            transpoter.is_alive = False
+                            blasts.append(
+                                Blast(transpoter.x, transpoter.y)
+                            )
+                            #Particle
+                            for i in range(10):
+                                particles.append(
+                                    Particle(transpoter.x, transpoter.y)
+                                )
+                            self.score += 10
+#                        pyxel.play(1, 0, loop=False)    #SE再生
+                if bullet.type == 2:    #レーザー
+                    if (transpoter.x + 16    > bullet.x and
+                        transpoter.x        < bullet.x + 16 and
+                        transpoter.y + 16    > bullet.y + 2 and
+                        transpoter.y        < bullet.y + 6):
+                        #Hit時の処理
+                        transpoter.hp -= 1
+                        #HitParticle
+                        hitparticles.append(
+                            HitParticle(bullet.x, bullet.y + 4)
+                        )
+                        #Particle
+                        for i in range(2):
+                            particles.append(
+                                Particle(transpoter.x, transpoter.y + 4)
+                            )
+                        #残りHP判定
+                        if transpoter.hp <= 0 and transpoter.is_alive == True:
+                            transpoter.is_alive = False
+                            blasts.append(
+                                Blast(transpoter.x, transpoter.y)
+                            )
+                            #Particle
+                            for i in range(10):
+                                particles.append(
+                                    Particle(transpoter.x, transpoter.y + 4)
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
