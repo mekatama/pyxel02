@@ -54,6 +54,28 @@ def check_collision_yuka(x, y):
         return isStop
     return False
 
+#関数(足元タイルとのコリジョン判定)
+    #//は商を求める(余りは切り捨てる)
+    #中型機用
+    #足元の2点だけ判定
+def check_collision_yuka16(x, y):
+    x1 = (x + 1) // 8           #キャラx座標左端のTileMapの座標
+    y1 = y // 8                 #キャラy座標上端のTileMapの座標
+    x2 = (x + 8 - 1 - 1) // 8   #キャラx座標右端のTileMapの座標
+    y2 = (y + 16 - 1) // 8      #キャラy座標下端のTileMapの座標
+    #tileの種類で判定
+    #左下判定
+    if get_tile(x1,y2) == (1,0):
+        isStop = True
+#        print("左下")
+        return isStop
+    #右下判定
+    if get_tile(x2,y2) == (1,0):
+        isStop = True
+#        print("右下")
+        return isStop
+    return False
+
 #関数(頭上タイルとのコリジョン判定)
     #//は商を求める(余りは切り捨てる)
     #8は今回のplayerが8×8ドットサイズだから
@@ -388,18 +410,40 @@ class Transpoter:
         self.y = y
         self.dx = 0
         self.dy = 0
+        self.new_transpoter_y = y
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.type = type        #0:空中中型機 1:コンテナ
         self.speed = speed
         self.spawnNum = spawnNum#生成数
+        self.gravity = GRAVITY
+        self.isGround = False
         self.is_alive = True
         transpoters.append(self)
     def update(self):
         #移動
-        pass
-#        self.new_enemy_x = self.x + self.dx
-#        self.new_enemy_y = self.y + self.dy
+        if self.type == 0:
+            pass
+        elif self.type == 1:
+            #空中時処理
+            if self.isGround == False:
+                #加速度更新
+                self.dy += self.gravity #重力加速度的な
+            else:
+                self.dy += 0 #変化なし
+            #playerの位置を更新する前に衝突判定
+            #y座標のみ空中時に計算
+            if self.isGround == False:
+                self.new_transpoter_y = self.y + self.dy
+            #移動先での当たり判定
+            #床判定
+            if check_collision_yuka16(self.x, self.new_transpoter_y) == True:
+                self.y = round(self.y / 8) * 8 #丸めて着地
+                self.isGround = True
+            else:
+                self.isGround = False
+                self.y = self.new_transpoter_y
+
         #生成
         if pyxel.frame_count % 120 == 0 and self.spawnNum > 0:
             Enemy(self.x + 4, self.y, 0.5, -1, 20)
