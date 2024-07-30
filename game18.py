@@ -602,7 +602,7 @@ class App:
                         #Hit時の処理
                         enemy.hp -= 1
                         #HitParticle
-                        if enemy.direction == 1:
+                        if bullet.direction == 1:
                             hitparticles.append(
                                 HitParticle(bullet.x + 8, bullet.y + 4)
                             )
@@ -625,7 +625,7 @@ class App:
                             #Particle
                             for i in range(10):
                                 particles.append(
-                                    Particle(enemy.x, enemy.y)
+                                    Particle(enemy.x + 4, enemy.y + 4)
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
@@ -638,12 +638,12 @@ class App:
                         enemy.hp -= 1
                         #HitParticle
                         hitparticles.append(
-                            HitParticle(bullet.x, bullet.y + 4)
+                            HitParticle(bullet.x + 4, bullet.y + 4)
                         )
                         #Particle
                         for i in range(2):
                             particles.append(
-                                Particle(enemy.x, enemy.y + 4)
+                                Particle(enemy.x + 4, enemy.y + 4)
                             )
                         #残りHP判定
                         if enemy.hp <= 0 and enemy.is_alive == True:
@@ -654,7 +654,7 @@ class App:
                             #Particle
                             for i in range(10):
                                 particles.append(
-                                    Particle(enemy.x, enemy.y + 4)
+                                    Particle(enemy.x + 4, enemy.y + 4)
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
@@ -675,19 +675,19 @@ class App:
                         #Particle
                         for i in range(2):
                             particles.append(
-                                Particle(transpoter.x, transpoter.y)
+                                Particle(bullet.x, bullet.y)
                             )
                         bullet.is_alive = False
                         #残りHP判定
                         if transpoter.hp <= 0 and transpoter.is_alive == True:
                             transpoter.is_alive = False
                             blasts.append(
-                                Blast(transpoter.x, transpoter.y)
+                                Blast(transpoter.x + 4, transpoter.y + 4)
                             )
                             #Particle
                             for i in range(10):
                                 particles.append(
-                                    Particle(transpoter.x, transpoter.y)
+                                    Particle(transpoter.x + 8, transpoter.y + 8)
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
@@ -699,7 +699,7 @@ class App:
                         #Hit時の処理
                         transpoter.hp -= 1
                         #HitParticle
-                        if transpoter.direction == 1:
+                        if bullet.direction == 1:
                             hitparticles.append(
                                 HitParticle(bullet.x + 8, bullet.y + 4)
                             )
@@ -709,20 +709,25 @@ class App:
                             )
                         #Particle
                         for i in range(2):
-                            particles.append(
-                                Particle(transpoter.x + 4, transpoter.y + 4)
-                            )
+                            if bullet.direction == 1:
+                                particles.append(
+                                    Particle(bullet.x + 8, bullet.y + 4)
+                                )
+                            else:
+                                hitparticles.append(
+                                    Particle(bullet.x, bullet.y + 4)
+                                )
                         bullet.is_alive = False
                         #残りHP判定
                         if transpoter.hp <= 0 and transpoter.is_alive == True:
                             transpoter.is_alive = False
                             blasts.append(
-                                Blast(transpoter.x, transpoter.y)
+                                Blast(transpoter.x + 4, transpoter.y + 4)
                             )
                             #Particle
                             for i in range(10):
                                 particles.append(
-                                    Particle(transpoter.x, transpoter.y)
+                                    Particle(transpoter.x + 8, transpoter.y + 8)
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
@@ -739,19 +744,24 @@ class App:
                         )
                         #Particle
                         for i in range(2):
-                            particles.append(
-                                Particle(transpoter.x, transpoter.y + 4)
-                            )
+                            if bullet.direction == 1:
+                                particles.append(
+                                    Particle(bullet.x + 8, transpoter.y + 8)
+                                )
+                            else:
+                                hitparticles.append(
+                                    Particle(bullet.x, transpoter.y + 8)
+                                )
                         #残りHP判定
                         if transpoter.hp <= 0 and transpoter.is_alive == True:
                             transpoter.is_alive = False
                             blasts.append(
-                                Blast(transpoter.x, transpoter.y)
+                                Blast(transpoter.x + 4, transpoter.y + 4)
                             )
                             #Particle
                             for i in range(10):
                                 particles.append(
-                                    Particle(transpoter.x, transpoter.y + 4)
+                                    Particle(transpoter.x + 8, transpoter.y + 8)
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
@@ -835,10 +845,10 @@ class App:
         self.player.draw()
         draw_list(bullets)
         draw_list(enemies)
+        draw_list(transpoters)
         draw_list(hitparticles)
         draw_list(blasts)
         draw_list(particles)
-        draw_list(transpoters)
 
         pyxel.camera()  #左上隅の座標を(0, 0)にリセット処理,UIの位置固定
         pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
