@@ -338,7 +338,7 @@ class Bullet:
             pyxel.blt(self.x, self.y, 0, 48, 0, 16 * self.direction, 8, 0)
 #■Enemy
 class Enemy:
-    def __init__(self, x, y, speed, dir, hp):
+    def __init__(self, x, y, speed, dir, hp, moveType, atkType):
         self.x = x
         self.y = y
         self.dx = 0
@@ -347,8 +347,11 @@ class Enemy:
         self.new_enemy_y = y
         self.gravity = GRAVITY
         self.hp = hp
-        self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.direction = dir        #移動方向flag(右:1 左:-1)
+        self.moveType = moveType    #0:移動 1:移動と停止 2:停止
+        self.atkType = atkType      #0:横通常弾 1:エイム通常弾 2:グレネード弾
         self.speed = speed
+        self.moveCount = 0
         self.isGround = False
         self.isJump = False
         self.isWall = False
@@ -357,10 +360,31 @@ class Enemy:
     def update(self):
         #移動
         if self.isGround == True:
-            if self.direction == 1:
-                self.dx = self.speed
-            elif self.direction == -1:
-                self.dx = -1 * self.speed
+            #左右移動
+            if self.moveType == 0:
+                if self.direction == 1:
+                    self.dx = self.speed
+                elif self.direction == -1:
+                    self.dx = -1 * self.speed
+            #移動と停止
+            elif self.moveType == 1:
+                #移動
+                if self.moveCount < 30:
+                    self.moveCount += 1
+                    if self.direction == 1:
+                        self.dx = self.speed
+                    elif self.direction == -1:
+                        self.dx = -1 * self.speed
+                #停止
+                elif self.moveCount >= 30 and self.moveCount < 60:
+                    self.dx = 0
+                    self.moveCount += 1
+                #初期化
+                elif self.moveCount >= 60:
+                    self.moveCount = 0
+            #停止
+            else:
+                pass
         #空中時処理
         if self.isGround == False:
             #加速度更新
@@ -446,7 +470,7 @@ class Transpoter:
 
         #生成
         if pyxel.frame_count % 120 == 0 and self.spawnNum > 0:
-            Enemy(self.x + 4, self.y, 0.5, -1, 20)
+            Enemy(self.x + 4, self.y, 0.5, -1, 20, 0, 0)
             self.spawnNum -= 1
 
     def draw(self):
@@ -526,8 +550,8 @@ class App:
         self.scroll_x = 0
         self.scroll_y = 0
         #仮配置
-        Enemy(32, pyxel.height / 2, 0.5, -1, 20)
-        Transpoter(64, pyxel.height / 2, 0, -1, 20, 1, 5)
+        Enemy(32, pyxel.height / 2, 0.5, -1, 20, 1, 0)
+#        Transpoter(64, pyxel.height / 2, 0, -1, 20, 1, 5)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
