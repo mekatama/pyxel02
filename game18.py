@@ -12,6 +12,7 @@ GRAVITY = 0.05
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
+ENEMY_BULLET_SPEED = 1
 STAGE_W = 128 * 2
 SAGE_H = 128 * 1
 LEFT_LIMIT = 40
@@ -20,6 +21,7 @@ TILE_SIZE = 8
 MAP_WIDTH = 16
 MAP_HEIGHT = 16
 #list用意
+enemybullets = []
 bullets = []
 hitparticles = []
 enemies = []
@@ -174,7 +176,6 @@ class Player:
         self.hp = PLAYER_HP
         self.direction = 1
         self.atk_type = 0
-        self.count_input = 0    #インプット制御
         self.isGround = False
         self.isJump = False
         self.isWall = False
@@ -355,6 +356,7 @@ class Enemy:
         self.isGround = False
         self.isJump = False
         self.isWall = False
+        self.isShot = True
         self.is_alive = True
         enemies.append(self)
     def update(self):
@@ -385,6 +387,15 @@ class Enemy:
             #停止
             else:
                 pass
+        #攻撃入力
+        #一定時間で自動射撃
+        if self.isShot == True:
+            if self.atkType == 0:
+                if pyxel.frame_count % 60 == 0:
+                    if self.direction == 1:
+                        EnemyBullet(self.x + 5, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType)
+                    elif self.direction == -1:
+                        EnemyBullet(self.x + 2, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType)
         #空中時処理
         if self.isGround == False:
             #加速度更新
@@ -426,6 +437,57 @@ class Enemy:
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8 * self.direction, 8, 0)
+#■EnemyBullet
+class EnemyBullet:
+    def __init__(self, x, y, speed, dir,type):
+        self.x = x
+        self.y = y
+        self.new_bullet_x = x
+        self.new_bullet_y = y
+        self.speed = speed
+        self.direction = dir
+        self.size = 1
+        self.color = 10 #colorは0～15
+        self.count = 0
+        self.count_missile = 0
+        self.type = type #0:通常 1:エイム 2:グレネード弾 3:???
+        self.is_alive = True
+        enemybullets.append(self)
+    def update(self):
+        #位置を更新する前に衝突判定
+        if self.type == 0:      #通常
+            self.new_bullet_x = self.x + self.speed * self.direction
+        elif self.type == 1:    #エイム
+            pass
+        elif self.type == 2:    #グレネード弾
+            pass
+        #移動先でtileと当たり判定
+        if self.type == 0:      #通常弾
+            if check_bullet_collision(self.new_bullet_x, self.y) == True:
+                self.x = round(self.x / 8) * 8 #丸めて着地
+                #HitParticle
+                hitparticles.append(
+                    HitParticle(self.x, self.y)
+                )
+                self.is_alive = False   #タイル接触なら消去
+            else:
+                self.x = self.new_bullet_x
+        elif self.type == 1:    #エイム
+            pass
+        elif self.type == 2:    #グレネード弾
+            pass
+
+        self.count += 1
+        #一定時間で消去
+        if self.count > 120:
+            self.is_alive = False   #消去
+    def draw(self):
+        if self.type == 0:
+            pyxel.pset(self.x, self.y, self.color)
+        elif self.type == 1:
+            pyxel.pset(self.x, self.y, self.color)
+        elif self.type == 2:
+            pyxel.blt(self.x, self.y, 0, 48, 0, 16 * self.direction, 8, 0)
 
 #■Transpoter
 class Transpoter:
@@ -805,6 +867,7 @@ class App:
             if STAGE_W - pyxel.width < self.scroll_x:   #BGの端到達判定
                 self.scroll_x = STAGE_W - pyxel.width   #スクロール停止
         #list実行
+        update_list(enemybullets)
         update_list(bullets)
         update_list(hitparticles)
         update_list(enemies)
@@ -812,6 +875,7 @@ class App:
         update_list(particles)
         update_list(transpoters)
         #list更新
+        cleanup_list(enemybullets)
         cleanup_list(bullets)
         cleanup_list(hitparticles)
         cleanup_list(enemies)
@@ -827,6 +891,7 @@ class App:
             self.score = 0
             self.scene = SCENE_TITLE
             #list全要素削除
+            enemybullets.clear()    #list全要素削除
             bullets.clear()         #list全要素削除
             hitparticles.clear()    #list全要素削除
             enemies.clear()         #list全要素削除
@@ -867,6 +932,7 @@ class App:
         pyxel.camera(self.scroll_x, self.scroll_y)
 
         self.player.draw()
+        draw_list(enemybullets)
         draw_list(bullets)
         draw_list(enemies)
         draw_list(transpoters)
@@ -894,7 +960,6 @@ class App:
             pyxel.blt(50, 120, 0, 32, 16, 8, 8, 0)
             pyxel.blt(60, 120, 0, 40, 16, 8, 8, 0)
             pyxel.blt(70, 120, 0, 48, 24, 8, 8, 0)
-
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
