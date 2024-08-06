@@ -9,7 +9,7 @@ SCENE_GAMEOVER = 2  #ゲームオーバー画面
 WINDOW_H = 128
 WINDOW_W = 128
 GRAVITY = 0.05
-PLAYER_HP = 1
+PLAYER_HP = 10
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
 ENEMY_BULLET_SPEED = 1
@@ -647,6 +647,33 @@ class App:
 
         #Player制御
         self.player.update()
+        #EnemyBulletとPlayerの当たり判定
+        for enemybullet in enemybullets:
+            if enemybullet.type == 0:    #通常弾
+                if (self.player.x + 6  > enemybullet.x - 0 and
+                    self.player.x + 2   < enemybullet.x + 2 and
+                    self.player.y + 6  > enemybullet.y - 0 and
+                    self.player.y + 2  < enemybullet.y + 2):
+                    #Hit時の処理
+                    self.player.hp -= 1
+                    hitparticles.append(
+                        HitParticle(enemybullet.x, enemybullet.y)
+                    )
+                    #Particle
+                    for i in range(2):
+                        particles.append(
+                            Particle(enemybullet.x, enemybullet.y)
+                        )
+                    enemybullet.is_alive = False
+    #                pyxel.play(3, 1, loop=False)    #SE再生
+                    #player残りHP判定
+                    if self.player.hp <= 0:
+                        blasts.append(
+                            Blast(enemybullet.x, enemybullet.y)
+                        )
+                        pyxel.stop()
+                        self.scene = SCENE_GAMEOVER
+
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
@@ -664,7 +691,7 @@ class App:
                         #Particle
                         for i in range(2):
                             particles.append(
-                                Particle(enemy.x, enemy.y)
+                                Particle(bullet.x, bullet.y)
                             )
                         bullet.is_alive = False
                         #残りHP判定
