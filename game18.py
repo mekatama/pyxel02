@@ -363,10 +363,12 @@ class Enemy:
         self.atkType = atkType      #0:横通常弾 1:エイム通常弾 2:グレネード弾
         self.speed = speed
         self.moveCount = 0
+        self.count_ani = 0
         self.isGround = False
         self.isJump = False
         self.isWall = False
         self.isShot = True
+        self.isHit = False
         self.is_alive = True
         enemies.append(self)
     def update(self):
@@ -446,7 +448,15 @@ class Enemy:
             self.y = self.new_enemy_y
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 24, 0, 8 * self.direction, 8, 0)
+        if self.isHit == False:
+            pyxel.blt(self.x, self.y, 0, 24, 0, 8 * self.direction, 8, 0)
+        else:
+            if self.count_ani <= 5: #ダメージモーション再生
+                self.count_ani += 1
+            elif self.count_ani > 5:
+                self.isHit = False
+                self.count_ani = 0  #初期化
+            pyxel.blt(self.x, self.y, 0, 24, 8, 8 * self.direction, 8, 0)
 #■EnemyBullet
 class EnemyBullet:
     def __init__(self, x, y, speed, dir,type):
@@ -701,6 +711,7 @@ class App:
                                 Particle(bullet.x, bullet.y)
                             )
                         bullet.is_alive = False
+                        enemy.isHit = True
                         #残りHP判定
                         if enemy.hp <= 0 and enemy.is_alive == True:
                             enemy.is_alive = False
