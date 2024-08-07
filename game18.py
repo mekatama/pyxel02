@@ -13,7 +13,8 @@ PLAYER_HP = 10
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
 ENEMY_BULLET_SPEED = 1
-STAGE_W = 128 * 2
+STAGE_W = 64 * 3
+#STAGE_W = 128 * 2
 SAGE_H = 128 * 1
 LEFT_LIMIT = 40
 RIGHT_LIMIT = WINDOW_W - 40 #調整項目
@@ -628,7 +629,7 @@ class App:
         self.scroll_x = 0
         self.scroll_y = 0
         #仮配置
-        Enemy(32, pyxel.height / 2, 0.5, -1, 20, 1, 0)
+#        Enemy(32, pyxel.height / 2, 0.5, -1, 3, 1, 0)
 #        Transpoter(64, pyxel.height / 2, 0, -1, 20, 1, 5)
 
         #実行開始 更新関数 描画関数
@@ -660,6 +661,12 @@ class App:
             spawntime = 25
         elif self.score >= 70:
             spawntime = 20
+
+        if pyxel.frame_count % 120 == 0:
+            if pyxel.rndi(0, 1) == 0:
+                Enemy(0, 50, 0.5, 1, 3, 1, 0)
+            else:
+                Enemy(184, 50, 0.5, -1, 3, 1, 0)
 
         #Player制御
         self.player.update()
