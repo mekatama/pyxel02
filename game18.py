@@ -176,10 +176,12 @@ class Player:
         self.hp = PLAYER_HP
         self.direction = 1
         self.atk_type = 0
+        self.count_ani = 0      #ダメージ用count
         self.isGround = False
         self.isJump = False
         self.isWall = False
         self.isShot = False
+        self.isHit = False
         self.is_alive = True
     def update(self):
         #移動入力
@@ -266,7 +268,15 @@ class Player:
 
     def draw(self):
         #editorデータ描画(player)
-        pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
+        if self.isHit == False:
+            pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
+        else:
+            if self.count_ani <= 6: #ダメージモーション再生
+                self.count_ani += 1
+            elif self.count_ani > 6:
+                self.isHit = False
+                self.count_ani = 0  #初期化
+            pyxel.blt(self.x, self.y, 0, 8, 8, 8 * self.direction, 8, 0)
 
 class Bullet:
     def __init__(self, x, y, speed, dir,type):
@@ -488,7 +498,6 @@ class EnemyBullet:
             pyxel.pset(self.x, self.y, self.color)
         elif self.type == 2:
             pyxel.blt(self.x, self.y, 0, 48, 0, 16 * self.direction, 8, 0)
-
 #■Transpoter
 class Transpoter:
     def __init__(self, x, y, speed, dir, hp, type, spawnNum):
@@ -537,7 +546,6 @@ class Transpoter:
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 16 * self.direction, 16, 0)
-
 #■HitParticle
 class HitParticle:
     def __init__(self, x, y):
@@ -552,7 +560,6 @@ class HitParticle:
             self.is_alive = False
     def draw(self):
         pyxel.circb(self.x, self.y, 2, 7)
-
 #■Blust
 class Blast:
     def __init__(self, x, y):
@@ -570,7 +577,6 @@ class Blast:
             self.is_alive = False
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
-
 #■Particle
 class Particle:
     def __init__(self, x, y):
@@ -656,6 +662,7 @@ class App:
                     self.player.y + 2  < enemybullet.y + 2):
                     #Hit時の処理
                     self.player.hp -= 1
+                    self.player.isHit = True
                     hitparticles.append(
                         HitParticle(enemybullet.x, enemybullet.y)
                     )
