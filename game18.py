@@ -205,7 +205,7 @@ class Player:
             elif self.atk_type == 2:
                 self.atk_type = 0
         else:
-            self.isShot = True
+            self.isShot = False
             self.dx = 0
         #jump入力
         if (pyxel.btnp(pyxel.KEY_SPACE) and (self.isJump == False) and (self.isGround == True)):
