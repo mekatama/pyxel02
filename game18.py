@@ -12,12 +12,12 @@ GRAVITY = 0.05
 PLAYER_HP = 10
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
-ENEMY_BULLET_SPEED = 1
+ENEMY_BULLET_SPEED = 0.5
 STAGE_W = 64 * 3
 #STAGE_W = 128 * 2
 SAGE_H = 128 * 1
-LEFT_LIMIT = 40
-RIGHT_LIMIT = WINDOW_W - 40 #調整項目
+LEFT_LIMIT = 62
+RIGHT_LIMIT = WINDOW_W - 62 #調整項目
 TILE_SIZE = 8
 MAP_WIDTH = 16
 MAP_HEIGHT = 16
@@ -278,7 +278,7 @@ class Player:
                 self.isHit = False
                 self.count_ani = 0  #初期化
             pyxel.blt(self.x, self.y, 0, 8, 8, 8 * self.direction, 8, 0)
-
+#■Bullet
 class Bullet:
     def __init__(self, x, y, speed, dir,type):
         self.x = x
@@ -404,7 +404,7 @@ class Enemy:
         #一定時間で自動射撃
         if self.isShot == True:
             if self.atkType == 0:
-                if pyxel.frame_count % 60 == 0:
+                if pyxel.frame_count % 120 == 0:
                     if self.direction == 1:
                         EnemyBullet(self.x + 5, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType)
                     elif self.direction == -1:
@@ -500,7 +500,7 @@ class EnemyBullet:
 
         self.count += 1
         #一定時間で消去
-        if self.count > 120:
+        if self.count > 360:
             self.is_alive = False   #消去
     def draw(self):
         if self.type == 0:
