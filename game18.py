@@ -216,7 +216,7 @@ class Player:
         #一定時間で自動射撃
         if self.isShot == True:
             if self.atk_type == 0:
-                if pyxel.frame_count % 12 == 0:
+                if pyxel.frame_count % 9 == 0:
                     if self.direction == 1:
                         Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
                     elif self.direction == -1:
