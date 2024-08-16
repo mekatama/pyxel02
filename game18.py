@@ -205,8 +205,15 @@ class Player:
             elif self.atk_type == 2:
                 self.atk_type = 0
         else:
-            self.isShot = False
-            self.dx = 0
+            #上攻撃
+            if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
+                self.direction = 2 #上向き
+                self.isShot = True
+                self.dx = 0
+            #停止
+            else:
+                self.isShot = False
+                self.dx = 0
         #jump入力
         if (pyxel.btnp(pyxel.KEY_SPACE) and (self.isJump == False) and (self.isGround == True)):
             self.dy = -1.5
@@ -221,6 +228,8 @@ class Player:
                         Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
                     elif self.direction == -1:
                         Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                    elif self.direction == 2:
+                        Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
             elif self.atk_type == 1:
                 if pyxel.frame_count % 30 == 0:
                     if self.direction == 1:
@@ -233,7 +242,6 @@ class Player:
                         Bullet(self.x + 4, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
                     elif self.direction == -1:
                         Bullet(self.x - 12, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
-
         #空中時処理
         if self.isGround == False:
             #加速度更新
@@ -245,7 +253,6 @@ class Player:
         #y座標のみ空中時に計算
         if self.isGround == False:
             self.new_player_y = self.y + self.dy
-
         #移動先での当たり判定
         #wall判定
         if check_collision_wall(self.new_player_x, self.y) == True:
@@ -253,11 +260,9 @@ class Player:
         else:
             self.isWall = False
             self.x = self.new_player_x
-
         #頭上判定
         if check_collision_head(self.x, self.new_player_y) == True:
             self.dy = 1 #下方向に加速させる
-
         #床判定
         if check_collision_yuka(self.x, self.new_player_y) == True:
             self.y = round(self.y / 8) * 8 #丸めて着地
@@ -297,7 +302,12 @@ class Bullet:
     def update(self):
         #位置を更新する前に衝突判定
         if self.type == 0:      #通常
-            self.new_bullet_x = self.x + self.speed * self.direction
+            #左右方向
+            if self.direction != 2:
+                self.new_bullet_x = self.x + self.speed * self.direction
+            else:
+                self.new_bullet_y = self.y - self.speed
+                print("_up")
         elif self.type == 1:    #ミサイル
             #初速と加速で更に判定
             self.new_bullet_x = self.x + self.speed * self.direction * 0.1
@@ -309,15 +319,21 @@ class Bullet:
             self.new_bullet_x = self.x + self.speed * self.direction * 1.2
         #移動先でtileと当たり判定
         if self.type == 0:      #通常弾
-            if check_bullet_collision(self.new_bullet_x, self.y) == True:
-                self.x = round(self.x / 8) * 8 #丸めて着地
-                #HitParticle
-                hitparticles.append(
-                    HitParticle(self.x, self.y)
-                )
-                self.is_alive = False   #タイル接触なら消去
+            #左右方向
+            if self.direction != 2:
+                if check_bullet_collision(self.new_bullet_x, self.y) == True:
+                    self.x = round(self.x / 8) * 8 #丸めて着地
+                    #HitParticle
+                    hitparticles.append(
+                        HitParticle(self.x, self.y)
+                    )
+                    self.is_alive = False   #タイル接触なら消去
+                else:
+                    self.x = self.new_bullet_x
+            #上方向
             else:
-                self.x = self.new_bullet_x
+                #上手く動かない
+                self.y = self.new_bullet_y
         elif self.type == 1:    #ミサイル
             if check_collision_wall(self.new_bullet_x, self.y) == True:
                 self.x = round(self.x / 8) * 8 #丸めて着地
