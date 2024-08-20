@@ -183,20 +183,24 @@ class Player:
         self.isWall = False
         self.isShot = False
         self.isHit = False
+        self.isUp = False       #上入力flag
         self.is_alive = True
     def update(self):
         #移動入力
         if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
             self.dx = PLAYER_SPEED
-            self.direction = 1  #右向き
+            self.direction = 1      #右向き
             self.isShot = True
+            self.isUp = False
         elif (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
             self.dx = -1 * PLAYER_SPEED
-            self.direction = -1 #左向き
+            self.direction = -1     #左向き
             self.isShot = True
+            self.isUp = False
         #武器チェンジ
         elif (pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
             self.isShot = False
+            self.isUp = False
             #武器チェンジ
             if self.atk_type == 0:
                 self.atk_type = 1
@@ -207,11 +211,12 @@ class Player:
         else:
             #上攻撃
             if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)):
-                self.direction = 2 #上向き
+                self.isUp = True
                 self.isShot = True
                 self.dx = 0
             #停止
             else:
+                self.isUp = False
                 self.isShot = False
                 self.dx = 0
         #jump入力
@@ -225,11 +230,11 @@ class Player:
             if self.atk_type == 0:
                 if pyxel.frame_count % 9 == 0:
                     if self.direction == 1:
-                        Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                        Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
                     elif self.direction == -1:
-                        Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
-                    elif self.direction == 2:
-                        Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                        Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                    elif self.isUp == True:
+                        Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
             elif self.atk_type == 1:
                 if pyxel.frame_count % 30 == 0:
                     if self.direction == 1:
@@ -285,7 +290,7 @@ class Player:
             pyxel.blt(self.x, self.y, 0, 8, 8, 8 * self.direction, 8, 0)
 #■Bullet
 class Bullet:
-    def __init__(self, x, y, speed, dir,type):
+    def __init__(self, x, y, speed, dir,type, isUp):
         self.x = x
         self.y = y
         self.new_bullet_x = x
@@ -297,13 +302,14 @@ class Bullet:
         self.count = 0
         self.count_missile = 0
         self.type = type #0:通常 1:ミサイル 2:レーザー 3:???
+        self.isUp = isUp
         self.is_alive = True
         bullets.append(self)
     def update(self):
         #位置を更新する前に衝突判定
         if self.type == 0:      #通常
             #左右方向
-            if self.direction != 2:
+            if self.isUp == False:
                 self.new_bullet_x = self.x + self.speed * self.direction
             else:
                 self.new_bullet_y = self.y - self.speed
@@ -320,7 +326,7 @@ class Bullet:
         #移動先でtileと当たり判定
         if self.type == 0:      #通常弾
             #左右方向
-            if self.direction != 2:
+            if self.isUp == False:
                 if check_bullet_collision(self.new_bullet_x, self.y) == True:
                     self.x = round(self.x / 8) * 8 #丸めて着地
                     #HitParticle
@@ -332,7 +338,6 @@ class Bullet:
                     self.x = self.new_bullet_x
             #上方向
             else:
-                #上手く動かない
                 self.y = self.new_bullet_y
         elif self.type == 1:    #ミサイル
             if check_collision_wall(self.new_bullet_x, self.y) == True:
