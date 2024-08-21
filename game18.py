@@ -237,16 +237,22 @@ class Player:
                         Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
             elif self.atk_type == 1:
                 if pyxel.frame_count % 30 == 0:
-                    if self.direction == 1:
-                        Bullet(self.x + 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
-                    elif self.direction == -1:
-                        Bullet(self.x - 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                    if self.isUp == False:
+                        if self.direction == 1:
+                            Bullet(self.x + 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                        elif self.direction == -1:
+                            Bullet(self.x - 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                    elif self.isUp == True:
+                        Bullet(self.x, self.y - 8, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
             elif self.atk_type == 2:
                 if pyxel.frame_count % 30 == 0:
-                    if self.direction == 1:
-                        Bullet(self.x + 4, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
-                    elif self.direction == -1:
-                        Bullet(self.x - 12, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type)
+                    if self.isUp == False:
+                        if self.direction == 1:
+                            Bullet(self.x + 4, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                        elif self.direction == -1:
+                            Bullet(self.x - 12, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                    elif self.isUp == True:
+                        Bullet(self.x, self.y - 8, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
         #空中時処理
         if self.isGround == False:
             #加速度更新
@@ -290,7 +296,7 @@ class Player:
             pyxel.blt(self.x, self.y, 0, 8, 8, 8 * self.direction, 8, 0)
 #■Bullet
 class Bullet:
-    def __init__(self, x, y, speed, dir,type, isUp):
+    def __init__(self, x, y, speed, dir, type, isUp):
         self.x = x
         self.y = y
         self.new_bullet_x = x
@@ -313,16 +319,28 @@ class Bullet:
                 self.new_bullet_x = self.x + self.speed * self.direction
             else:
                 self.new_bullet_y = self.y - self.speed
-                print("_up")
         elif self.type == 1:    #ミサイル
-            #初速と加速で更に判定
-            self.new_bullet_x = self.x + self.speed * self.direction * 0.1
-            self.count_missile += 1
-            #missile加速
-            if self.count_missile >= 20:
-                self.new_bullet_x = self.x + self.speed * self.direction * 1.2
+            #左右方向
+            if self.isUp == False:
+                #初速と加速で更に判定
+                self.new_bullet_x = self.x + self.speed * self.direction * 0.1
+                self.count_missile += 1
+                #missile加速
+                if self.count_missile >= 20:
+                    self.new_bullet_x = self.x + self.speed * self.direction * 1.2
+            else:
+                #初速と加速で更に判定
+                self.new_bullet_y = self.y - self.speed * 0.1
+                self.count_missile += 1
+                #missile加速
+                if self.count_missile >= 20:
+                    self.new_bullet_y = self.y - self.speed * 1.2
         elif self.type == 2:    #レーザー
-            self.new_bullet_x = self.x + self.speed * self.direction * 1.2
+            #左右方向
+            if self.isUp == False:
+                self.new_bullet_x = self.x + self.speed * self.direction * 1.2
+            else:
+                self.new_bullet_y = self.y - self.speed * 1.2
         #移動先でtileと当たり判定
         if self.type == 0:      #通常弾
             #左右方向
@@ -340,24 +358,32 @@ class Bullet:
             else:
                 self.y = self.new_bullet_y
         elif self.type == 1:    #ミサイル
-            if check_collision_wall(self.new_bullet_x, self.y) == True:
-                self.x = round(self.x / 8) * 8 #丸めて着地
-                #HitParticle
-                if self.direction == 1:
-                    hitparticles.append(
-                        HitParticle(self.x + 8, self.y + 4)
-                    )
+            #左右方向
+            if self.isUp == False:
+                if check_collision_wall(self.new_bullet_x, self.y) == True:
+                    self.x = round(self.x / 8) * 8 #丸めて着地
+                    #HitParticle
+                    if self.direction == 1:
+                        hitparticles.append(
+                            HitParticle(self.x + 8, self.y + 4)
+                        )
+                    else:
+                        hitparticles.append(
+                            HitParticle(self.x, self.y + 4)
+                        )
+                    self.is_alive = False   #タイル接触なら消去
                 else:
-                    hitparticles.append(
-                        HitParticle(self.x, self.y + 4)
-                    )
-                self.is_alive = False   #タイル接触なら消去
+                    self.x = self.new_bullet_x
+            #上方向
             else:
-                self.x = self.new_bullet_x
+                self.y = self.new_bullet_y
         elif self.type == 2:    #レーザー
-            self.x = self.new_bullet_x
-
-#        self.x += self.speed * self.direction        #弾移動
+            #左右方向
+            if self.isUp == False:
+                self.x = self.new_bullet_x
+            #上方向
+            else:
+                self.y = self.new_bullet_y
         self.count += 1
         #一定時間で消去
         if self.count > 60:
@@ -366,9 +392,15 @@ class Bullet:
         if self.type == 0:
             pyxel.pset(self.x, self.y, self.color)
         elif self.type == 1:
-            pyxel.blt(self.x, self.y, 0, 0, 8, 8 * self.direction, 8, 0)
+            if self.isUp == False:
+                pyxel.blt(self.x, self.y, 0, 0, 8, 8 * self.direction, 8, 0)
+            else:
+                pyxel.blt(self.x, self.y, 0, 0, 16, 8, 8, 0)
         elif self.type == 2:
-            pyxel.blt(self.x, self.y, 0, 48, 0, 16 * self.direction, 8, 0)
+            if self.isUp == False:
+                pyxel.blt(self.x, self.y, 0, 48, 0, 16 * self.direction, 8, 0)
+            else:
+                pyxel.blt(self.x, self.y, 0, 56, 8, 8, 16, 0)
 #■Enemy
 class Enemy:
     def __init__(self, x, y, speed, dir, hp, moveType, atkType):
