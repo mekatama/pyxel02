@@ -16,8 +16,8 @@ ENEMY_BULLET_SPEED = 0.5
 STAGE_W = 64 * 3
 #STAGE_W = 128 * 2
 SAGE_H = 128 * 1
-LEFT_LIMIT = 62
-RIGHT_LIMIT = WINDOW_W - 62 #調整項目
+LEFT_LIMIT = 64
+RIGHT_LIMIT = WINDOW_W - 64 #調整項目
 TILE_SIZE = 8
 MAP_WIDTH = 16
 MAP_HEIGHT = 16
@@ -681,6 +681,8 @@ class App:
         #BG表示用の座標
         self.scroll_x = 0
         self.scroll_y = 0
+        #playerのHP表示用の座標
+        self.player_hp_X = 0
         #仮配置
 #        Enemy(32, pyxel.height / 2, 0.5, -1, 3, 1, 0)
 #        Transpoter(64, pyxel.height / 2, 0, -1, 20, 1, 5)
@@ -1046,12 +1048,22 @@ class App:
         draw_list(particles)
 
         pyxel.camera()  #左上隅の座標を(0, 0)にリセット処理,UIの位置固定
+        #debug UI
         pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
         pyxel.text(0,   6, "isGround:%s" %self.player.isGround, 7)
         pyxel.text(0,  12, "isJump:%s" %self.player.isJump, 7)
         pyxel.text(0,  18, "new_y:%f" %self.player.new_player_y, 7)
         pyxel.text(0,  24, "    y:%f" %self.player.y, 7)
         pyxel.text(0,  30, "   dy:%f" %self.player.dy, 7)
+        #player HP UI
+        if self.player.x < RIGHT_LIMIT:
+            self.player_hp_X = self.player.x
+        elif self.player.x >= RIGHT_LIMIT and self.player.x <= 128:
+            self.player_hp_X = RIGHT_LIMIT
+        elif self.player.x > 128:
+            self.player_hp_X = self.player.x - RIGHT_LIMIT 
+        pyxel.text(self.player_hp_X - 4,  self.player.y - 6, "HP:%i" %self.player.hp, 7)
+
         #UI
         if self.player.atk_type == 0:
             pyxel.blt(50, 120, 0, 32, 24, 8, 8, 0)
