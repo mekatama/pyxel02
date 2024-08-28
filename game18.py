@@ -178,8 +178,8 @@ class Player:
         self.direction = 1
         self.atk_type = 0
         self.count_ani = 0      #ダメージ用count
-        self.zandan_missile = 0
-        self.zandan_laser = 0
+        self.zandan_missile = 10
+        self.zandan_laser = 10
         self.isGround = False
         self.isJump = False
         self.isWall = False
@@ -238,23 +238,29 @@ class Player:
                     elif self.isUp == True:
                         Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
             elif self.atk_type == 1:
-                if pyxel.frame_count % 30 == 0:
-                    if self.isUp == False:
-                        if self.direction == 1:
-                            Bullet(self.x + 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
-                        elif self.direction == -1:
-                            Bullet(self.x - 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
-                    elif self.isUp == True:
-                        Bullet(self.x, self.y - 8, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                if self.zandan_missile > 0:
+                    if pyxel.frame_count % 30 == 0:
+                        if self.isUp == False:
+                            if self.direction == 1:
+                                Bullet(self.x + 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                            elif self.direction == -1:
+                                Bullet(self.x - 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                        elif self.isUp == True:
+                            Bullet(self.x, self.y - 8, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                        #残弾処理
+                        self.zandan_missile -= 1
             elif self.atk_type == 2:
-                if pyxel.frame_count % 30 == 0:
-                    if self.isUp == False:
-                        if self.direction == 1:
-                            Bullet(self.x + 4, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
-                        elif self.direction == -1:
-                            Bullet(self.x - 12, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
-                    elif self.isUp == True:
-                        Bullet(self.x, self.y - 8, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                if self.zandan_laser > 0:
+                    if pyxel.frame_count % 30 == 0:
+                        if self.isUp == False:
+                            if self.direction == 1:
+                                Bullet(self.x + 4, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                            elif self.direction == -1:
+                                Bullet(self.x - 12, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                        elif self.isUp == True:
+                            Bullet(self.x, self.y - 8, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
+                        #残弾処理
+                        self.zandan_laser -= 1
         #空中時処理
         if self.isGround == False:
             #加速度更新
