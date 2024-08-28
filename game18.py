@@ -178,6 +178,8 @@ class Player:
         self.direction = 1
         self.atk_type = 0
         self.count_ani = 0      #ダメージ用count
+        self.zandan_missile = 0
+        self.zandan_laser = 0
         self.isGround = False
         self.isJump = False
         self.isWall = False
@@ -1065,6 +1067,10 @@ class App:
         pyxel.text(self.player_hp_X - 4,  self.player.y - 6, "HP:%i" %self.player.hp, 7)
 
         #UI
+        #残段数
+        pyxel.text(60, 114, "%i" %self.player.zandan_missile, 7)
+        pyxel.text(70, 114, "%i" %self.player.zandan_laser, 7)
+        #武器icon
         if self.player.atk_type == 0:
             pyxel.blt(50, 120, 0, 32, 24, 8, 8, 0)
             pyxel.blt(60, 120, 0, 40, 16, 8, 8, 0)
