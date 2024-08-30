@@ -144,8 +144,6 @@ def check_bullet_collision(x, y):
         isTileHit = True
         return isTileHit
     return False
-
-
 #関数(List実行)
 def update_list(list):
     for elem in list:
@@ -421,7 +419,7 @@ class Enemy:
         self.gravity = GRAVITY
         self.hp = hp
         self.direction = dir        #移動方向flag(右:1 左:-1)
-        self.moveType = moveType    #0:移動 1:移動と停止 2:停止
+        self.moveType = moveType    #0:移動 1:移動と停止 2:停止 3:空中移動
         self.atkType = atkType      #0:横通常弾 1:エイム通常弾 2:グレネード弾
         self.speed = speed
         self.moveCount = 0
@@ -461,6 +459,15 @@ class Enemy:
             #停止
             else:
                 pass
+        #空中用
+        else:
+            #左右移動
+            if self.moveType == 3:
+                if self.direction == 1:
+                    self.dx = self.speed
+                elif self.direction == -1:
+                    self.dx = -1 * self.speed
+
         #攻撃入力
         #一定時間で自動射撃
         if self.isShot == True:
@@ -472,8 +479,11 @@ class Enemy:
                         EnemyBullet(self.x + 2, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType)
         #空中時処理
         if self.isGround == False:
-            #加速度更新
-            self.dy += self.gravity #重力加速度的な
+            if self.moveType != 3:
+                #加速度更新
+                self.dy += self.gravity #重力加速度的な
+            else:
+                self.dy += 0            #空中敵は落下しない
         else:
             self.dy += 0 #変化なし
         #playerの位置を更新する前に衝突判定
@@ -692,7 +702,7 @@ class App:
         #playerのHP表示用の座標
         self.player_hp_X = 0
         #仮配置
-#        Enemy(32, pyxel.height / 2, 0.5, -1, 3, 1, 0)
+#        Enemy(32, pyxel.height / 2, 0.5, -1, 3, 3, 0)
 #        Transpoter(64, pyxel.height / 2, 0, -1, 20, 1, 5)
 
         #実行開始 更新関数 描画関数
