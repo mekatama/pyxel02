@@ -594,13 +594,19 @@ class Transpoter:
         self.speed = speed
         self.spawnNum = spawnNum#生成数
         self.gravity = GRAVITY
+        self.moveCount = 0
         self.isGround = False
         self.is_alive = True
         transpoters.append(self)
     def update(self):
         #移動
         if self.type == 0:
-            pass
+            if self.moveCount < 35:
+                self.dy += 0.1
+                self.y += self.dy
+                self.moveCount += 1
+            elif self.moveCount >= 35:
+                pass
         elif self.type == 1:
             #空中時処理
             if self.isGround == False:
@@ -703,7 +709,7 @@ class App:
         self.player_hp_X = 0
         #仮配置
 #        Enemy(32, pyxel.height / 2, 0.5, -1, 3, 3, 0)
-#        Transpoter(64, pyxel.height / 2, 0, -1, 20, 1, 5)
+        Transpoter(64, -32, 2, -1, 20, 0, 5)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
