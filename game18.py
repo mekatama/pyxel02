@@ -571,8 +571,15 @@ class EnemyBullet:
             else:
                 self.x = self.new_bullet_x
         elif self.type == 1:    #通常弾(下)
-            self.y = self.new_bullet_y
-            pass
+            if check_bullet_collision(self.x, self.new_bullet_y) == True:
+                self.y = round(self.y / 8) * 8 #丸めて着地
+                #HitParticle
+                hitparticles.append(
+                    HitParticle(self.x, self.y)
+                )
+                self.is_alive = False   #タイル接触なら消去
+            else:
+                self.y = self.new_bullet_y
         elif self.type == 2:    #エイム
             pass
         elif self.type == 3:    #グレネード弾
