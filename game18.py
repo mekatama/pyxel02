@@ -420,7 +420,7 @@ class Enemy:
         self.hp = hp
         self.direction = dir        #移動方向flag(右:1 左:-1)
         self.moveType = moveType    #0:移動 1:移動と停止 2:停止 3:空中移動
-        self.atkType = atkType      #0:横通常弾 1:エイム通常弾 2:グレネード弾
+        self.atkType = atkType      #0:横通常弾 1:下通常弾 2:エイム通常弾 3:グレネード弾
         self.speed = speed
         self.moveCount = 0
         self.count_ani = 0
@@ -477,6 +477,10 @@ class Enemy:
                         EnemyBullet(self.x + 5, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType)
                     elif self.direction == -1:
                         EnemyBullet(self.x + 2, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType)
+            if self.atkType == 1:
+                if pyxel.frame_count % 120 == 0:
+                    EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 2, self.atkType)
+
         #空中時処理
         if self.isGround == False:
             if self.moveType != 3:
@@ -537,24 +541,26 @@ class EnemyBullet:
         self.new_bullet_x = x
         self.new_bullet_y = y
         self.speed = speed
-        self.direction = dir
+        self.direction = dir    #1:右 -1:左 2:下
         self.size = 1
         self.color = 10 #colorは0～15
         self.count = 0
         self.count_missile = 0
-        self.type = type #0:通常 1:エイム 2:グレネード弾 3:???
+        self.type = type #0:通常(左右) 1:通常(下) 2:エイム 3:グレネード弾 4:???
         self.is_alive = True
         enemybullets.append(self)
     def update(self):
         #位置を更新する前に衝突判定
-        if self.type == 0:      #通常
+        if self.type == 0:      #通常弾(左右)
             self.new_bullet_x = self.x + self.speed * self.direction
-        elif self.type == 1:    #エイム
+        elif self.type == 1:    #通常弾(下)
+            self.new_bullet_y = self.y + self.speed
+        elif self.type == 2:    #エイム
             pass
-        elif self.type == 2:    #グレネード弾
+        elif self.type == 3:    #グレネード弾
             pass
         #移動先でtileと当たり判定
-        if self.type == 0:      #通常弾
+        if self.type == 0:      #通常弾(左右)
             if check_bullet_collision(self.new_bullet_x, self.y) == True:
                 self.x = round(self.x / 8) * 8 #丸めて着地
                 #HitParticle
@@ -564,9 +570,12 @@ class EnemyBullet:
                 self.is_alive = False   #タイル接触なら消去
             else:
                 self.x = self.new_bullet_x
-        elif self.type == 1:    #エイム
+        elif self.type == 1:    #通常弾(下)
+            self.y = self.new_bullet_y
             pass
-        elif self.type == 2:    #グレネード弾
+        elif self.type == 2:    #エイム
+            pass
+        elif self.type == 3:    #グレネード弾
             pass
 
         self.count += 1
@@ -708,8 +717,8 @@ class App:
         #playerのHP表示用の座標
         self.player_hp_X = 0
         #仮配置
-#        Enemy(32, pyxel.height / 2, 0.5, -1, 3, 3, 0)
-        Transpoter(64, -32, 2, -1, 20, 0, 5)
+        Enemy(32, pyxel.height / 2, 0.5, -1, 3, 3, 1)
+#        Transpoter(64, -32, 2, -1, 20, 0, 5)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
