@@ -759,17 +759,44 @@ class App:
 
         if pyxel.frame_count % 120 == 0:
             if pyxel.rndi(0, 1) == 0:
-                Enemy(0, 50, 0.5, 1, 3, 1, 0)
+#                Enemy(0, 50, 0.5, 1, 3, 1, 0)
+                pass
             else:
-                Enemy(184, 50, 0.5, -1, 3, 1, 0)
+#                Enemy(184, 50, 0.5, -1, 3, 1, 0)
+                pass
 
         #Player制御
         self.player.update()
         #EnemyBulletとPlayerの当たり判定
         for enemybullet in enemybullets:
-            if enemybullet.type == 0:    #通常弾
+            if enemybullet.type == 0:    #通常弾(左右)
                 if (self.player.x + 6  > enemybullet.x - 0 and
                     self.player.x + 2   < enemybullet.x + 2 and
+                    self.player.y + 6  > enemybullet.y - 0 and
+                    self.player.y + 2  < enemybullet.y + 2):
+                    #Hit時の処理
+                    self.player.hp -= 1
+                    self.player.isHit = True
+                    hitparticles.append(
+                        HitParticle(enemybullet.x, enemybullet.y)
+                    )
+                    #Particle
+                    for i in range(2):
+                        particles.append(
+                            Particle(enemybullet.x, enemybullet.y)
+                        )
+                    enemybullet.is_alive = False
+    #                pyxel.play(3, 1, loop=False)    #SE再生
+                    #player残りHP判定
+                    if self.player.hp <= 0:
+                        blasts.append(
+                            Blast(enemybullet.x, enemybullet.y)
+                        )
+                        pyxel.stop()
+                        self.scene = SCENE_GAMEOVER
+            if enemybullet.type == 1:    #通常弾(下)
+                if (self.player.x + 8  > enemybullet.x - 0 and
+                    self.player.x + 0   < enemybullet.x + 2 and
                     self.player.y + 6  > enemybullet.y - 0 and
                     self.player.y + 2  < enemybullet.y + 2):
                     #Hit時の処理
