@@ -837,6 +837,31 @@ class App:
                         )
                         pyxel.stop()
                         self.scene = SCENE_GAMEOVER
+            if enemybullet.type == 2:    #エイム弾
+                if (self.player.x + 8  > enemybullet.x - 0 and
+                    self.player.x + 0   < enemybullet.x + 2 and
+                    self.player.y + 8  > enemybullet.y - 0 and
+                    self.player.y + 0  < enemybullet.y + 2):
+                    #Hit時の処理
+                    self.player.hp -= 1
+                    self.player.isHit = True
+                    hitparticles.append(
+                        HitParticle(enemybullet.x, enemybullet.y)
+                    )
+                    #Particle
+                    for i in range(2):
+                        particles.append(
+                            Particle(enemybullet.x, enemybullet.y)
+                        )
+                    enemybullet.is_alive = False
+    #                pyxel.play(3, 1, loop=False)    #SE再生
+                    #player残りHP判定
+                    if self.player.hp <= 0:
+                        blasts.append(
+                            Blast(enemybullet.x, enemybullet.y)
+                        )
+                        pyxel.stop()
+                        self.scene = SCENE_GAMEOVER
 
         #EnemyとBulletの当たり判定
         for enemy in enemies:
