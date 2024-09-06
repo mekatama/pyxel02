@@ -562,8 +562,8 @@ class EnemyBullet:
             self.new_bullet_y = self.y + self.speed
         elif self.type == 2:    #エイム
             #弾用座標
-            self.x += self.speed * math.cos(self.aim)
-            self.y += self.speed * -math.sin(self.aim)
+            self.new_bullet_x += self.speed * math.cos(self.aim)
+            self.new_bullet_y += self.speed * -math.sin(self.aim)
         elif self.type == 3:    #グレネード弾
             pass
         #移動先でtileと当たり判定
@@ -588,7 +588,17 @@ class EnemyBullet:
             else:
                 self.y = self.new_bullet_y
         elif self.type == 2:    #エイム
-            pass
+            if check_bullet_collision(self.new_bullet_x, self.new_bullet_y) == True:
+                self.x = round(self.x / 8) * 8 #丸めて着地
+                self.y = round(self.y / 8) * 8 #丸めて着地
+                #HitParticle
+                hitparticles.append(
+                    HitParticle(self.x, self.y)
+                )
+                self.is_alive = False   #タイル接触なら消去
+            else:
+                self.x = self.new_bullet_x
+                self.y = self.new_bullet_y
         elif self.type == 3:    #グレネード弾
             pass
 
