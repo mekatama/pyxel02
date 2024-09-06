@@ -428,6 +428,7 @@ class Enemy:
         self.isJump = False
         self.isWall = False
         self.isShot = True
+        self.isFire = False         #aim攻撃判定用
         self.isHit = False
         self.is_alive = True
         enemies.append(self)
@@ -474,13 +475,16 @@ class Enemy:
             if self.atkType == 0:
                 if pyxel.frame_count % 120 == 0:
                     if self.direction == 1:
-                        EnemyBullet(self.x + 5, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType)
+                        EnemyBullet(self.x + 5, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType, 0)
                     elif self.direction == -1:
-                        EnemyBullet(self.x + 2, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType)
+                        EnemyBullet(self.x + 2, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType, 0)
             if self.atkType == 1:
                 if pyxel.frame_count % 120 == 0:
-                    EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 2, self.atkType)
-
+                    EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 2, self.atkType, 0)
+            if self.atkType == 2:
+                if pyxel.frame_count % 120 == 0:
+                    self.isFire = True  #エイム攻撃はappで処理
+                pass
         #空中時処理
         if self.isGround == False:
             if self.moveType != 3:
@@ -535,7 +539,7 @@ class Enemy:
             pyxel.blt(self.x, self.y, 0, 24, 8, 8 * self.direction, 8, 0)
 #■EnemyBullet
 class EnemyBullet:
-    def __init__(self, x, y, speed, dir,type):
+    def __init__(self, x, y, speed, dir,type, aim):
         self.x = x
         self.y = y
         self.new_bullet_x = x
@@ -543,10 +547,11 @@ class EnemyBullet:
         self.speed = speed
         self.direction = dir    #1:右 -1:左 2:下
         self.size = 1
-        self.color = 10 #colorは0～15
+        self.color = 10         #colorは0～15
         self.count = 0
         self.count_missile = 0
-        self.type = type #0:通常(左右) 1:通常(下) 2:エイム 3:グレネード弾 4:???
+        self.aim = aim          #攻撃角度
+        self.type = type        #0:通常(左右) 1:通常(下) 2:エイム 3:グレネード弾 4:???
         self.is_alive = True
         enemybullets.append(self)
     def update(self):
@@ -556,7 +561,9 @@ class EnemyBullet:
         elif self.type == 1:    #通常弾(下)
             self.new_bullet_y = self.y + self.speed
         elif self.type == 2:    #エイム
-            pass
+            #弾用座標
+            self.x += self.speed * math.cos(self.aim)
+            self.y += self.speed * -math.sin(self.aim)
         elif self.type == 3:    #グレネード弾
             pass
         #移動先でtileと当たり判定
@@ -595,7 +602,8 @@ class EnemyBullet:
         elif self.type == 1:
             pyxel.pset(self.x, self.y, self.color)
         elif self.type == 2:
-            pyxel.blt(self.x, self.y, 0, 48, 0, 16 * self.direction, 8, 0)
+            pyxel.pset(self.x, self.y, self.color)
+#            pyxel.blt(self.x, self.y, 0, 48, 0, 16 * self.direction, 8, 0)
 #■Transpoter
 class Transpoter:
     def __init__(self, x, y, speed, dir, hp, type, spawnNum):
@@ -724,7 +732,7 @@ class App:
         #playerのHP表示用の座標
         self.player_hp_X = 0
         #仮配置
-        Enemy(32, pyxel.height / 2, 0.5, -1, 3, 3, 1)
+        Enemy(32, pyxel.height / 2, 0.5, -1, 3, 3, 2)
 #        Transpoter(64, -32, 2, -1, 20, 0, 5)
 
         #実行開始 更新関数 描画関数
@@ -1025,6 +1033,18 @@ class App:
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
+
+        #EnemyのPlayer狙い処理
+        for enemy in enemies:
+            #攻撃タイミング
+            if enemy.isFire == True:
+                dx = self.player.x - enemy.x
+                dy = self.player.y - enemy.y
+                enemy.aim = math.atan2(-dy, dx)
+                #敵弾生成
+                EnemyBullet(enemy.x + 4, enemy.y + 8, ENEMY_BULLET_SPEED, 2, enemy.atkType, enemy.aim)
+                enemy.isFire = False
+
         #High Score
         if self.score >= self.highScore:
             self.highScore = self.score
