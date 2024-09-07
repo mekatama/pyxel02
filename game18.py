@@ -29,6 +29,7 @@ enemies = []
 blasts = []
 particles = []
 transpoters = []
+items = []
 
 #関数(TileMap(0)のタイルを取得)
 #指定座標のタイルの種類を取得
@@ -722,6 +723,25 @@ class Particle:
         self.y += self.speed * -math.sin(self.aim)
     def draw(self):
         pyxel.pset(self.x, self.y, 7)
+#■Item
+class Item:
+    def __init__(self, x, y, type):
+        self.x = x
+        self.y = y
+        self.type = type        #0:missile 1:laser
+        self.vec = 0
+        self.count = 0
+        self.motion = 0         #アニメ切り替え用
+        self.is_alive = True
+        items.append(self)
+    def update(self):
+        self.x = self.x
+        self.y = self.y
+        self.count += 1
+        if self.count >= 5 and self.count < 10:
+            self.motion = 1
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
 
 class App:
     def __init__(self):
@@ -1103,6 +1123,7 @@ class App:
         update_list(blasts)
         update_list(particles)
         update_list(transpoters)
+        update_list(items)
         #list更新
         cleanup_list(enemybullets)
         cleanup_list(bullets)
@@ -1111,6 +1132,7 @@ class App:
         cleanup_list(blasts)
         cleanup_list(particles)
         cleanup_list(transpoters)
+        cleanup_list(items)
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
@@ -1127,6 +1149,7 @@ class App:
             blasts.clear()          #list全要素削除
             particles.clear()       #list全要素削除
             transpoters.clear()     #list全要素削除
+            items.clear()     #list全要素削除
 	#描画関数
     def draw(self):
         #画面クリア 0は黒
@@ -1168,6 +1191,7 @@ class App:
         draw_list(hitparticles)
         draw_list(blasts)
         draw_list(particles)
+        draw_list(items)
 
         pyxel.camera()  #左上隅の座標を(0, 0)にリセット処理,UIの位置固定
         #debug UI
