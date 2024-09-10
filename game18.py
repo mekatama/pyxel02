@@ -729,19 +729,15 @@ class Item:
         self.x = x
         self.y = y
         self.type = type        #0:missile 1:laser
-        self.vec = 0
-        self.count = 0
-        self.motion = 0         #アニメ切り替え用
         self.is_alive = True
         items.append(self)
     def update(self):
-        self.x = self.x
-        self.y = self.y
-        self.count += 1
-        if self.count >= 5 and self.count < 10:
-            self.motion = 1
+        pass
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 32, 0, 8, 8, 0)
+        if self.type == 0:
+            pyxel.blt(self.x, self.y, 0, 40, 32, 8, 8, 0)
+        elif self.type == 1:
+            pyxel.blt(self.x, self.y, 0, 48, 32, 8, 8, 0)
 
 class App:
     def __init__(self):
@@ -764,6 +760,7 @@ class App:
         #仮配置
         Enemy(32, pyxel.height / 2, 0.5, -1, 3, 3, 2)
 #        Transpoter(64, -32, 2, -1, 20, 0, 5)
+        Item(64, pyxel.height / 2, 1)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
