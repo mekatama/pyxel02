@@ -728,11 +728,33 @@ class Item:
     def __init__(self, x, y, type):
         self.x = x
         self.y = y
+        self.dy = 0
+        self.new_item_y = y
+        self.gravity = GRAVITY
         self.type = type        #0:missile 1:laser
+        self.isGround = False
         self.is_alive = True
         items.append(self)
     def update(self):
-        pass
+        #空中時処理
+        if self.isGround == False:
+            #加速度更新
+            self.dy += self.gravity #重力加速度的な
+        else:
+            self.dy += 0            #変化なし
+        #位置を更新する前に衝突判定
+        #y座標のみ空中時に計算
+        if self.isGround == False:
+            self.new_item_y = self.y + self.dy
+        #移動先での当たり判定
+        #床判定
+        if check_collision_yuka(self.x, self.new_item_y) == True:
+            self.y = round(self.y / 8) * 8 #丸めて着地
+            self.isGround = True
+        else:
+            self.isGround = False
+            self.y = self.new_item_y
+
     def draw(self):
         if self.type == 0:
             pyxel.blt(self.x, self.y, 0, 40, 32, 8, 8, 0)
