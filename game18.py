@@ -782,7 +782,7 @@ class App:
         #仮配置
         Enemy(32, pyxel.height / 2, 0.5, -1, 3, 3, 2)
 #        Transpoter(64, -32, 2, -1, 20, 0, 5)
-        Item(64, pyxel.height / 2, 1)
+        Item(64, pyxel.height / 2, 0)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -1107,6 +1107,20 @@ class App:
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
+
+        #ItemとPlayerの処理
+        for item in items:
+            if (self.player.x + 8  > item.x + 0 and
+                self.player.x + 0  < item.x + 8 and
+                self.player.y + 8  > item.y + 0 and
+                self.player.y + 0  < item.y + 8):
+                #Hit時の処理
+                if item.type == 0:
+                    self.player.zandan_missile += 1
+                elif item.type == 1:
+                    self.player.zandan_laser += 1
+                item.is_alive = False
+#                pyxel.play(3, 1, loop=False)    #SE再生
 
         #EnemyのPlayer狙い処理
         for enemy in enemies:
