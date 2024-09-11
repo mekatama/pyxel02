@@ -782,7 +782,6 @@ class App:
         #仮配置
         Enemy(32, pyxel.height / 2, 0.5, -1, 3, 3, 2)
 #        Transpoter(64, -32, 2, -1, 20, 0, 5)
-        Item(64, pyxel.height / 2, 0)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -816,7 +815,7 @@ class App:
 
         if pyxel.frame_count % 120 == 0:
             if pyxel.rndi(0, 1) == 0:
-#                Enemy(0, 50, 0.5, 1, 3, 1, 0)
+                Enemy(0, 50, 0.5, 1, 3, 1, 0)
                 pass
             else:
 #                Enemy(184, 50, 0.5, -1, 3, 1, 0)
@@ -933,6 +932,11 @@ class App:
                             for i in range(10):
                                 particles.append(
                                     Particle(enemy.x, enemy.y)
+                                )
+                            #item出現はランダム
+                            if pyxel.rndi(0, 3) == 0:
+                                items.append(
+                                    Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 1))
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
@@ -1114,12 +1118,13 @@ class App:
                 self.player.x + 0  < item.x + 8 and
                 self.player.y + 8  > item.y + 0 and
                 self.player.y + 0  < item.y + 8):
-                #Hit時の処理
-                if item.type == 0:
-                    self.player.zandan_missile += 1
-                elif item.type == 1:
-                    self.player.zandan_laser += 1
-                item.is_alive = False
+                if item.is_alive == True:
+                    #Hit時の処理
+                    if item.type == 0:
+                        self.player.zandan_missile += 1
+                    elif item.type == 1:
+                        self.player.zandan_laser += 1
+                    item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
         #EnemyのPlayer狙い処理
