@@ -780,8 +780,8 @@ class App:
         #playerのHP表示用の座標
         self.player_hp_X = 0
         #仮配置
-        Enemy(32, pyxel.height / 2, 0.5, -1, 3, 3, 2)
-#        Transpoter(64, -32, 2, -1, 20, 0, 5)
+        Enemy(32, pyxel.height / 2, 0, -1, 100, 3, 2)
+#        Transpoter(64, -32, 2, -1, 20, 0, 0)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -815,7 +815,7 @@ class App:
 
         if pyxel.frame_count % 120 == 0:
             if pyxel.rndi(0, 1) == 0:
-                Enemy(0, 50, 0.5, 1, 3, 1, 0)
+#                Enemy(0, 50, 0.5, 1, 3, 1, 0)
                 pass
             else:
 #                Enemy(184, 50, 0.5, -1, 3, 1, 0)
@@ -948,13 +948,18 @@ class App:
                         #Hit時の処理
                         enemy.hp -= 1
                         #HitParticle
-                        if bullet.direction == 1:
-                            hitparticles.append(
-                                HitParticle(bullet.x + 8, bullet.y + 4)
-                            )
+                        if bullet.isUp == False:
+                            if bullet.direction == 1:
+                                hitparticles.append(
+                                    HitParticle(bullet.x + 8, bullet.y + 4)
+                                )
+                            else:
+                                hitparticles.append(
+                                    HitParticle(bullet.x, bullet.y + 4)
+                                )
                         else:
                             hitparticles.append(
-                                HitParticle(bullet.x, bullet.y + 4)
+                                HitParticle(bullet.x + 4, bullet.y + 4)
                             )
                         #Particle
                         for i in range(2):
@@ -973,6 +978,11 @@ class App:
                                 particles.append(
                                     Particle(enemy.x + 4, enemy.y + 4)
                                 )
+                            #item出現はランダム
+                            if pyxel.rndi(0, 3) == 0:
+                                items.append(
+                                    Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 1))
+                                )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 2:    #レーザー
@@ -989,7 +999,7 @@ class App:
                         #Particle
                         for i in range(2):
                             particles.append(
-                                Particle(enemy.x + 4, enemy.y + 4)
+                                Particle(bullet.x + 4, bullet.y + 4)
                             )
                         #残りHP判定
                         if enemy.hp <= 0 and enemy.is_alive == True:
@@ -1001,6 +1011,11 @@ class App:
                             for i in range(10):
                                 particles.append(
                                     Particle(enemy.x + 4, enemy.y + 4)
+                                )
+                            #item出現はランダム
+                            if pyxel.rndi(0, 3) == 0:
+                                items.append(
+                                    Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 1))
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
@@ -1045,23 +1060,33 @@ class App:
                         #Hit時の処理
                         transpoter.hp -= 1
                         #HitParticle
-                        if bullet.direction == 1:
-                            hitparticles.append(
-                                HitParticle(bullet.x + 8, bullet.y + 4)
-                            )
-                        else:
-                            hitparticles.append(
-                                HitParticle(bullet.x, bullet.y + 4)
-                            )
-                        #Particle
-                        for i in range(2):
+                        if bullet.isUp == False:
                             if bullet.direction == 1:
-                                particles.append(
-                                    Particle(bullet.x + 8, bullet.y + 4)
+                                hitparticles.append(
+                                    HitParticle(bullet.x + 8, bullet.y + 4)
                                 )
                             else:
                                 hitparticles.append(
-                                    Particle(bullet.x, bullet.y + 4)
+                                    HitParticle(bullet.x, bullet.y + 4)
+                                )
+                        else:
+                            hitparticles.append(
+                                HitParticle(bullet.x + 4, bullet.y + 4)
+                            )
+                        #Particle
+                        for i in range(2):
+                            if bullet.isUp == False:
+                                if bullet.direction == 1:
+                                    particles.append(
+                                        Particle(bullet.x + 8, bullet.y + 4)
+                                    )
+                                else:
+                                    hitparticles.append(
+                                        Particle(bullet.x, bullet.y + 4)
+                                    )
+                            else:
+                                hitparticles.append(
+                                    Particle(bullet.x + 4, bullet.y + 4)
                                 )
                         bullet.is_alive = False
                         #残りHP判定
@@ -1085,18 +1110,28 @@ class App:
                         #Hit時の処理
                         transpoter.hp -= 1
                         #HitParticle
-                        hitparticles.append(
-                            HitParticle(bullet.x, bullet.y + 4)
-                        )
+                        if bullet.isUp == False:
+                            hitparticles.append(
+                                HitParticle(bullet.x, bullet.y + 4)
+                            )
+                        else:
+                            hitparticles.append(
+                                HitParticle(bullet.x + 4, bullet.y + 4)
+                            )
                         #Particle
                         for i in range(2):
-                            if bullet.direction == 1:
-                                particles.append(
-                                    Particle(bullet.x + 8, transpoter.y + 8)
-                                )
+                            if bullet.isUp == False:
+                                if bullet.direction == 1:
+                                    particles.append(
+                                        Particle(bullet.x + 8, transpoter.y + 8)
+                                    )
+                                else:
+                                    hitparticles.append(
+                                        Particle(bullet.x, transpoter.y + 8)
+                                    )
                             else:
-                                hitparticles.append(
-                                    Particle(bullet.x, transpoter.y + 8)
+                                particles.append(
+                                    Particle(bullet.x + 4, bullet.y + 4)
                                 )
                         #残りHP判定
                         if transpoter.hp <= 0 and transpoter.is_alive == True:
