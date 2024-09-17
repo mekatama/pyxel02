@@ -780,8 +780,8 @@ class App:
         #playerのHP表示用の座標
         self.player_hp_X = 0
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, -1, 100, 3, 2)
-#        Transpoter(64, -32, 2, -1, 20, 0, 0)
+#        Enemy(32, pyxel.height / 2, 0, -1, 100, 3, 2)
+        Transpoter(64, -32, 2, -1, 20, 0, 5)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -815,10 +815,10 @@ class App:
 
         if pyxel.frame_count % 120 == 0:
             if pyxel.rndi(0, 1) == 0:
-#                Enemy(0, 50, 0.5, 1, 3, 1, 0)
+                Enemy(0, 50, 0.5, 1, 3, 1, 0)
                 pass
             else:
-#                Enemy(184, 50, 0.5, -1, 3, 1, 0)
+                Enemy(184, 50, 0.5, -1, 3, 1, 0)
                 pass
 
         #Player制御
@@ -1213,6 +1213,7 @@ class App:
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
+            self.player.hp = 10
             self.scene = SCENE_TITLE
             #list全要素削除
             enemybullets.clear()    #list全要素削除
