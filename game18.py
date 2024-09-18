@@ -185,6 +185,7 @@ class Player:
         self.isShot = False
         self.isHit = False
         self.isUp = False       #上入力flag
+        self.isStepOn = False   #敵踏みつけflag
         self.is_alive = True
     def update(self):
         #移動入力
@@ -220,11 +221,13 @@ class Player:
                 self.isUp = False
                 self.isShot = False
                 self.dx = 0
-        #jump入力
-        if (pyxel.btnp(pyxel.KEY_SPACE) and (self.isJump == False) and (self.isGround == True)):
+        #jump入力(敵踏みつけてもジャンプtest)
+        if ((pyxel.btnp(pyxel.KEY_SPACE) and (self.isJump == False) and (self.isGround == True)) or
+             self.isStepOn == True):
             self.dy = -1.5
             self.isJump = True
             self.isGround = False
+            self.isStepOn = False
         #攻撃入力
         #一定時間で自動射撃
         if self.isShot == True:
@@ -1146,6 +1149,18 @@ class App:
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
+
+        #EnemyとPlayer踏みつけ処理(当たり判定は調整必要)
+        for enemy in enemies:
+            if (self.player.x + 7 > enemy.x + 0 and
+                self.player.x + 0 < enemy.x + 7 and
+                self.player.y + 8 > enemy.y and
+                self.player.y + 7 < enemy.y):
+                if enemy.is_alive == True:
+                    #Hit時の処理
+                    self.player.isStepOn = True
+                    enemy.is_alive = False
+#                pyxel.play(3, 1, loop=False)    #SE再生
 
         #ItemとPlayerの処理
         for item in items:
