@@ -734,7 +734,7 @@ class Item:
         self.dy = 0
         self.new_item_y = y
         self.gravity = GRAVITY
-        self.type = type        #0:missile 1:laser
+        self.type = type        #0:missile 1:laser 2:hp
         self.isGround = False
         self.is_alive = True
         items.append(self)
@@ -763,6 +763,8 @@ class Item:
             pyxel.blt(self.x, self.y, 0, 40, 32, 8, 8, 0)
         elif self.type == 1:
             pyxel.blt(self.x, self.y, 0, 48, 32, 8, 8, 0)
+        elif self.type == 2:
+            pyxel.blt(self.x, self.y, 0, 56, 32, 8, 8, 0)
 
 class App:
     def __init__(self):
@@ -1159,6 +1161,11 @@ class App:
                 if enemy.is_alive == True:
                     #Hit時の処理
                     self.player.isStepOn = True
+                    #HP回復item出現はランダム
+                    if pyxel.rndi(0, 3) == 0:
+                        items.append(
+                            Item(enemy.x, enemy.y - 4, 2)
+                        )
                     enemy.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
@@ -1174,6 +1181,8 @@ class App:
                         self.player.zandan_missile += 1
                     elif item.type == 1:
                         self.player.zandan_laser += 1
+                    elif item.type == 2:
+                        self.player.hp += 1
                     item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
