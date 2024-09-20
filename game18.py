@@ -735,6 +735,7 @@ class Item:
         self.new_item_y = y
         self.gravity = GRAVITY
         self.type = type        #0:missile 1:laser 2:hp
+        self.getCount = 0       #出現直後に取得できないようにカウント用
         self.isGround = False
         self.is_alive = True
         items.append(self)
@@ -1176,14 +1177,16 @@ class App:
                 self.player.y + 8  > item.y + 0 and
                 self.player.y + 0  < item.y + 8):
                 if item.is_alive == True:
-                    #Hit時の処理
-                    if item.type == 0:
-                        self.player.zandan_missile += 1
-                    elif item.type == 1:
-                        self.player.zandan_laser += 1
-                    elif item.type == 2:
-                        self.player.hp += 1
-                    item.is_alive = False
+                    item.getCount += 1
+                    if item.getCount > 10:   #出現直後は取得不可
+                        #Hit時の処理
+                        if item.type == 0:
+                            self.player.zandan_missile += 1
+                        elif item.type == 1:
+                            self.player.zandan_laser += 1
+                        elif item.type == 2:
+                            self.player.hp += 1
+                        item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
         #EnemyのPlayer狙い処理
@@ -1281,6 +1284,7 @@ class App:
         #camera再セット
         pyxel.camera(self.scroll_x, self.scroll_y)
 
+        draw_list(items)
         self.player.draw()
         draw_list(enemybullets)
         draw_list(bullets)
@@ -1289,8 +1293,7 @@ class App:
         draw_list(hitparticles)
         draw_list(blasts)
         draw_list(particles)
-        draw_list(items)
-
+        
         pyxel.camera()  #左上隅の座標を(0, 0)にリセット処理,UIの位置固定
         #debug UI
         pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
