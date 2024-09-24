@@ -612,12 +612,12 @@ class EnemyBullet:
             self.is_alive = False   #消去
     def draw(self):
         if self.type == 0:
-            pyxel.pset(self.x, self.y, self.color)
+            pyxel.circ(self.x, self.y, 1, self.color)
         elif self.type == 1:
-            pyxel.pset(self.x, self.y, self.color)
+            pyxel.circ(self.x, self.y, 1, self.color)
         elif self.type == 2:
-            pyxel.pset(self.x, self.y, self.color)
-#            pyxel.blt(self.x, self.y, 0, 48, 0, 16 * self.direction, 8, 0)
+            pyxel.circ(self.x, self.y, 1, self.color)
+
 #■Transpoter
 class Transpoter:
     def __init__(self, x, y, speed, dir, hp, type, spawnNum):
