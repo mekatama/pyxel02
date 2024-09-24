@@ -477,16 +477,16 @@ class Enemy:
         #一定時間で自動射撃
         if self.isShot == True:
             if self.atkType == 0:
-                if pyxel.frame_count % 120 == 0:
+                if pyxel.frame_count % 180 == 0:
                     if self.direction == 1:
                         EnemyBullet(self.x + 5, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType, 0)
                     elif self.direction == -1:
                         EnemyBullet(self.x + 2, self.y + 4, ENEMY_BULLET_SPEED, self.direction, self.atkType, 0)
             if self.atkType == 1:
-                if pyxel.frame_count % 120 == 0:
+                if pyxel.frame_count % 180 == 0:
                     EnemyBullet(self.x + 4, self.y + 8, ENEMY_BULLET_SPEED, 2, self.atkType, 0)
             if self.atkType == 2:
-                if pyxel.frame_count % 120 == 0:
+                if pyxel.frame_count % 180 == 0:
                     self.isFire = True  #エイム攻撃はappで処理
                 pass
         #空中時処理
@@ -617,7 +617,6 @@ class EnemyBullet:
             pyxel.circ(self.x, self.y, 1, self.color)
         elif self.type == 2:
             pyxel.circ(self.x, self.y, 1, self.color)
-
 #■Transpoter
 class Transpoter:
     def __init__(self, x, y, speed, dir, hp, type, spawnNum):
