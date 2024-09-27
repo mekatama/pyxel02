@@ -665,9 +665,15 @@ class Transpoter:
                 self.y = self.new_transpoter_y
 
         #生成
-        if pyxel.frame_count % 120 == 0 and self.spawnNum > 0:
-            Enemy(self.x + 4, self.y, 0.5, -1, 20, 0, 0)
-            self.spawnNum -= 1
+        if self.type == 0:
+            if pyxel.frame_count % 120 == 0 and self.spawnNum > 0:
+                Enemy(self.x + 4, self.y, 0.5, -1, 20, 0, 0)
+                self.spawnNum -= 1
+        elif self.type == 1:
+            if pyxel.frame_count % 120 == 0 and self.spawnNum > 0 and self.isGround == True:
+                Enemy(self.x + 4, self.y, 0.5, -1, 20, 0, 0)
+                self.spawnNum -= 1
+
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 16 * self.direction, 16, 0)
