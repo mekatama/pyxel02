@@ -733,7 +733,7 @@ class Item:
         self.dy = 0
         self.new_item_y = y
         self.gravity = GRAVITY
-        self.type = type        #0:missile 1:laser 2:hp
+        self.type = type        #0:missile 1:laser 2:hp 3:trap
         self.getCount = 0       #出現直後に取得できないようにカウント用
         self.isGround = False
         self.is_alive = True
@@ -765,6 +765,8 @@ class Item:
             pyxel.blt(self.x, self.y, 0, 48, 32, 8, 8, 0)
         elif self.type == 2:
             pyxel.blt(self.x, self.y, 0, 56, 32, 8, 8, 0)
+        elif self.type == 3:
+            pyxel.blt(self.x, self.y, 0, 32, 32, 8, 8, 0)
 
 class App:
     def __init__(self):
@@ -786,7 +788,7 @@ class App:
         self.player_hp_X = 0
         #仮配置
 #        Enemy(32, pyxel.height / 2, 0, -1, 100, 3, 2)
-        Transpoter(64, -32, 2, -1, 20, 0, 5)
+#        Transpoter(64, -32, 2, -1, 20, 0, 5)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -1185,6 +1187,9 @@ class App:
                             self.player.zandan_laser += 1
                         elif item.type == 2:
                             self.player.hp += 1
+                        elif item.type == 3:
+                            #コンテナ生成
+                            Transpoter(item.x, -32, 2, -1, 20, 1, 3)
                         item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
