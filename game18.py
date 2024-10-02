@@ -1265,12 +1265,14 @@ class App:
 
     #ゲームオーバー画面処理用update
     def update_gameover_scene(self):
+        #グローバル変数宣言
+        global g_enemy_spawn_num
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.player.hp = 10
-            self.enemy_spawn_num = 0    #enemyの生成数
+            g_enemy_spawn_num = 0       #enemyの生成数
             self.enemyS_dead_num = 0    #普通enemyの破壊数
             self.enemyM_dead_num = 0    #中型機enemyの破壊数
             self.scene = SCENE_TITLE
