@@ -949,6 +949,7 @@ class App:
                         enemy.isHit = True
                         #残りHP判定
                         if enemy.hp <= 0 and enemy.is_alive == True:
+                            self.enemyS_dead_num += 1
                             enemy.is_alive = False
                             blasts.append(
                                 Blast(enemy.x, enemy.y)
@@ -994,6 +995,7 @@ class App:
                         bullet.is_alive = False
                         #残りHP判定
                         if enemy.hp <= 0 and enemy.is_alive == True:
+                            self.enemyS_dead_num += 1
                             enemy.is_alive = False
                             blasts.append(
                                 Blast(enemy.x, enemy.y)
@@ -1028,6 +1030,7 @@ class App:
                             )
                         #残りHP判定
                         if enemy.hp <= 0 and enemy.is_alive == True:
+                            self.enemyS_dead_num += 1
                             enemy.is_alive = False
                             blasts.append(
                                 Blast(enemy.x, enemy.y)
@@ -1066,6 +1069,7 @@ class App:
                         bullet.is_alive = False
                         #残りHP判定
                         if transpoter.hp <= 0 and transpoter.is_alive == True:
+                            self.enemyM_dead_num += 1
                             transpoter.is_alive = False
                             blasts.append(
                                 Blast(transpoter.x + 4, transpoter.y + 4)
@@ -1116,6 +1120,7 @@ class App:
                         bullet.is_alive = False
                         #残りHP判定
                         if transpoter.hp <= 0 and transpoter.is_alive == True:
+                            self.enemyM_dead_num += 1
                             transpoter.is_alive = False
                             blasts.append(
                                 Blast(transpoter.x + 4, transpoter.y + 4)
@@ -1160,6 +1165,7 @@ class App:
                                 )
                         #残りHP判定
                         if transpoter.hp <= 0 and transpoter.is_alive == True:
+                            self.enemyM_dead_num += 1
                             transpoter.is_alive = False
                             blasts.append(
                                 Blast(transpoter.x + 4, transpoter.y + 4)
@@ -1186,6 +1192,7 @@ class App:
                         items.append(
                             Item(enemy.x, enemy.y - 4, 2)
                         )
+                    self.enemyS_dead_num += 1
                     enemy.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
@@ -1324,10 +1331,13 @@ class App:
         pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
         pyxel.text(0,   6, "isGround:%s" %self.player.isGround, 7)
         pyxel.text(0,  12, "isJump:%s" %self.player.isJump, 7)
-        pyxel.text(0,  18, "new_y:%f" %self.player.new_player_y, 7)
-        pyxel.text(0,  24, "    y:%f" %self.player.y, 7)
+        pyxel.text(0,  18, "ene_S:%i" %self.enemyS_dead_num, 7)
+        pyxel.text(0,  24, "ene_M:%i" %self.enemyM_dead_num, 7)
         pyxel.text(0,  30, "spawn:%i" %g_enemy_spawn_num, 7)
+#        pyxel.text(0,  24, "    y:%f" %self.player.y, 7)
+#        pyxel.text(0,  30, "spawn:%i" %g_enemy_spawn_num, 7)
 #        pyxel.text(0,  30, "   dy:%f" %self.player.dy, 7)
+
         #player HP UI
         if self.player.x < RIGHT_LIMIT:
             self.player_hp_X = self.player.x
