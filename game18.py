@@ -5,6 +5,8 @@ import math
 SCENE_TITLE = 0	    #タイトル画面
 SCENE_PLAY = 1	    #ゲーム画面
 SCENE_GAMEOVER = 2  #ゲームオーバー画面
+#グローバル変数
+g_enemy_spawn_num = 0   #enemyの生成数
 #定数
 WINDOW_H = 128
 WINDOW_W = 128
@@ -664,15 +666,19 @@ class Transpoter:
                 self.isGround = False
                 self.y = self.new_transpoter_y
 
+        #グローバル変数宣言
+        global g_enemy_spawn_num
         #生成
         if self.type == 0:
             if pyxel.frame_count % 120 == 0 and self.spawnNum > 0:
                 Enemy(self.x + 4, self.y, 0.5, -1, 20, 0, 0)
                 self.spawnNum -= 1
+                g_enemy_spawn_num += 1
         elif self.type == 1:
             if pyxel.frame_count % 120 == 0 and self.spawnNum > 0 and self.isGround == True:
                 Enemy(self.x + 4, self.y, 0.5, -1, 20, 0, 0)
                 self.spawnNum -= 1
+                g_enemy_spawn_num += 1
 
 
     def draw(self):
@@ -782,6 +788,8 @@ class App:
         pyxel.load("my_resource18.pyxres")
         self.score = 0
         self.highScore = 0
+        self.enemyS_dead_num = 0    #普通enemyの破壊数
+        self.enemyM_dead_num = 0    #中型機enemyの破壊数
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成(+1は着地座標調整、確定ではない)
@@ -818,6 +826,8 @@ class App:
 
     #ゲーム画面処理用update
     def update_play_scene(self):
+        #グローバル変数宣言
+        global g_enemy_spawn_num
         #scoreで生成間隔を制御
         if self.score < 30:
             spawntime = 30
@@ -829,9 +839,11 @@ class App:
         if pyxel.frame_count % 120 == 0:
             if pyxel.rndi(0, 1) == 0:
                 Enemy(0, 50, 0.5, 1, 3, 1, 0)
+                g_enemy_spawn_num += 1
                 pass
             else:
                 Enemy(184, 50, 0.5, -1, 3, 1, 0)
+                g_enemy_spawn_num += 1
                 pass
 
         #Player制御
@@ -1251,6 +1263,9 @@ class App:
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.player.hp = 10
+            self.enemy_spawn_num = 0    #enemyの生成数
+            self.enemyS_dead_num = 0    #普通enemyの破壊数
+            self.enemyM_dead_num = 0    #中型機enemyの破壊数
             self.scene = SCENE_TITLE
             #list全要素削除
             enemybullets.clear()    #list全要素削除
@@ -1311,7 +1326,8 @@ class App:
         pyxel.text(0,  12, "isJump:%s" %self.player.isJump, 7)
         pyxel.text(0,  18, "new_y:%f" %self.player.new_player_y, 7)
         pyxel.text(0,  24, "    y:%f" %self.player.y, 7)
-        pyxel.text(0,  30, "   dy:%f" %self.player.dy, 7)
+        pyxel.text(0,  30, "spawn:%i" %g_enemy_spawn_num, 7)
+#        pyxel.text(0,  30, "   dy:%f" %self.player.dy, 7)
         #player HP UI
         if self.player.x < RIGHT_LIMIT:
             self.player_hp_X = self.player.x
