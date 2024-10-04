@@ -179,6 +179,7 @@ class Player:
         self.direction = 1
         self.atk_type = 0
         self.count_ani = 0      #ダメージ用count
+        self.count_stop = 0     #移動停止時間をカウント
         self.zandan_missile = 10
         self.zandan_laser = 10
         self.isGround = False
@@ -223,6 +224,7 @@ class Player:
                 self.isUp = False
                 self.isShot = False
                 self.dx = 0
+                self.count_stop += 1
         #jump入力(敵踏みつけてもジャンプtest)
         if ((pyxel.btnp(pyxel.KEY_SPACE) and (self.isJump == False) and (self.isGround == True)) or
              self.isStepOn == True):
@@ -230,9 +232,12 @@ class Player:
             self.isJump = True
             self.isGround = False
             self.isStepOn = False
+            self.count_stop = 0
+        print(self.count_stop)
         #攻撃入力
         #一定時間で自動射撃
         if self.isShot == True:
+            self.count_stop = 0
             if self.atk_type == 0:
                 if pyxel.frame_count % 9 == 0:
                     if self.direction == 1:
@@ -267,6 +272,7 @@ class Player:
                         self.zandan_laser -= 1
         #空中時処理
         if self.isGround == False:
+            self.count_stop = 0
             #加速度更新
             self.dy += self.gravity #重力加速度的な
         else:
