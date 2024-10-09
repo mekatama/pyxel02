@@ -841,7 +841,8 @@ class App:
             spawntime = 25
         elif self.score >= 70:
             spawntime = 20
-
+        """
+        #左右からenemy生成
         if pyxel.frame_count % 120 == 0:
             if pyxel.rndi(0, 1) == 0:
                 Enemy(0, 50, 0.5, 1, 3, 1, 0)
@@ -851,6 +852,11 @@ class App:
                 Enemy(184, 50, 0.5, -1, 3, 1, 0)
                 g_enemy_spawn_num += 1
                 pass
+        """
+        #停止で浮遊enemy生成
+        if self.player.count_stop > 120:
+            Enemy(self.player.x, 50, 0.5, -1, 3, 3, 2)
+            self.player.count_stop = 0
 
         #Player制御
         self.player.update()
