@@ -855,7 +855,11 @@ class App:
         """
         #停止で浮遊enemy生成
         if self.player.count_stop > 120:
-            Enemy(self.player.x, 50, 0.5, -1, 3, 3, 2)
+            #位置ランダム
+            if pyxel.rndi(0, 1) == 0:
+                Enemy(self.player.x + pyxel.rndi(0, 32), 50, 0, -1, 3, 3, 2)
+            else:
+                Enemy(self.player.x - pyxel.rndi(0, 32), 50, 0, 1, 3, 3, 2)
             self.player.count_stop = 0
 
         #Player制御
