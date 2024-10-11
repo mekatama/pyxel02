@@ -431,10 +431,11 @@ class Enemy:
         self.gravity = GRAVITY
         self.hp = hp
         self.direction = dir        #移動方向flag(右:1 左:-1)
-        self.moveType = moveType    #0:移動 1:移動と停止 2:停止 3:空中移動
+        self.moveType = moveType    #0:移動 1:移動と停止 2:停止 3:空中移動 4:画面外から空中停止
         self.atkType = atkType      #0:横通常弾 1:下通常弾 2:エイム通常弾 3:グレネード弾
         self.speed = speed
         self.moveCount = 0
+        self.moveCount2 = 0
         self.count_ani = 0
         self.isGround = False
         self.isJump = False
@@ -480,6 +481,14 @@ class Enemy:
                     self.dx = self.speed
                 elif self.direction == -1:
                     self.dx = -1 * self.speed
+            #画面外から空中停止
+            if self.moveType == 4:
+                if self.moveCount2 < 25:
+                    self.dy += 0.1
+                    self.y += self.dy
+                    self.moveCount2 += 1
+                elif self.moveCount2 >= 25:
+                    self.dy = 0
 
         #攻撃入力
         #一定時間で自動射撃
@@ -499,7 +508,7 @@ class Enemy:
                 pass
         #空中時処理
         if self.isGround == False:
-            if self.moveType != 3:
+            if self.moveType != 3 and self.moveType != 4:
                 #加速度更新
                 self.dy += self.gravity #重力加速度的な
             else:
@@ -857,9 +866,9 @@ class App:
         if self.player.count_stop > 120:
             #位置ランダム
             if pyxel.rndi(0, 1) == 0:
-                Enemy(self.player.x + pyxel.rndi(0, 32), 50, 0, -1, 3, 3, 2)
+                Enemy(self.player.x + pyxel.rndi(0, 32), -32, 0, -1, 3, 4, 2)
             else:
-                Enemy(self.player.x - pyxel.rndi(0, 32), 50, 0, 1, 3, 3, 2)
+                Enemy(self.player.x - pyxel.rndi(0, 32), -32, 0, 1, 3, 4, 2)
             self.player.count_stop = 0
 
         #Player制御
