@@ -233,7 +233,6 @@ class Player:
             self.isGround = False
             self.isStepOn = False
             self.count_stop = 0
-        print(self.count_stop)
         #攻撃入力
         #一定時間で自動射撃
         if self.isShot == True:
@@ -815,6 +814,8 @@ class App:
         self.scroll_y = 0
         #playerのHP表示用の座標
         self.player_hp_X = 0
+        #制御用flag
+        self.isOnece1 = True  #中型機生成用
         #仮配置
 #        Enemy(32, pyxel.height / 2, 0, -1, 100, 3, 2)
 #        Transpoter(64, -32, 2, -1, 20, 0, 5)
@@ -850,7 +851,6 @@ class App:
             spawntime = 25
         elif self.score >= 70:
             spawntime = 20
-        """
         #左右からenemy生成
         if pyxel.frame_count % 120 == 0:
             if pyxel.rndi(0, 1) == 0:
@@ -861,7 +861,14 @@ class App:
                 Enemy(184, 50, 0.5, -1, 3, 1, 0)
                 g_enemy_spawn_num += 1
                 pass
-        """
+        #生成数で中型機生成
+        if g_enemy_spawn_num % 10 == 0:
+            if self.isOnece1 == False:
+                Transpoter(self.player.x + pyxel.rndi(0, 32), -32, 2, -1, 20, 0, 5)
+                self.isOnece1 = True
+        elif g_enemy_spawn_num % 10 == 1:
+            self.isOnece1 = False
+
         #停止で浮遊enemy生成
         if self.player.count_stop > 120:
             #位置ランダム
