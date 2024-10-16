@@ -658,8 +658,20 @@ class Transpoter:
                 self.dy += 0.1
                 self.y += self.dy
                 self.moveCount += 1
-            elif self.moveCount >= 35:
-                pass
+            elif self.moveCount >= 35 and self.moveCount < 1000:
+                self.moveCount += 1
+#                pass
+            elif self.moveCount >= 1000 and self.moveCount < 1100:
+                #画面外へ
+                print("byebye")
+                self.dy -= 0.2
+                self.y += self.dy
+                self.moveCount += 1
+            elif self.moveCount >= 1100:
+                #画面外で消去
+                print("dead")
+                self.is_alive = False
+
         elif self.type == 1:
             #空中時処理
             if self.isGround == False:
@@ -684,16 +696,15 @@ class Transpoter:
         global g_enemy_spawn_num
         #生成
         if self.type == 0:
-            if pyxel.frame_count % 120 == 0 and self.spawnNum > 0:
+            if pyxel.frame_count % 180 == 0 and self.spawnNum > 0:
                 Enemy(self.x + 4, self.y, 0.5, -1, 20, 0, 0)
                 self.spawnNum -= 1
                 g_enemy_spawn_num += 1
         elif self.type == 1:
-            if pyxel.frame_count % 120 == 0 and self.spawnNum > 0 and self.isGround == True:
+            if pyxel.frame_count % 180 == 0 and self.spawnNum > 0 and self.isGround == True:
                 Enemy(self.x + 4, self.y, 0.5, -1, 20, 0, 0)
                 self.spawnNum -= 1
                 g_enemy_spawn_num += 1
-
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 32, 0, 16 * self.direction, 16, 0)
