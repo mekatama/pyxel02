@@ -663,13 +663,11 @@ class Transpoter:
 #                pass
             elif self.moveCount >= 1000 and self.moveCount < 1100:
                 #画面外へ
-                print("byebye")
                 self.dy -= 0.2
                 self.y += self.dy
                 self.moveCount += 1
             elif self.moveCount >= 1100:
                 #画面外で消去
-                print("dead")
                 self.is_alive = False
 
         elif self.type == 1:
@@ -827,6 +825,7 @@ class App:
         self.player_hp_X = 0
         #制御用flag
         self.isOnece1 = True  #中型機生成用
+        self.isOnece2 = True  #浮遊enemy真下に攻撃生成用
         #仮配置
 #        Enemy(32, pyxel.height / 2, 0, -1, 100, 3, 2)
 #        Transpoter(64, -32, 2, -1, 20, 0, 5)
@@ -879,7 +878,13 @@ class App:
                 self.isOnece1 = True
         elif g_enemy_spawn_num % 10 == 1:
             self.isOnece1 = False
-
+        #撃破数で浮遊enemy真下に攻撃を生成
+        if self.enemyS_dead_num % 10 == 0:
+            if self.isOnece2 == False:
+                Enemy(self.player.x + pyxel.rndi(0, 32), -32, 0, -1, 3, 4, 1)
+                self.isOnece2 = True
+        elif self.enemyS_dead_num % 10 == 1:
+            self.isOnece2 = False
         #停止で浮遊enemy生成
         if self.player.count_stop > 120:
             #位置ランダム
