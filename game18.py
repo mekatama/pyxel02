@@ -768,7 +768,7 @@ class Item:
         self.dy = 0
         self.new_item_y = y
         self.gravity = GRAVITY
-        self.type = type        #0:missile 1:laser 2:hp 3:trap
+        self.type = type        #0:missile 1:laser 2:trap 3:hp
         self.getCount = 0       #出現直後に取得できないようにカウント用
         self.isGround = False
         self.is_alive = True
@@ -799,9 +799,9 @@ class Item:
         elif self.type == 1:
             pyxel.blt(self.x, self.y, 0, 48, 32, 8, 8, 0)
         elif self.type == 2:
-            pyxel.blt(self.x, self.y, 0, 56, 32, 8, 8, 0)
-        elif self.type == 3:
             pyxel.blt(self.x, self.y, 0, 32, 32, 8, 8, 0)
+        elif self.type == 3:
+            pyxel.blt(self.x, self.y, 0, 56, 32, 8, 8, 0)
 
 class App:
     def __init__(self):
