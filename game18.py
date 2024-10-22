@@ -1010,7 +1010,7 @@ class App:
                             #item出現はランダム
                             if pyxel.rndi(0, 3) == 0:
                                 items.append(
-                                    Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 1))
+                                    Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 2))
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
@@ -1056,7 +1056,7 @@ class App:
                             #item出現はランダム
                             if pyxel.rndi(0, 3) == 0:
                                 items.append(
-                                    Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 1))
+                                    Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 2))
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
@@ -1091,7 +1091,7 @@ class App:
                             #item出現はランダム
                             if pyxel.rndi(0, 3) == 0:
                                 items.append(
-                                    Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 1))
+                                    Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 2))
                                 )
                             self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
@@ -1238,7 +1238,7 @@ class App:
                     #HP回復item出現はランダム
                     if pyxel.rndi(0, 3) == 0:
                         items.append(
-                            Item(enemy.x, enemy.y - 4, 2)
+                            Item(enemy.x, enemy.y - 4, 3)
                         )
                     self.enemyS_dead_num += 1
                     enemy.is_alive = False
@@ -1259,10 +1259,10 @@ class App:
                         elif item.type == 1:
                             self.player.zandan_laser += 1
                         elif item.type == 2:
-                            self.player.hp += 1
-                        elif item.type == 3:
                             #コンテナ生成
                             Transpoter(item.x, -32, 2, -1, 20, 1, 3)
+                        elif item.type == 3:
+                            self.player.hp += 1
                         item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
