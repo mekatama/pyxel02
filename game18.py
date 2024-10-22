@@ -28,6 +28,7 @@ enemybullets = []
 bullets = []
 hitparticles = []
 enemies = []
+enemiesUI = []
 blasts = []
 particles = []
 transpoters = []
@@ -557,6 +558,23 @@ class Enemy:
                 self.isHit = False
                 self.count_ani = 0  #初期化
             pyxel.blt(self.x, self.y, 0, 24, 8, 8 * self.direction, 8, 0)
+#■Enemy_UI
+class EnemyUI:
+    def __init__(self, x, y, score):
+        self.x = x
+        self.y = y
+        self.score = score
+        self.count = 0
+        self.is_alive = True
+        enemiesUI.append(self)
+    def update(self):
+        self.count += 1
+        if self.count < 20:
+            self.y -= 0.7
+        elif self.count >= 20:
+            self.is_alive = False
+    def draw(self):
+        pyxel.text(self.x, self.y, f"+{self.score:2}", 13)
 #■EnemyBullet
 class EnemyBullet:
     def __init__(self, x, y, speed, dir,type, aim):
@@ -1013,6 +1031,9 @@ class App:
                                     Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 2))
                                 )
                             self.score += 10
+                            enemiesUI.append(
+                                EnemyUI(enemy.x, enemy.y, 10)
+                            )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 1:    #ミサイル弾
                     if (enemy.x + 8    > bullet.x and
@@ -1058,7 +1079,10 @@ class App:
                                 items.append(
                                     Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 2))
                                 )
-                            self.score += 10
+                            self.score += 20
+                            enemiesUI.append(
+                                EnemyUI(enemy.x, enemy.y, 20)
+                            )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 2:    #レーザー
                     if (enemy.x + 8    > bullet.x and
@@ -1093,7 +1117,10 @@ class App:
                                 items.append(
                                     Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 2))
                                 )
-                            self.score += 10
+                            self.score += 30
+                            enemiesUI.append(
+                                EnemyUI(enemy.x, enemy.y, 30)
+                            )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
         #中型機とBulletの当たり判定
         for transpoter in transpoters:
@@ -1127,7 +1154,10 @@ class App:
                                 particles.append(
                                     Particle(transpoter.x + 8, transpoter.y + 8)
                                 )
-                            self.score += 10
+                            self.score += 40
+                            enemiesUI.append(
+                                EnemyUI(enemy.x, enemy.y, 40)
+                            )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 1:    #ミサイル弾
                     if (transpoter.x + 16    > bullet.x and
@@ -1178,7 +1208,10 @@ class App:
                                 particles.append(
                                     Particle(transpoter.x + 8, transpoter.y + 8)
                                 )
-                            self.score += 10
+                            self.score += 50
+                            enemiesUI.append(
+                                EnemyUI(enemy.x, enemy.y, 50)
+                            )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 2:    #レーザー
                     if (transpoter.x + 16    > bullet.x and
@@ -1223,7 +1256,10 @@ class App:
                                 particles.append(
                                     Particle(transpoter.x + 8, transpoter.y + 8)
                                 )
-                            self.score += 10
+                            self.score += 60
+                            enemiesUI.append(
+                                EnemyUI(enemy.x, enemy.y, 60)
+                            )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 
         #EnemyとPlayer踏みつけ処理(当たり判定は調整必要)
@@ -1241,6 +1277,9 @@ class App:
                             Item(enemy.x, enemy.y - 4, 3)
                         )
                     self.enemyS_dead_num += 1
+                    enemiesUI.append(
+                        EnemyUI(enemy.x, enemy.y, 0)
+                    )
                     enemy.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
@@ -1297,6 +1336,7 @@ class App:
         update_list(bullets)
         update_list(hitparticles)
         update_list(enemies)
+        update_list(enemiesUI)
         update_list(blasts)
         update_list(particles)
         update_list(transpoters)
@@ -1306,6 +1346,7 @@ class App:
         cleanup_list(bullets)
         cleanup_list(hitparticles)
         cleanup_list(enemies)
+        cleanup_list(enemiesUI)
         cleanup_list(blasts)
         cleanup_list(particles)
         cleanup_list(transpoters)
@@ -1329,6 +1370,7 @@ class App:
             bullets.clear()         #list全要素削除
             hitparticles.clear()    #list全要素削除
             enemies.clear()         #list全要素削除
+            enemiesUI.clear()       #list全要素削除
             blasts.clear()          #list全要素削除
             particles.clear()       #list全要素削除
             transpoters.clear()     #list全要素削除
@@ -1371,6 +1413,7 @@ class App:
         draw_list(enemybullets)
         draw_list(bullets)
         draw_list(enemies)
+        draw_list(enemiesUI)
         draw_list(transpoters)
         draw_list(hitparticles)
         draw_list(blasts)
