@@ -572,7 +572,9 @@ class EnemyUI:
         self.count += 1
         if self.count < 20:
             self.y -= 0.7
-        elif self.count >= 20:
+        elif self.count >= 20 and self.count < 40:
+            pass
+        elif self.count >= 40:
             self.is_alive = False
     def draw(self):
         if self.type == 0:
