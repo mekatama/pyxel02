@@ -560,10 +560,11 @@ class Enemy:
             pyxel.blt(self.x, self.y, 0, 24, 8, 8 * self.direction, 8, 0)
 #■Enemy_UI
 class EnemyUI:
-    def __init__(self, x, y, score):
+    def __init__(self, x, y, score, type):
         self.x = x
         self.y = y
         self.score = score
+        self.type = type    #0:score 1:HP
         self.count = 0
         self.is_alive = True
         enemiesUI.append(self)
@@ -574,7 +575,10 @@ class EnemyUI:
         elif self.count >= 20:
             self.is_alive = False
     def draw(self):
-        pyxel.text(self.x, self.y, f"+{self.score:2}", 13)
+        if self.type == 0:
+            pyxel.text(self.x, self.y, f"+{self.score:2}", 13)
+        elif self.type == 1:
+            pyxel.text(self.x, self.y, f"HP+1", 13)
 #■EnemyBullet
 class EnemyBullet:
     def __init__(self, x, y, speed, dir,type, aim):
@@ -1032,7 +1036,7 @@ class App:
                                 )
                             self.score += 10
                             enemiesUI.append(
-                                EnemyUI(enemy.x, enemy.y, 10)
+                                EnemyUI(enemy.x, enemy.y, 10, 0)
                             )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 1:    #ミサイル弾
@@ -1081,7 +1085,7 @@ class App:
                                 )
                             self.score += 20
                             enemiesUI.append(
-                                EnemyUI(enemy.x, enemy.y, 20)
+                                EnemyUI(enemy.x, enemy.y, 20, 0)
                             )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 2:    #レーザー
@@ -1119,7 +1123,7 @@ class App:
                                 )
                             self.score += 30
                             enemiesUI.append(
-                                EnemyUI(enemy.x, enemy.y, 30)
+                                EnemyUI(enemy.x, enemy.y, 30, 0)
                             )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
         #中型機とBulletの当たり判定
@@ -1156,7 +1160,7 @@ class App:
                                 )
                             self.score += 40
                             enemiesUI.append(
-                                EnemyUI(enemy.x, enemy.y, 40)
+                                EnemyUI(enemy.x, enemy.y, 40, 0)
                             )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 1:    #ミサイル弾
@@ -1210,7 +1214,7 @@ class App:
                                 )
                             self.score += 50
                             enemiesUI.append(
-                                EnemyUI(enemy.x, enemy.y, 50)
+                                EnemyUI(enemy.x, enemy.y, 50, 0)
                             )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 2:    #レーザー
@@ -1258,7 +1262,7 @@ class App:
                                 )
                             self.score += 60
                             enemiesUI.append(
-                                EnemyUI(enemy.x, enemy.y, 60)
+                                EnemyUI(enemy.x, enemy.y, 60, 0)
                             )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 
@@ -1278,7 +1282,7 @@ class App:
                         )
                     self.enemyS_dead_num += 1
                     enemiesUI.append(
-                        EnemyUI(enemy.x, enemy.y, 0)
+                        EnemyUI(enemy.x, enemy.y, 0, 0)
                     )
                     enemy.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
@@ -1302,6 +1306,9 @@ class App:
                             Transpoter(item.x, -32, 2, -1, 20, 1, 3)
                         elif item.type == 3:
                             self.player.hp += 1
+                            enemiesUI.append(
+                                EnemyUI(enemy.x, enemy.y, 0, 1)
+                            )
                         item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
 
@@ -1409,11 +1416,11 @@ class App:
         pyxel.camera(self.scroll_x, self.scroll_y)
 
         draw_list(items)
+        draw_list(enemiesUI)
         self.player.draw()
         draw_list(enemybullets)
         draw_list(bullets)
         draw_list(enemies)
-        draw_list(enemiesUI)
         draw_list(transpoters)
         draw_list(hitparticles)
         draw_list(blasts)
