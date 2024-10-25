@@ -12,7 +12,7 @@ WINDOW_H = 128
 WINDOW_W = 128
 GRAVITY = 0.05
 PLAYER_HP = 10
-PLAYER_SPEED = 1
+PLAYER_SPEED = 0.5
 PLAYER_BULLET_SPEED = 4
 ENEMY_BULLET_SPEED = 0.5
 STAGE_W = 64 * 3
@@ -181,6 +181,7 @@ class Player:
         self.atk_type = 0
         self.count_ani = 0      #ダメージ用count
         self.count_stop = 0     #移動停止時間をカウント
+        self.count_shot = 0     #攻撃間隔をカウント
         self.zandan_missile = 10
         self.zandan_laser = 10
         self.isGround = False
@@ -226,6 +227,7 @@ class Player:
                 self.isShot = False
                 self.dx = 0
                 self.count_stop += 1
+                self.count_shot = 0
         #jump入力(敵踏みつけてもジャンプtest)
         if ((pyxel.btnp(pyxel.KEY_SPACE) and (self.isJump == False) and (self.isGround == True)) or
              self.isStepOn == True):
@@ -238,8 +240,10 @@ class Player:
         #一定時間で自動射撃
         if self.isShot == True:
             self.count_stop = 0
+            self.count_shot += 1
             if self.atk_type == 0:
-                if pyxel.frame_count % 9 == 0:
+#                if pyxel.frame_count % 9 == 0:
+                if self.count_shot % 9 == 0:
                     if self.direction == 1:
                         Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
                     elif self.direction == -1:
@@ -248,7 +252,7 @@ class Player:
                         Bullet(self.x + 4, self.y + 2, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
             elif self.atk_type == 1:
                 if self.zandan_missile > 0:
-                    if pyxel.frame_count % 30 == 0:
+                    if self.count_shot % 30 == 0:
                         if self.isUp == False:
                             if self.direction == 1:
                                 Bullet(self.x + 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
@@ -260,7 +264,7 @@ class Player:
                         self.zandan_missile -= 1
             elif self.atk_type == 2:
                 if self.zandan_laser > 0:
-                    if pyxel.frame_count % 30 == 0:
+                    if self.count_shot % 30 == 0:
                         if self.isUp == False:
                             if self.direction == 1:
                                 Bullet(self.x + 4, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
