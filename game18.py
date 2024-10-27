@@ -179,7 +179,9 @@ class Player:
         self.hp = PLAYER_HP
         self.direction = 1
         self.atk_type = 0
+        self.motion = 0         #描画切り替えよう
         self.count_ani = 0      #ダメージ用count
+        self.count_ani2 = 0     #アニメーション再生用count
         self.count_stop = 0     #移動停止時間をカウント
         self.count_shot = 0     #攻撃間隔をカウント
         self.zandan_missile = 10
@@ -193,6 +195,13 @@ class Player:
         self.isStepOn = False   #敵踏みつけflag
         self.is_alive = True
     def update(self):
+        self.count_ani2 += 1
+        #歩行アニメ切り替え
+        if self.count_ani2 % 8 == 0: #一定時間表示
+            if self.motion == 0:
+                self.motion = 1
+            elif self.motion == 1:
+                self.motion = 0
         #移動入力
         if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
             self.dx = PLAYER_SPEED
@@ -242,7 +251,6 @@ class Player:
             self.count_stop = 0
             self.count_shot += 1
             if self.atk_type == 0:
-#                if pyxel.frame_count % 9 == 0:
                 if self.count_shot % 9 == 0:
                     if self.direction == 1:
                         Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
@@ -308,14 +316,14 @@ class Player:
     def draw(self):
         #editorデータ描画(player)
         if self.isHit == False:
-            pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
+            pyxel.blt(self.x, self.y, 0, 0, 24 + (8 * self.motion), 8 * self.direction, 8, 0)
         else:
-            if self.count_ani <= 6: #ダメージモーション再生
-                self.count_ani += 1
-            elif self.count_ani > 6:
+            if self.count_ani <= 8: #ダメージモーション再生
+                self.count_ani += 1 
+            elif self.count_ani > 8:
                 self.isHit = False
                 self.count_ani = 0  #初期化
-            pyxel.blt(self.x, self.y, 0, 8, 8, 8 * self.direction, 8, 0)
+            pyxel.blt(self.x, self.y, 0, 8, 24 + (8 * self.motion), 8 * self.direction, 8, 0)
 #■Bullet
 class Bullet:
     def __init__(self, x, y, speed, dir, type, isUp):
