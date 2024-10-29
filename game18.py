@@ -448,7 +448,9 @@ class Enemy:
         self.speed = speed
         self.moveCount = 0
         self.moveCount2 = 0
-        self.count_ani = 0
+        self.motion = 0         #描画切り替えよう
+        self.count_ani = 0      #ダメージ用count
+        self.count_ani2 = 0     #アニメーション再生用count
         self.isGround = False
         self.isJump = False
         self.isWall = False
@@ -458,6 +460,13 @@ class Enemy:
         self.is_alive = True
         enemies.append(self)
     def update(self):
+        self.count_ani2 += 1
+        #歩行アニメ切り替え
+        if self.count_ani2 % 8 == 0: #一定時間表示
+            if self.motion == 0:
+                self.motion = 1
+            elif self.motion == 1:
+                self.motion = 0
         #移動
         if self.isGround == True:
             #左右移動
@@ -562,14 +571,14 @@ class Enemy:
 
     def draw(self):
         if self.isHit == False:
-            pyxel.blt(self.x, self.y, 0, 24, 0, 8 * self.direction, 8, 0)
+            pyxel.blt(self.x, self.y, 0, 16, 24 + (8 * self.motion), 8 * self.direction, 8, 0)
         else:
-            if self.count_ani <= 5: #ダメージモーション再生
+            if self.count_ani <= 8: #ダメージモーション再生
                 self.count_ani += 1
-            elif self.count_ani > 5:
+            elif self.count_ani > 8:
                 self.isHit = False
                 self.count_ani = 0  #初期化
-            pyxel.blt(self.x, self.y, 0, 24, 8, 8 * self.direction, 8, 0)
+            pyxel.blt(self.x, self.y, 0, 24, 24 + (8 * self.motion), 8 * self.direction, 8, 0)
 #■Enemy_UI
 class EnemyUI:
     def __init__(self, x, y, score, type):
