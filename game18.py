@@ -471,19 +471,25 @@ class Enemy:
         if self.isGround == True:
             #左右移動
             if self.moveType == 0:
-                if self.direction == 1:
-                    self.dx = self.speed
-                elif self.direction == -1:
-                    self.dx = -1 * self.speed
+                if self.isHit == False:
+                    if self.direction == 1:
+                        self.dx = self.speed
+                    elif self.direction == -1:
+                        self.dx = -1 * self.speed
+                else:
+                    self.dx = 0
             #移動と停止
             elif self.moveType == 1:
                 #移動
                 if self.moveCount < 30:
                     self.moveCount += 1
-                    if self.direction == 1:
-                        self.dx = self.speed
-                    elif self.direction == -1:
-                        self.dx = -1 * self.speed
+                    if self.isHit == False:
+                        if self.direction == 1:
+                            self.dx = self.speed
+                        elif self.direction == -1:
+                            self.dx = -1 * self.speed
+                    else:
+                        self.dx = 0
                 #停止
                 elif self.moveCount >= 30 and self.moveCount < 60:
                     self.dx = 0
@@ -498,10 +504,13 @@ class Enemy:
         else:
             #左右移動
             if self.moveType == 3:
-                if self.direction == 1:
-                    self.dx = self.speed
-                elif self.direction == -1:
-                    self.dx = -1 * self.speed
+                if self.isHit == False:
+                    if self.direction == 1:
+                        self.dx = self.speed
+                    elif self.direction == -1:
+                        self.dx = -1 * self.speed
+                else:
+                    self.dx = 0
             #画面外から空中停止
             if self.moveType == 4:
                 if self.moveCount2 < 25:
@@ -872,7 +881,7 @@ class App:
         self.isOnece1 = True  #中型機生成用
         self.isOnece2 = True  #浮遊enemy真下に攻撃生成用
         #仮配置
-#        Enemy(32, pyxel.height / 2, 0, -1, 100, 3, 2)
+#        Enemy(32, pyxel.height / 2, 0.5, -1, 100, 3, 2)
 #        Transpoter(64, -32, 2, -1, 20, 0, 5)
 
         #実行開始 更新関数 描画関数
