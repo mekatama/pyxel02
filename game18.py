@@ -5,6 +5,8 @@ import math
 SCENE_TITLE = 0	    #タイトル画面
 SCENE_PLAY = 1	    #ゲーム画面
 SCENE_GAMEOVER = 2  #ゲームオーバー画面
+SCENE_HELP1 = 3     #ヘルプ画面1
+SCENE_HELP2 = 4     #ヘルプ画面2
 #グローバル変数
 g_enemy_spawn_num = 0   #enemyの生成数
 #定数
@@ -911,6 +913,10 @@ class App:
             self.update_play_scene()
         elif self.scene == SCENE_GAMEOVER:
             self.update_gameover_scene()
+        elif self.scene == SCENE_HELP1:
+            self.update_help1_scene()
+        elif self.scene == SCENE_HELP2:
+            self.update_help2_scene()
 
     #タイトル画面処理用update
     def update_title_scene(self):
@@ -918,6 +924,10 @@ class App:
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)    #BGM再生
             self.scene = SCENE_PLAY
+        #H_keyでヘルプ画面1に遷移
+        if pyxel.btnr(pyxel.KEY_H):
+#            pyxel.playm(0, loop = True)    #BGM再生
+            self.scene = SCENE_HELP1
 
     #ゲーム画面処理用update
     def update_play_scene(self):
@@ -1431,6 +1441,18 @@ class App:
             particles.clear()       #list全要素削除
             transpoters.clear()     #list全要素削除
             items.clear()     #list全要素削除
+
+    #ヘルプ画面1処理用update
+    def update_help1_scene(self):
+        #Hでヘルプ画面2に遷移
+        if pyxel.btnr(pyxel.KEY_H):
+            self.scene = SCENE_HELP2
+    #ヘルプ画面2処理用update
+    def update_help2_scene(self):
+        #Hでタイトル画面に遷移
+        if pyxel.btnr(pyxel.KEY_H):
+            self.scene = SCENE_TITLE
+
 	#描画関数
     def draw(self):
         #画面クリア 0は黒
@@ -1444,6 +1466,10 @@ class App:
             self.draw_play_scene()
         elif self.scene == SCENE_GAMEOVER:
             self.draw_gameover_scene()
+        elif self.scene == SCENE_HELP1:
+            self.draw_help1_scene()
+        elif self.scene == SCENE_HELP2:
+            self.draw_help2_scene()
 
         #score表示(f文字列的な)
 #        pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
@@ -1519,4 +1545,17 @@ class App:
         pyxel.text(0, 20, "01234567890123456789012345678901", 7)
         pyxel.text(44, 40, "GAME OVER", 7)
         pyxel.text(32, 80, "- PRESS ENTER -", 7)
+
+    #ヘルプ画面1描画用update
+    def draw_help1_scene(self):
+        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
+        pyxel.text(44, 40, "HELP1", 7)
+        pyxel.text(32, 80, "- PRESS H -", 7)
+
+    #ヘルプ画面1描画用update
+    def draw_help2_scene(self):
+        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
+        pyxel.text(44, 40, "HELP2", 7)
+        pyxel.text(32, 80, "- PRESS H -", 7)
+
 App()
