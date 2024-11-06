@@ -580,14 +580,29 @@ class Enemy:
 
     def draw(self):
         if self.isHit == False:
-            pyxel.blt(self.x, self.y, 0, 16, 24 + (8 * self.motion), 8 * self.direction, 8, 0)
+            if self.moveType == 0:
+                pyxel.blt(self.x, self.y, 0, 16, 24 + (8 * self.motion), 8 * self.direction, 8, 0)
+            elif self.moveType == 1:
+                pyxel.blt(self.x, self.y, 0, 0, 40 + (8 * self.motion), 8 * self.direction, 8, 0)
+            if self.atkType == 1:
+                pyxel.blt(self.x, self.y, 0, 16, 40 + (8 * self.motion), 8 * self.direction, 8, 0)
+            elif self.atkType == 2:
+                pyxel.blt(self.x, self.y, 0, 32, 40 + (8 * self.motion), 8 * self.direction, 8, 0)
         else:
             if self.count_ani <= 8: #ダメージモーション再生
                 self.count_ani += 1
             elif self.count_ani > 8:
                 self.isHit = False
                 self.count_ani = 0  #初期化
-            pyxel.blt(self.x, self.y, 0, 24, 24 + (8 * self.motion), 8 * self.direction, 8, 0)
+
+            if self.moveType == 0:
+                pyxel.blt(self.x, self.y, 0, 24, 24 + (8 * self.motion), 8 * self.direction, 8, 0)
+            elif self.moveType == 1:
+                pyxel.blt(self.x, self.y, 0, 8, 40 + (8 * self.motion), 8 * self.direction, 8, 0)
+            if self.atkType == 1:
+                pyxel.blt(self.x, self.y, 0, 24, 40 + (8 * self.motion), 8 * self.direction, 8, 0)
+            elif self.atkType == 2:
+                pyxel.blt(self.x, self.y, 0, 40, 40 + (8 * self.motion), 8 * self.direction, 8, 0)
 #■Enemy_UI
 class EnemyUI:
     def __init__(self, x, y, score, type):
@@ -749,12 +764,12 @@ class Transpoter:
         #生成
         if self.type == 0:
             if pyxel.frame_count % 180 == 0 and self.spawnNum > 0:
-                Enemy(self.x + 4, self.y, 0.5, -1, 20, 0, 0)
+                Enemy(self.x + 4, self.y, 0.5, -1, 5, 0, 0)
                 self.spawnNum -= 1
                 g_enemy_spawn_num += 1
         elif self.type == 1:
             if pyxel.frame_count % 180 == 0 and self.spawnNum > 0 and self.isGround == True:
-                Enemy(self.x + 4, self.y, 0.5, -1, 20, 0, 0)
+                Enemy(self.x + 4, self.y, 0.5, -1, 5, 0, 0)
                 self.spawnNum -= 1
                 g_enemy_spawn_num += 1
 
@@ -881,7 +896,7 @@ class App:
         self.isOnece1 = True  #中型機生成用
         self.isOnece2 = True  #浮遊enemy真下に攻撃生成用
         #仮配置
-#        Enemy(32, pyxel.height / 2, 0.5, -1, 100, 3, 2)
+        Enemy(96, pyxel.height / 2, 0.5, -1, 100, 4, 2)
 #        Transpoter(64, -32, 2, -1, 20, 0, 5)
 
         #実行開始 更新関数 描画関数
@@ -915,6 +930,7 @@ class App:
             spawntime = 25
         elif self.score >= 70:
             spawntime = 20
+        """
         #左右からenemy生成
         if pyxel.frame_count % 120 == 0:
             if pyxel.rndi(0, 1) == 0:
@@ -947,7 +963,7 @@ class App:
             else:
                 Enemy(self.player.x - pyxel.rndi(0, 32), -32, 0, 1, 3, 4, 2)
             self.player.count_stop = 0
-
+        """
         #Player制御
         self.player.update()
         #EnemyBulletとPlayerの当たり判定
@@ -1339,7 +1355,8 @@ class App:
                         elif item.type == 3:
                             self.player.hp += 1
                             enemiesUI.append(
-                                EnemyUI(enemy.x, enemy.y, 0, 1)
+                                EnemyUI(item.x, item.y, 0, 1)
+#                                EnemyUI(enemy.x, enemy.y, 0, 1)
                             )
                         item.is_alive = False
 #                pyxel.play(3, 1, loop=False)    #SE再生
