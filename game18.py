@@ -918,6 +918,7 @@ class App:
         elif self.scene == SCENE_HELP2:
             self.update_help2_scene()
 
+
     #タイトル画面処理用update
     def update_title_scene(self):
         #ENTERでゲーム画面に遷移
