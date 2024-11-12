@@ -918,7 +918,6 @@ class App:
         elif self.scene == SCENE_HELP2:
             self.update_help2_scene()
 
-
     #タイトル画面処理用update
     def update_title_scene(self):
         #ENTERでゲーム画面に遷移
@@ -1448,6 +1447,7 @@ class App:
         #Hでヘルプ画面2に遷移
         if pyxel.btnr(pyxel.KEY_H):
             self.scene = SCENE_HELP2
+
     #ヘルプ画面2処理用update
     def update_help2_scene(self):
         #Hでタイトル画面に遷移
@@ -1549,14 +1549,43 @@ class App:
 
     #ヘルプ画面1描画用update
     def draw_help1_scene(self):
-        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
-        pyxel.text(44, 40, "HELP1", 7)
-        pyxel.text(32, 80, "- PRESS H -", 7)
+        pyxel.text(0, 0, "01234567890123456789012345678901", 7)
+        pyxel.text(0, 6, "HELP 1", 7)
+        pyxel.text(18, 13, "MOVE & SHOT", 7)
+        pyxel.blt(  0, 11, 0, 0, 56, 16, 8, 0)
+        pyxel.text(18, 22, "JUMP", 7)
+        pyxel.blt(  0, 20, 0, 0, 64, 16, 8, 0)
+        pyxel.text(18, 31, "WEAPON CHANGE", 7)
+        pyxel.blt(  0, 29, 0, 0, 64, 16, 8, 0)
+        pyxel.text(18, 40, "FUMITUKE", 7)
+        pyxel.blt(  0, 38, 0, 0, 64, 16, 8, 0)
+        pyxel.text(18, 49, "NORMAL BULLET", 7)
+        pyxel.blt(  4, 47, 0, 48, 8, 8, 8, 0)
+        pyxel.text(18, 58, "MISSILE", 7)
+        pyxel.blt(  4, 56, 0, 0, 8, 8, 8, 0)
+        pyxel.text(18, 67, "LASER", 7)
+        pyxel.blt(  0, 65, 0, 48, 0, 16, 8, 0)
+
+        pyxel.text(18, 76, "MISSILE ITEM", 7)
+        pyxel.blt(  4, 74, 0, 40, 32, 8, 8, 0)
+        pyxel.text(18, 85, "LASER ITEM", 7)
+        pyxel.blt(  4, 83, 0, 48, 32, 8, 8, 0)
+        pyxel.text(18, 94, "KAIFFUKU ITEM", 7)
+        pyxel.blt(  4, 92, 0, 56, 32, 8, 8, 0)
+        pyxel.text(18, 103, "TRAP ITEM", 7)
+        pyxel.blt(  4, 101, 0, 32, 32, 8, 8, 0)
+
+        pyxel.text(32, 112, "- PRESS H -", 7)
 
     #ヘルプ画面1描画用update
     def draw_help2_scene(self):
         pyxel.text(0, 20, "01234567890123456789012345678901", 7)
         pyxel.text(44, 40, "HELP2", 7)
-        pyxel.text(32, 80, "- PRESS H -", 7)
+        pyxel.text(18, 49, "HINT !!", 7)
+        pyxel.text(18, 58, "HINT 1", 7)
+        pyxel.text(18, 67, "HINT 2", 7)
+        pyxel.text(18, 76, "HINT 3", 7)
+
+        pyxel.text(32, 112, "- PRESS H -", 7)
 
 App()
