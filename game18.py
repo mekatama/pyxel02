@@ -7,6 +7,8 @@ SCENE_PLAY = 1	    #ゲーム画面
 SCENE_GAMEOVER = 2  #ゲームオーバー画面
 SCENE_HELP1 = 3     #ヘルプ画面1
 SCENE_HELP2 = 4     #ヘルプ画面2
+SCENE_HELP3 = 5     #ヘルプ画面3
+SCENE_HELP4 = 6     #ヘルプ画面4
 #グローバル変数
 g_enemy_spawn_num = 0   #enemyの生成数
 #定数
@@ -917,6 +919,10 @@ class App:
             self.update_help1_scene()
         elif self.scene == SCENE_HELP2:
             self.update_help2_scene()
+        elif self.scene == SCENE_HELP3:
+            self.update_help3_scene()
+        elif self.scene == SCENE_HELP4:
+            self.update_help4_scene()
 
     #タイトル画面処理用update
     def update_title_scene(self):
@@ -1450,6 +1456,21 @@ class App:
 
     #ヘルプ画面2処理用update
     def update_help2_scene(self):
+        #Hでヘルプ画面3に遷移
+        if pyxel.btnr(pyxel.KEY_H):
+            print("push")
+            self.scene = SCENE_HELP3
+
+    #ヘルプ画面3処理用update
+    def update_help3_scene(self):
+        print("push")
+        #Hでヘルプ画面4に遷移
+        if pyxel.btnr(pyxel.KEY_H):
+            self.scene = SCENE_HELP4
+            print("push")
+
+    #ヘルプ画面4処理用update
+    def update_help4_scene(self):
         #Hでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_H):
             self.scene = SCENE_TITLE
@@ -1471,6 +1492,10 @@ class App:
             self.draw_help1_scene()
         elif self.scene == SCENE_HELP2:
             self.draw_help2_scene()
+        elif self.scene == SCENE_HELP3:
+            self.draw_help3_scene()
+        elif self.scene == SCENE_HELP4:
+            self.draw_help4_scene()
 
         #score表示(f文字列的な)
 #        pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
@@ -1557,35 +1582,60 @@ class App:
         pyxel.blt(  0, 20, 0, 0, 64, 16, 8, 0)
         pyxel.text(18, 31, "WEAPON CHANGE", 7)
         pyxel.blt(  0, 29, 0, 0, 64, 16, 8, 0)
-        pyxel.text(18, 40, "FUMITUKE", 7)
+        pyxel.text(18, 40, "STOMP", 7)
         pyxel.blt(  0, 38, 0, 0, 64, 16, 8, 0)
+
         pyxel.text(18, 49, "NORMAL BULLET", 7)
         pyxel.blt(  4, 47, 0, 48, 8, 8, 8, 0)
-        pyxel.text(18, 58, "MISSILE", 7)
-        pyxel.blt(  4, 56, 0, 0, 8, 8, 8, 0)
-        pyxel.text(18, 67, "LASER", 7)
-        pyxel.blt(  0, 65, 0, 48, 0, 16, 8, 0)
+        pyxel.text(26, 58, "WEAK", 7)
+        pyxel.text(26, 67, "CAN ATTACK INFINITELY", 7)
 
-        pyxel.text(18, 76, "MISSILE ITEM", 7)
-        pyxel.blt(  4, 74, 0, 40, 32, 8, 8, 0)
-        pyxel.text(18, 85, "LASER ITEM", 7)
-        pyxel.blt(  4, 83, 0, 48, 32, 8, 8, 0)
-        pyxel.text(18, 94, "KAIFFUKU ITEM", 7)
-        pyxel.blt(  4, 92, 0, 56, 32, 8, 8, 0)
-        pyxel.text(18, 103, "TRAP ITEM", 7)
-        pyxel.blt(  4, 101, 0, 32, 32, 8, 8, 0)
+        pyxel.text(18, 76, "MISSILE", 7)
+        pyxel.blt(  4, 74, 0, 0, 8, 8, 8, 0)
+        pyxel.text(26, 85, "VERY STRONG", 7)
+        pyxel.text(26, 94, "HAS AMMO", 7)
 
-        pyxel.text(32, 112, "- PRESS H -", 7)
+        pyxel.text(18, 103, "LASER", 7)
+        pyxel.blt(  0, 101, 0, 48, 0, 16, 8, 0)
+        pyxel.text(26, 112, "STRONG. PIERCES", 7)
+        pyxel.text(26, 121, "HAS AMMO", 7)
 
-    #ヘルプ画面1描画用update
+#        pyxel.text(32, 112, "- PRESS H -", 7)
+
+    #ヘルプ画面2描画用update
     def draw_help2_scene(self):
-        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
-        pyxel.text(44, 40, "HELP2", 7)
+        pyxel.text(44, 6, "HELP2", 7)
+        pyxel.text(18, 15, "MISSILE ITEM", 7)
+        pyxel.blt(  4, 13, 0, 40, 32, 8, 8, 0)
+        pyxel.text(26, 24, "ADDS ONE MISSILE AMMO", 7)
+
+        pyxel.text(18, 33, "LASER ITEM", 7)
+        pyxel.blt(  4, 31, 0, 48, 32, 8, 8, 0)
+        pyxel.text(26, 42, "ADDS ONE LASER AMMO", 7)
+
+        pyxel.text(18, 51, "RECOVERY ITEM", 7)
+        pyxel.blt(  4, 49, 0, 56, 32, 8, 8, 0)
+        pyxel.text(26, 60, "RECOVERS ONE HP", 7)
+
+        pyxel.text(18, 69, "TRAP ITEM", 7)
+        pyxel.blt(  4, 67, 0, 32, 32, 8, 8, 0)
+        pyxel.text(26, 78, "A CONTAINER FULL OF", 7)
+        pyxel.text(26, 87, "ENEMIES WILL APPEAR", 7)
+
+        """
         pyxel.text(18, 49, "HINT !!", 7)
         pyxel.text(18, 58, "HINT 1", 7)
         pyxel.text(18, 67, "HINT 2", 7)
         pyxel.text(18, 76, "HINT 3", 7)
 
         pyxel.text(32, 112, "- PRESS H -", 7)
+        """
+    #ヘルプ画面3描画用update
+    def draw_help3_scene(self):
+        pyxel.text(44, 6, "HELP3", 7)
+
+    #ヘルプ画面4描画用update
+    def draw_help4_scene(self):
+        pyxel.text(44, 6, "HELP4", 7)
 
 App()
