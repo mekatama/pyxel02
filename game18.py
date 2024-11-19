@@ -1458,16 +1458,13 @@ class App:
     def update_help2_scene(self):
         #Hでヘルプ画面3に遷移
         if pyxel.btnr(pyxel.KEY_H):
-            print("push")
             self.scene = SCENE_HELP3
 
     #ヘルプ画面3処理用update
     def update_help3_scene(self):
-        print("push")
         #Hでヘルプ画面4に遷移
         if pyxel.btnr(pyxel.KEY_H):
             self.scene = SCENE_HELP4
-            print("push")
 
     #ヘルプ画面4処理用update
     def update_help4_scene(self):
@@ -1636,6 +1633,19 @@ class App:
 
     #ヘルプ画面4描画用update
     def draw_help4_scene(self):
-        pyxel.text(44, 6, "HELP4", 7)
+        pyxel.text(8, 3, "HINT 1", 9)
+        pyxel.text(16, 12, "YOU CAN'T ATTACK LEFT OR", 7)
+        pyxel.text(16, 21, "RIGHT IF YOU DON'T MOVE", 7)
+        pyxel.text(8, 30, "HINT 2", 9)
+        pyxel.text(16, 39, "GAME OVER WHEN HP IS ZERO", 7)
+        pyxel.text(8, 48, "HINT 3", 9)
+        pyxel.text(16, 57, "WHEN YOU DEFEAT AN ENEMY", 7)
+        pyxel.text(16, 66, "WITH AN ATTACK, THEY WILL", 7)
+        pyxel.text(16, 75, "SOMETIMES DROP MISSILE OR", 7)
+        pyxel.text(16, 84, "LASER ITEMS", 7)
+        pyxel.text(8, 93, "HINT 4", 9)
+        pyxel.text(16, 102, "WHEN YOU STOMP ON AN ENEMY,", 7)
+        pyxel.text(16, 111, "THEY WILL SOMETIMES DROP", 7)
+        pyxel.text(16, 120, "A RECOVERY ITEM", 7)
 
 App()
