@@ -13,7 +13,6 @@ PLAYER_BULLET_SPEED = 4
 #list用意
 bullets = []
 enemies = []
-
 #関数(List実行)
 def update_list(list):
     for elem in list:
@@ -62,7 +61,7 @@ class Player:
         self.dx = 0
     def draw(self):
         #editorデータ描画(player)
-        pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
+        pyxel.rect(self.x, self.y, 8, 8, 9)
 
 class Bullet:
     def __init__(self, x, y, speed, dir):
@@ -97,24 +96,20 @@ class Enemy:
         #移動
         pass
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+        pyxel.rect(self.x, self.y, 8, 8, 7)
 
 class App:
     def __init__(self):
         #画面サイズの設定　titleはwindow枠にtext出せる
         pyxel.init(WINDOW_W, WINDOW_H, title="Pyxel Base")
-        #editorデータ読み込み(コードと同じフォルダにある)
-        pyxel.load("my_resource10.pyxres")
         self.score = 0
         self.highScore = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
         self.player = Player(pyxel.width / 2, pyxel.height / 2)
-
-        #仮配置
+        #Enemy仮配置
         Enemy(32, pyxel.height / 2, 0, 0,3)
-
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
 
@@ -152,11 +147,9 @@ class App:
                     if enemy.hp <= 0:
                         enemy.is_alive = False
                         self.score += 10
-
         #High Score
         if self.score >= self.highScore:
             self.highScore = self.score
-
         #list実行
         update_list(bullets)
         update_list(enemies)
@@ -185,7 +178,6 @@ class App:
             self.draw_play_scene()
         elif self.scene == SCENE_GAMEOVER:
             self.draw_gameover_scene()
-
         #score表示(f文字列的な)
         pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
         pyxel.text(60, 4, f"HIGH SCORE {self.highScore:5}", 6)
