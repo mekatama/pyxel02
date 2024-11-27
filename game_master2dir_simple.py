@@ -103,7 +103,6 @@ class App:
         #画面サイズの設定　titleはwindow枠にtext出せる
         pyxel.init(WINDOW_W, WINDOW_H, title="Pyxel Base")
         self.score = 0
-        self.highScore = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
         #Playerインスタンス生成
@@ -147,9 +146,6 @@ class App:
                     if enemy.hp <= 0:
                         enemy.is_alive = False
                         self.score += 10
-        #High Score
-        if self.score >= self.highScore:
-            self.highScore = self.score
         #list実行
         update_list(bullets)
         update_list(enemies)
@@ -180,7 +176,6 @@ class App:
             self.draw_gameover_scene()
         #score表示(f文字列的な)
         pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
-        pyxel.text(60, 4, f"HIGH SCORE {self.highScore:5}", 6)
 
     #タイトル画面描画用update
     def draw_title_scene(self):
