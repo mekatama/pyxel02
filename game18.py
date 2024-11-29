@@ -1572,84 +1572,88 @@ class App:
     #ヘルプ画面1描画用update
     def draw_help1_scene(self):
 #        pyxel.text(0, 0, "01234567890123456789012345678901", 7)
-#        pyxel.text(0, 6, "HELP 1", 7)
+        pyxel.text(44, 3, "NEXT:H KEY", 3)
         pyxel.text(96, 3, "PAGE 1/4", 10)
-        pyxel.text(18, 13, "MOVE & SHOT", 7)
-        pyxel.blt(  0, 11, 0, 0, 56, 16, 8, 0)
-        pyxel.text(18, 22, "JUMP", 7)
-        pyxel.blt(  0, 20, 0, 0, 64, 16, 8, 0)
-        pyxel.text(18, 31, "WEAPON CHANGE", 7)
-        pyxel.blt(  0, 29, 0, 0, 64, 16, 8, 0)
-        pyxel.text(18, 40, "STOMP", 7)
-        pyxel.blt(  0, 38, 0, 0, 64, 16, 8, 0)
+        pyxel.text(1, 12, "BASIC ACTION:", 9)
 
+        pyxel.text(30, 30, "MOVE & SHOT", 7)
+        pyxel.blt(  4, 28, 0, 0, 56, 16, 8, 0)
+
+        pyxel.text(30, 48, "JUMP", 7)
+        pyxel.text(2, 48, "SPACE", 6)
+        pyxel.blt(  0, 46, 0, 0, 64, 24, 8, 0)
+
+        pyxel.text(30, 66, "WEAPON CHANGE", 7)
+        pyxel.blt(  7, 64, 0, 24, 56, 8, 8, 0)
+
+        pyxel.text(1, 84, "STOMP ACTION:", 9)
+        pyxel.blt(  1, 93, 0, 8, 72, 32, 32, 0)
 
 #        pyxel.text(32, 112, "- PRESS H -", 7)
 
     #ヘルプ画面2描画用update
     def draw_help2_scene(self):
-#        pyxel.text(44, 6, "HELP2", 7)
+        pyxel.text(44, 3, "NEXT:H KEY", 3)
         pyxel.text(96, 3, "PAGE 2/4", 10)
 
-        pyxel.text(18, 49, "NORMAL BULLET", 7)
-        pyxel.blt(  4, 47, 0, 48, 8, 8, 8, 0)
-        pyxel.text(26, 58, "WEAK", 7)
-        pyxel.text(26, 67, "CAN ATTACK INFINITELY", 7)
+        pyxel.text(18, 12, "NORMAL BULLET", 9)
+        pyxel.blt(  4, 10, 0, 48, 8, 8, 8, 0)
+        pyxel.text(26, 21, "WEAK", 7)
+        pyxel.text(26, 30, "CAN ATTACK INFINITELY", 7)
 
-        pyxel.text(18, 76, "MISSILE", 7)
-        pyxel.blt(  4, 74, 0, 0, 8, 8, 8, 0)
-        pyxel.text(26, 85, "VERY STRONG", 7)
-        pyxel.text(26, 94, "HAS AMMO", 7)
+        pyxel.text(18, 48, "MISSILE", 9)
+        pyxel.blt(  4, 46, 0, 0, 8, 8, 8, 0)
+        pyxel.text(26, 57, "VERY STRONG", 7)
+        pyxel.text(26, 66, "HAS AMMO", 7)
 
-        pyxel.text(18, 103, "LASER", 7)
-        pyxel.blt(  0, 101, 0, 48, 0, 16, 8, 0)
-        pyxel.text(26, 112, "STRONG. PIERCES", 7)
-        pyxel.text(26, 121, "HAS AMMO", 7)
+        pyxel.text(18, 84, "LASER", 9)
+        pyxel.blt(  0, 82, 0, 48, 0, 16, 8, 0)
+        pyxel.text(26, 93, "STRONG. PIERCES", 7)
+        pyxel.text(26, 102, "HAS AMMO", 7)
 
 #        pyxel.text(32, 112, "- PRESS H -", 7)
 
     #ヘルプ画面3描画用update
     def draw_help3_scene(self):
-#        pyxel.text(44, 6, "HELP3", 7)
+        pyxel.text(44, 3, "NEXT:H KEY", 3)
         pyxel.text(96, 3, "PAGE 3/4", 10)
 
-        pyxel.text(18, 15, "MISSILE ITEM", 7)
-        pyxel.blt(  4, 13, 0, 40, 32, 8, 8, 0)
-        pyxel.text(26, 24, "ADDS ONE MISSILE AMMO", 7)
+        pyxel.text(18, 12, "MISSILE ITEM", 9)
+        pyxel.blt(  4, 10, 0, 40, 32, 8, 8, 0)
+        pyxel.text(26, 21, "ADDS ONE MISSILE AMMO", 7)
 
-        pyxel.text(18, 33, "LASER ITEM", 7)
-        pyxel.blt(  4, 31, 0, 48, 32, 8, 8, 0)
-        pyxel.text(26, 42, "ADDS ONE LASER AMMO", 7)
+        pyxel.text(18, 39, "LASER ITEM", 9)
+        pyxel.blt(  4, 37, 0, 48, 32, 8, 8, 0)
+        pyxel.text(26, 48, "ADDS ONE LASER AMMO", 7)
 
-        pyxel.text(18, 51, "RECOVERY ITEM", 7)
-        pyxel.blt(  4, 49, 0, 56, 32, 8, 8, 0)
-        pyxel.text(26, 60, "RECOVERS ONE HP", 7)
+        pyxel.text(18, 66, "RECOVERY ITEM", 9)
+        pyxel.blt(  4, 64, 0, 56, 32, 8, 8, 0)
+        pyxel.text(26, 75, "RECOVERS ONE HP", 7)
 
-        pyxel.text(18, 69, "TRAP ITEM", 7)
-        pyxel.blt(  4, 67, 0, 32, 32, 8, 8, 0)
-        pyxel.text(26, 78, "A CONTAINER FULL OF", 7)
-        pyxel.text(26, 87, "ENEMIES WILL APPEAR", 7)
+        pyxel.text(18, 93, "TRAP ITEM", 9)
+        pyxel.blt(  4, 91, 0, 32, 32, 8, 8, 0)
+        pyxel.text(26, 102, "A CONTAINER FULL OF", 7)
+        pyxel.text(26, 111, "ENEMIES WILL APPEAR", 7)
 
     #ヘルプ画面4描画用update
     def draw_help4_scene(self):
-#        pyxel.text(1, 3, "HINT 1", 9)
+        pyxel.text(44, 3, "NEXT:H KEY", 3)
         pyxel.text(96, 3, "PAGE 4/4", 10)
         pyxel.text(1, 12, "HINT1:", 9)
         pyxel.text(26, 12, "YOU CAN'T ATTACK LEFT OR", 7)
         pyxel.text(1, 21, "RIGHT IF YOU DON'T MOVE", 7)
 
-        pyxel.text(1, 30, "HINT2:", 9)
-        pyxel.text(26, 30, "GAME OVER WHEN HP IS ZERO", 7)
+        pyxel.text(1, 39, "HINT2:", 9)
+        pyxel.text(26, 39, "GAME OVER WHEN HP IS ZERO", 7)
 
-        pyxel.text(1, 48, "HINT3:", 9)
-        pyxel.text(26, 48, "WHEN YOU DEFEAT AN ENEMY", 7)
-        pyxel.text(1, 57, "WITH AN ATTACK, THEY WILL SOME-", 7)
-        pyxel.text(1, 66, "TIMES DROP MISSILE OR LASER", 7)
-        pyxel.text(1, 75, "ITEMS", 7)
+        pyxel.text(1, 57, "HINT3:", 9)
+        pyxel.text(26, 57, "WHEN YOU DEFEAT AN ENEMY", 7)
+        pyxel.text(1, 66, "WITH AN ATTACK, THEY WILL SOME-", 7)
+        pyxel.text(1, 75, "TIMES DROP MISSILE OR LASER", 7)
+        pyxel.text(1, 84, "ITEMS", 7)
 
-        pyxel.text(1, 93, "HINT4:", 9)
-        pyxel.text(26, 93, "WHEN YOU STOMP ON AN", 7)
-        pyxel.text(1, 102, "ENEMY, THEY WILL SOMETIMES DROP", 7)
-        pyxel.text(1, 111, "A RECOVERY ITEM", 7)
-
+        pyxel.text(1, 102, "HINT4:", 9)
+        pyxel.text(26, 102, "WHEN YOU STOMP ON AN", 7)
+        pyxel.text(1, 111, "ENEMY, THEY WILL SOMETIMES DROP", 7)
+        pyxel.text(1, 120, "A RECOVERY ITEM", 7)
 App()
