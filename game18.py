@@ -1500,11 +1500,11 @@ class App:
 
     #タイトル画面描画用update
     def draw_title_scene(self):
-        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
-        pyxel.text(48, 28, "________", 7)
-        pyxel.text(32, 58, "- PRESS  ENTER -", 7)
-        pyxel.text(0, 76, "--------------------------------", 7)
-        pyxel.text(40, 82, "HOW TO PLAY", 7)
+        pyxel.blt(0, 8, 0, 0, 96, 128, 32, 0)
+        pyxel.text(0, 52, "--------------------------------", 7)
+        pyxel.text(20, 58, "- START PRESS ENTER -", 9)
+        pyxel.text(0, 64, "--------------------------------", 7)
+        pyxel.text(20, 100, "HOW TO PLAY PRESS H KEY", 7)
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
