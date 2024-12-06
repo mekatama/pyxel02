@@ -900,7 +900,7 @@ class App:
         self.isOnece1 = True  #中型機生成用
         self.isOnece2 = True  #浮遊enemy真下に攻撃生成用
         #仮配置
-        Enemy(96, pyxel.height / 2, 0.5, -1, 100, 4, 2)
+#        Enemy(96, pyxel.height / 2, 0.5, -1, 100, 4, 2)
 #        Transpoter(64, -32, 2, -1, 20, 0, 5)
 
         #実行開始 更新関数 描画関数
@@ -1505,6 +1505,7 @@ class App:
         pyxel.text(20, 58, "- START PRESS ENTER -", 9)
         pyxel.text(0, 64, "--------------------------------", 7)
         pyxel.text(20, 100, "HOW TO PLAY PRESS H KEY", 7)
+        self.player.draw()
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
