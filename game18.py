@@ -328,6 +328,27 @@ class Player:
                 self.isHit = False
                 self.count_ani = 0  #初期化
             pyxel.blt(self.x, self.y, 0, 8, 24 + (8 * self.motion), 8 * self.direction, 8, 0)
+#■TitlePlayer
+class TitlePlayer:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.dx = 0
+        self.dy = 0
+        self.direction = 1
+        self.motion = 0         #描画切り替えよう
+        self.count_ani2 = 0     #アニメーション再生用count
+    def update(self):
+        self.count_ani2 += 1
+        #歩行アニメ切り替え
+        if self.count_ani2 % 8 == 0: #一定時間表示
+            if self.motion == 0:
+                self.motion = 1
+            elif self.motion == 1:
+                self.motion = 0
+    def draw(self):
+        #editorデータ描画(player)
+        pyxel.blt(self.x, self.y, 0, 0, 24 + (8 * self.motion), 8 * self.direction, 8, 0)
 #■Bullet
 class Bullet:
     def __init__(self, x, y, speed, dir, type, isUp):
@@ -890,6 +911,8 @@ class App:
         self.scene = SCENE_TITLE
         #Playerインスタンス生成(+1は着地座標調整、確定ではない)
         self.player = Player(36, pyxel.height / 2 + 1)
+        #TitlePlayerインスタンス生成
+        self.titlePlayer = TitlePlayer(36, pyxel.height / 2 + 1)
 
         #BG表示用の座標
         self.scroll_x = 0
@@ -926,6 +949,8 @@ class App:
 
     #タイトル画面処理用update
     def update_title_scene(self):
+        #Player制御
+        self.titlePlayer.update()
         #ENTERでゲーム画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
 #            pyxel.playm(0, loop = True)    #BGM再生
@@ -1505,7 +1530,7 @@ class App:
         pyxel.text(20, 58, "- START PRESS ENTER -", 9)
         pyxel.text(0, 64, "--------------------------------", 7)
         pyxel.text(20, 100, "HOW TO PLAY PRESS H KEY", 7)
-        self.player.draw()
+        self.titlePlayer.draw()
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
