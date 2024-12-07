@@ -346,6 +346,12 @@ class TitlePlayer:
                 self.motion = 1
             elif self.motion == 1:
                 self.motion = 0
+        #自動移動
+        self.direction = 1      #右向き
+        self.dx = PLAYER_SPEED
+        self.x = self.x + self.dx
+        if self.x > 130:
+            self.x = -40
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 0, 24 + (8 * self.motion), 8 * self.direction, 8, 0)
@@ -912,8 +918,7 @@ class App:
         #Playerインスタンス生成(+1は着地座標調整、確定ではない)
         self.player = Player(36, pyxel.height / 2 + 1)
         #TitlePlayerインスタンス生成
-        self.titlePlayer = TitlePlayer(36, pyxel.height / 2 + 1)
-
+        self.titlePlayer = TitlePlayer(36, 46)
         #BG表示用の座標
         self.scroll_x = 0
         self.scroll_y = 0
