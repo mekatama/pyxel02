@@ -17,6 +17,9 @@ WINDOW_W = 128
 GRAVITY = 0.05
 PLAYER_HP = 10
 PLAYER_SPEED = 0.5
+PLAYER_BULLET_ATK = 1
+PLAYER_MISSILE_ATK = 10
+PLAYER_LASER_ATK = 5
 PLAYER_BULLET_SPEED = 4
 ENEMY_BULLET_SPEED = 0.5
 STAGE_W = 64 * 3
@@ -976,7 +979,7 @@ class App:
             spawntime = 25
         elif self.score >= 70:
             spawntime = 20
-        """
+
         #左右からenemy生成
         if pyxel.frame_count % 120 == 0:
             if pyxel.rndi(0, 1) == 0:
@@ -1009,7 +1012,7 @@ class App:
             else:
                 Enemy(self.player.x - pyxel.rndi(0, 32), -32, 0, 1, 3, 4, 2)
             self.player.count_stop = 0
-        """
+
         #Player制御
         self.player.update()
         #EnemyBulletとPlayerの当たり判定
@@ -1099,7 +1102,7 @@ class App:
                         enemy.y + 8    > bullet.y - 2 and
                         enemy.y        < bullet.y + 2):
                         #Hit時の処理
-                        enemy.hp -= 1
+                        enemy.hp -= PLAYER_BULLET_ATK
                         #HitParticle
                         hitparticles.append(
                             HitParticle(bullet.x, bullet.y)
@@ -1139,7 +1142,7 @@ class App:
                         enemy.y + 8    > bullet.y + 2 and
                         enemy.y        < bullet.y + 6):
                         #Hit時の処理
-                        enemy.hp -= 1
+                        enemy.hp -= PLAYER_MISSILE_ATK
                         #HitParticle
                         if bullet.isUp == False:
                             if bullet.direction == 1:
@@ -1177,9 +1180,9 @@ class App:
                                 items.append(
                                     Item(enemy.x, enemy.y - 4, pyxel.rndi(0, 2))
                                 )
-                            self.score += 20
+                            self.score += 50
                             enemiesUI.append(
-                                EnemyUI(enemy.x, enemy.y, 20, 0)
+                                EnemyUI(enemy.x, enemy.y, 50, 0)
                             )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 2:    #レーザー
@@ -1188,7 +1191,7 @@ class App:
                         enemy.y + 8    > bullet.y + 2 and
                         enemy.y        < bullet.y + 6):
                         #Hit時の処理
-                        enemy.hp -= 1
+                        enemy.hp -= PLAYER_LASER_ATK
                         #HitParticle
                         hitparticles.append(
                             HitParticle(bullet.x + 4, bullet.y + 4)
@@ -1229,7 +1232,7 @@ class App:
                         transpoter.y + 16    > bullet.y - 2 and
                         transpoter.y        < bullet.y + 2):
                         #Hit時の処理
-                        transpoter.hp -= 1
+                        transpoter.hp -= PLAYER_BULLET_ATK
                         #HitParticle
                         hitparticles.append(
                             HitParticle(bullet.x, bullet.y)
@@ -1252,9 +1255,9 @@ class App:
                                 particles.append(
                                     Particle(transpoter.x + 8, transpoter.y + 8)
                                 )
-                            self.score += 40
+                            self.score += 100
                             enemiesUI.append(
-                                EnemyUI(enemy.x, enemy.y, 40, 0)
+                                EnemyUI(enemy.x, enemy.y, 100, 0)
                             )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 1:    #ミサイル弾
@@ -1263,7 +1266,7 @@ class App:
                         transpoter.y + 16    > bullet.y + 2 and
                         transpoter.y        < bullet.y + 6):
                         #Hit時の処理
-                        transpoter.hp -= 1
+                        transpoter.hp -= PLAYER_MISSILE_ATK
                         #HitParticle
                         if bullet.isUp == False:
                             if bullet.direction == 1:
@@ -1306,9 +1309,9 @@ class App:
                                 particles.append(
                                     Particle(transpoter.x + 8, transpoter.y + 8)
                                 )
-                            self.score += 50
+                            self.score += 300
                             enemiesUI.append(
-                                EnemyUI(enemy.x, enemy.y, 50, 0)
+                                EnemyUI(enemy.x, enemy.y, 300, 0)
                             )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
                 if bullet.type == 2:    #レーザー
@@ -1317,7 +1320,7 @@ class App:
                         transpoter.y + 16    > bullet.y + 2 and
                         transpoter.y        < bullet.y + 6):
                         #Hit時の処理
-                        transpoter.hp -= 1
+                        transpoter.hp -= PLAYER_LASER_ATK
                         #HitParticle
                         if bullet.isUp == False:
                             hitparticles.append(
@@ -1354,9 +1357,9 @@ class App:
                                 particles.append(
                                     Particle(transpoter.x + 8, transpoter.y + 8)
                                 )
-                            self.score += 60
+                            self.score += 200
                             enemiesUI.append(
-                                EnemyUI(enemy.x, enemy.y, 60, 0)
+                                EnemyUI(enemy.x, enemy.y, 200, 0)
                             )
 #                        pyxel.play(1, 0, loop=False)    #SE再生
 
@@ -1525,8 +1528,8 @@ class App:
             self.draw_help4_scene()
 
         #score表示(f文字列的な)
-#        pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
-#        pyxel.text(60, 4, f"HIGH SCORE {self.highScore:5}", 6)
+        pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
+        pyxel.text(60, 4, f"HIGH SCORE {self.highScore:5}", 6)
 
     #タイトル画面描画用update
     def draw_title_scene(self):
