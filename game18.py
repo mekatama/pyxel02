@@ -918,7 +918,7 @@ class App:
         #Playerインスタンス生成(+1は着地座標調整、確定ではない)
         self.player = Player(36, pyxel.height / 2 + 1)
         #TitlePlayerインスタンス生成
-        self.titlePlayer = TitlePlayer(36, 46)
+        self.titlePlayer = TitlePlayer(36, 56)
         #BG表示用の座標
         self.scroll_x = 0
         self.scroll_y = 0
@@ -1531,10 +1531,10 @@ class App:
     #タイトル画面描画用update
     def draw_title_scene(self):
         pyxel.blt(0, 8, 0, 0, 96, 128, 32, 0)
-        pyxel.text(0, 52, "--------------------------------", 7)
-        pyxel.text(20, 58, "- START PRESS ENTER -", 9)
-        pyxel.text(0, 64, "--------------------------------", 7)
-        pyxel.text(20, 100, "HOW TO PLAY PRESS H KEY", 7)
+        pyxel.text(0, 62, "--------------------------------", 7)
+        pyxel.text(20, 68, "- START PRESS ENTER -", 9)
+        pyxel.text(0, 74, "--------------------------------", 7)
+        pyxel.text(20, 120, "HOW TO PLAY PRESS H KEY", 7)
         self.titlePlayer.draw()
 
     #ゲーム画面描画用update
@@ -1557,12 +1557,12 @@ class App:
         
         pyxel.camera()  #左上隅の座標を(0, 0)にリセット処理,UIの位置固定
         #debug UI
-        pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
-        pyxel.text(0,   6, "isGround:%s" %self.player.isGround, 7)
-        pyxel.text(0,  12, "isJump:%s" %self.player.isJump, 7)
-        pyxel.text(0,  18, "ene_S:%i" %self.enemyS_dead_num, 7)
-        pyxel.text(0,  24, "ene_M:%i" %self.enemyM_dead_num, 7)
-        pyxel.text(0,  30, "spawn:%i" %g_enemy_spawn_num, 7)
+#        pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
+#        pyxel.text(0,   6, "isGround:%s" %self.player.isGround, 7)
+#        pyxel.text(0,  12, "isJump:%s" %self.player.isJump, 7)
+#        pyxel.text(0,  18, "ene_S:%i" %self.enemyS_dead_num, 7)
+#        pyxel.text(0,  24, "ene_M:%i" %self.enemyM_dead_num, 7)
+#        pyxel.text(0,  30, "spawn:%i" %g_enemy_spawn_num, 7)
 #        pyxel.text(0,  24, "    y:%f" %self.player.y, 7)
 #        pyxel.text(0,  30, "spawn:%i" %g_enemy_spawn_num, 7)
 #        pyxel.text(0,  30, "   dy:%f" %self.player.dy, 7)
@@ -1596,13 +1596,12 @@ class App:
 
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
-        pyxel.text(0, 20, "01234567890123456789012345678901", 7)
         pyxel.text(44, 40, "GAME OVER", 7)
         pyxel.text(32, 80, "- PRESS ENTER -", 7)
 
     #ヘルプ画面1描画用update
     def draw_help1_scene(self):
-#        pyxel.text(0, 0, "01234567890123456789012345678901", 7)
+#       pyxel.text(0, 0, "01234567890123456789012345678901", 7)
         pyxel.text(44, 3, "NEXT:H KEY", 3)
         pyxel.text(96, 3, "PAGE 1/4", 10)
         pyxel.text(1, 12, "BASIC ACTION:", 9)
@@ -1619,8 +1618,6 @@ class App:
 
         pyxel.text(1, 84, "STOMP ACTION:", 9)
         pyxel.blt(  1, 93, 0, 8, 72, 32, 32, 0)
-
-#        pyxel.text(32, 112, "- PRESS H -", 7)
 
     #ヘルプ画面2描画用update
     def draw_help2_scene(self):
@@ -1641,8 +1638,6 @@ class App:
         pyxel.blt(  0, 82, 0, 48, 0, 16, 8, 0)
         pyxel.text(26, 93, "STRONG. PIERCES", 7)
         pyxel.text(26, 102, "HAS AMMO", 7)
-
-#        pyxel.text(32, 112, "- PRESS H -", 7)
 
     #ヘルプ画面3描画用update
     def draw_help3_scene(self):
