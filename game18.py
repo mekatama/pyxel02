@@ -1472,10 +1472,16 @@ class App:
 #            pyxel.playm(0, loop = True)         #BGM再生
             self.score = 0
             self.player.hp = 10
+            self.player.zandan_missile = 10
+            self.player.zandan_laser = 10
+            self.player.count_stop = 0
             g_enemy_spawn_num = 0       #enemyの生成数
             self.enemyS_dead_num = 0    #普通enemyの破壊数
             self.enemyM_dead_num = 0    #中型機enemyの破壊数
             self.scene = SCENE_TITLE
+            self.isOnece1 = True        #中型機生成用
+            self.isOnece2 = True        #浮遊enemy真下に攻撃生成用
+            self.player.atk_type = 0
             #list全要素削除
             enemybullets.clear()    #list全要素削除
             bullets.clear()         #list全要素削除
