@@ -873,6 +873,7 @@ class Item:
         self.gravity = GRAVITY
         self.type = type        #0:missile 1:laser 2:trap 3:hp
         self.getCount = 0       #出現直後に取得できないようにカウント用
+        self.delCount = 0       #一定時間で削除カウント用
         self.isGround = False
         self.is_alive = True
         items.append(self)
@@ -895,6 +896,11 @@ class Item:
         else:
             self.isGround = False
             self.y = self.new_item_y
+        #trapだけ一定時間で削除
+        if self.type == 2:
+            self.delCount += 1
+            if self.delCount > 600:
+                self.is_alive = False
 
     def draw(self):
         if self.type == 0:
