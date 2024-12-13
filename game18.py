@@ -731,7 +731,8 @@ class EnemyBullet:
 
         self.count += 1
         #一定時間で消去
-        if self.count > 360:
+#        if self.count > 360:
+        if self.count > 160:
             self.is_alive = False   #消去
     def draw(self):
         if self.type == 0:
