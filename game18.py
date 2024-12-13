@@ -190,6 +190,7 @@ class Player:
         self.count_ani = 0      #ダメージ用count
         self.count_ani2 = 0     #アニメーション再生用count
         self.count_stop = 0     #移動停止時間をカウント
+        self.count_air = 0      #空中にいる時間をカウント
         self.count_shot = 0     #攻撃間隔をカウント
         self.zandan_missile = 10
         self.zandan_laser = 10
@@ -292,10 +293,14 @@ class Player:
         #空中時処理
         if self.isGround == False:
             self.count_stop = 0
+            self.count_air += 1
             #加速度更新
             self.dy += self.gravity #重力加速度的な
         else:
             self.dy += 0 #変化なし
+            if self.count_air > 0:
+                print(self.count_air)
+                self.count_air = 0
         #playerの位置を更新する前に衝突判定
         self.new_player_x = self.x + self.dx
         #y座標のみ空中時に計算
@@ -319,7 +324,6 @@ class Player:
         else:
             self.isGround = False
             self.y = self.new_player_y
-
     def draw(self):
         #editorデータ描画(player)
         if self.isHit == False:
@@ -1475,6 +1479,7 @@ class App:
             self.player.zandan_missile = 10
             self.player.zandan_laser = 10
             self.player.count_stop = 0
+            self.player.count_air = 0
             g_enemy_spawn_num = 0       #enemyの生成数
             self.enemyS_dead_num = 0    #普通enemyの破壊数
             self.enemyM_dead_num = 0    #中型機enemyの破壊数
