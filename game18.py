@@ -225,6 +225,7 @@ class Player:
         elif (pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)):
             self.isShot = False
             self.isUp = False
+            pyxel.play(1, 1, loop=False)    #SE再生
             #武器チェンジ
             if self.atk_type == 0:
                 self.atk_type = 1
@@ -253,6 +254,7 @@ class Player:
             self.isGround = False
             self.isStepOn = False
             self.count_stop = 0
+            pyxel.play(2, 2, loop=False)    #SE再生
         #攻撃入力
         #一定時間で自動射撃
         if self.isShot == True:
@@ -260,6 +262,7 @@ class Player:
             self.count_shot += 1
             if self.atk_type == 0:
                 if self.count_shot % 9 == 0:
+                    pyxel.play(1, 2, loop=False)    #SE再生
                     if self.direction == 1:
                         Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
                     elif self.direction == -1:
@@ -269,6 +272,7 @@ class Player:
             elif self.atk_type == 1:
                 if self.zandan_missile > 0:
                     if self.count_shot % 30 == 0:
+                        pyxel.play(1, 10, loop=False)    #SE再生
                         if self.isUp == False:
                             if self.direction == 1:
                                 Bullet(self.x + 8, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
@@ -281,6 +285,7 @@ class Player:
             elif self.atk_type == 2:
                 if self.zandan_laser > 0:
                     if self.count_shot % 30 == 0:
+                        pyxel.play(1, 11, loop=False)    #SE再生
                         if self.isUp == False:
                             if self.direction == 1:
                                 Bullet(self.x + 4, self.y, PLAYER_BULLET_SPEED, self.direction, self.atk_type, self.isUp)
@@ -420,6 +425,7 @@ class Bullet:
                         HitParticle(self.x, self.y)
                     )
                     self.is_alive = False   #タイル接触なら消去
+                    pyxel.play(2, 4, loop=False)    #SE再生
                 else:
                     self.x = self.new_bullet_x
             #上方向
@@ -440,6 +446,7 @@ class Bullet:
                             HitParticle(self.x, self.y + 4)
                         )
                     self.is_alive = False   #タイル接触なら消去
+                    pyxel.play(2, 4, loop=False)    #SE再生
                 else:
                     self.x = self.new_bullet_x
             #上方向
@@ -983,12 +990,12 @@ class App:
     def update_play_scene(self):
         #グローバル変数宣言
         global g_enemy_spawn_num
-        #scoreで生成間隔を制御
-        if self.score < 30:
+        #(未使用)scoreで生成間隔を制御
+        if self.score < 500:
             spawntime = 30
-        elif self.score >= 30 and self.score < 70:
+        elif self.score >= 500 and self.score < 1000:
             spawntime = 25
-        elif self.score >= 70:
+        elif self.score >= 1000:
             spawntime = 20
 
         #左右からenemy生成
@@ -1009,11 +1016,11 @@ class App:
         elif g_enemy_spawn_num % 10 == 1:
             self.isOnece1 = False
         #撃破数で浮遊enemy真下に攻撃を生成
-        if self.enemyS_dead_num % 10 == 0:
+        if self.enemyS_dead_num % 20 == 0:
             if self.isOnece2 == False:
                 Enemy(self.player.x + pyxel.rndi(0, 32), -32, 0, -1, 3, 4, 1)
                 self.isOnece2 = True
-        elif self.enemyS_dead_num % 10 == 1:
+        elif self.enemyS_dead_num % 20 == 1:
             self.isOnece2 = False
         #停止で浮遊enemy生成
         if self.player.count_stop > 120:
@@ -1045,7 +1052,7 @@ class App:
                             Particle(enemybullet.x, enemybullet.y)
                         )
                     enemybullet.is_alive = False
-    #                pyxel.play(3, 1, loop=False)    #SE再生
+                    pyxel.play(1, 7, loop=False)    #SE再生
                     #player残りHP判定
                     if self.player.hp <= 0:
                         blasts.append(
@@ -1125,6 +1132,7 @@ class App:
                             )
                         bullet.is_alive = False
                         enemy.isHit = True
+                        pyxel.play(2, 3, loop=False)    #SE再生
                         #残りHP判定
                         if enemy.hp <= 0 and enemy.is_alive == True:
                             self.enemyS_dead_num += 1
@@ -1146,7 +1154,7 @@ class App:
                             enemiesUI.append(
                                 EnemyUI(enemy.x, enemy.y, 10, 0)
                             )
-#                        pyxel.play(1, 0, loop=False)    #SE再生
+                            pyxel.play(2, 0, loop=False)    #SE再生
                 if bullet.type == 1:    #ミサイル弾
                     if (enemy.x + 8    > bullet.x and
                         enemy.x        < bullet.x + 8 and
@@ -1195,7 +1203,7 @@ class App:
                             enemiesUI.append(
                                 EnemyUI(enemy.x, enemy.y, 50, 0)
                             )
-#                        pyxel.play(1, 0, loop=False)    #SE再生
+#                        pyxel.play(2, 0, loop=False)    #SE再生
                 if bullet.type == 2:    #レーザー
                     if (enemy.x + 8    > bullet.x and
                         enemy.x        < bullet.x + 16 and
@@ -1233,7 +1241,7 @@ class App:
                             enemiesUI.append(
                                 EnemyUI(enemy.x, enemy.y, 30, 0)
                             )
-#                        pyxel.play(1, 0, loop=False)    #SE再生
+#                        pyxel.play(2, 0, loop=False)    #SE再生
         #中型機とBulletの当たり判定
         for transpoter in transpoters:
             for bullet in bullets:
@@ -1254,6 +1262,7 @@ class App:
                                 Particle(bullet.x, bullet.y)
                             )
                         bullet.is_alive = False
+                        pyxel.play(2, 3, loop=False)    #SE再生
                         #残りHP判定
                         if transpoter.hp <= 0 and transpoter.is_alive == True:
                             self.enemyM_dead_num += 1
@@ -1270,7 +1279,7 @@ class App:
                             enemiesUI.append(
                                 EnemyUI(enemy.x, enemy.y, 100, 0)
                             )
-#                        pyxel.play(1, 0, loop=False)    #SE再生
+                            pyxel.play(2, 0, loop=False)    #SE再生
                 if bullet.type == 1:    #ミサイル弾
                     if (transpoter.x + 16    > bullet.x and
                         transpoter.x        < bullet.x + 8 and
@@ -1308,6 +1317,7 @@ class App:
                                     Particle(bullet.x + 4, bullet.y + 4)
                                 )
                         bullet.is_alive = False
+                        pyxel.play(2, 3, loop=False)    #SE再生
                         #残りHP判定
                         if transpoter.hp <= 0 and transpoter.is_alive == True:
                             self.enemyM_dead_num += 1
@@ -1324,7 +1334,7 @@ class App:
                             enemiesUI.append(
                                 EnemyUI(enemy.x, enemy.y, 300, 0)
                             )
-#                        pyxel.play(1, 0, loop=False)    #SE再生
+#                        pyxel.play(2, 0, loop=False)    #SE再生
                 if bullet.type == 2:    #レーザー
                     if (transpoter.x + 16    > bullet.x and
                         transpoter.x        < bullet.x + 16 and
@@ -1372,7 +1382,7 @@ class App:
                             enemiesUI.append(
                                 EnemyUI(enemy.x, enemy.y, 200, 0)
                             )
-#                        pyxel.play(1, 0, loop=False)    #SE再生
+#                        pyxel.play(2, 0, loop=False)    #SE再生
 
         #EnemyとPlayer踏みつけ処理(当たり判定は調整必要)
         for enemy in enemies:
@@ -1393,7 +1403,7 @@ class App:
                         EnemyUI(enemy.x, enemy.y, 0, 0)
                     )
                     enemy.is_alive = False
-#                pyxel.play(3, 1, loop=False)    #SE再生
+                    pyxel.play(2, 9, loop=False)    #SE再生
 
         #ItemとPlayerの処理
         for item in items:
@@ -1407,19 +1417,21 @@ class App:
                         #Hit時の処理
                         if item.type == 0:
                             self.player.zandan_missile += 1
+                            pyxel.play(3, 5, loop=False)    #SE再生
                         elif item.type == 1:
                             self.player.zandan_laser += 1
+                            pyxel.play(3, 5, loop=False)    #SE再生
                         elif item.type == 2:
                             #コンテナ生成
                             Transpoter(item.x, -32, 2, -1, 20, 1, 3)
+                            pyxel.play(3, 5, loop=False)    #SE再生
                         elif item.type == 3:
                             self.player.hp += 1
                             enemiesUI.append(
                                 EnemyUI(item.x, item.y, 0, 1)
-#                                EnemyUI(enemy.x, enemy.y, 0, 1)
                             )
+                            pyxel.play(3, 6, loop=False)    #SE再生
                         item.is_alive = False
-#                pyxel.play(3, 1, loop=False)    #SE再生
 
         #EnemyのPlayer狙い処理
         for enemy in enemies:
