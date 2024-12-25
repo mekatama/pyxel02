@@ -948,6 +948,9 @@ class App:
         #制御用flag
         self.isOnece1 = True  #中型機生成用
         self.isOnece2 = True  #浮遊enemy真下に攻撃生成用
+        #タイトルBGM
+        pyxel.playm(0, loop = True)    #BGM再生
+
         #仮配置
 #        Enemy(96, pyxel.height / 2, 0.5, -1, 100, 4, 2)
 #        Transpoter(64, -32, 2, -1, 20, 0, 5)
