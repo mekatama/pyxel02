@@ -946,8 +946,9 @@ class App:
         #playerのHP表示用の座標
         self.player_hp_X = 0
         #制御用flag
-        self.isOnece1 = True  #中型機生成用
-        self.isOnece2 = True  #浮遊enemy真下に攻撃生成用
+        self.isOnece1 = True    #中型機生成用
+        self.isOnece2 = True    #浮遊enemy真下に攻撃生成用
+        self.isOnece3 = False   #gameoverBGM鳴らす用
         #タイトルBGM
         pyxel.playm(0, loop = True)    #BGM再生
 
@@ -982,7 +983,9 @@ class App:
         self.titlePlayer.update()
         #ENTERでゲーム画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
-#            pyxel.playm(0, loop = True)    #BGM再生
+            #サウンド停止
+            pyxel.stop()
+            pyxel.playm(2, loop = True)    #BGM再生
             self.scene = SCENE_PLAY
         #H_keyでヘルプ画面1に遷移
         if pyxel.btnr(pyxel.KEY_H):
@@ -1487,9 +1490,14 @@ class App:
     def update_gameover_scene(self):
         #グローバル変数宣言
         global g_enemy_spawn_num
+        #ゲームオーバーBGM
+        if self.isOnece3 == False:
+            pyxel.playm(1, loop = False)    #BGM再生
+            self.isOnece3 = True
         #ENTERでタイトル画面に遷移
         if pyxel.btnr(pyxel.KEY_RETURN):
-#            pyxel.playm(0, loop = True)         #BGM再生
+            #タイトルBGM
+            pyxel.playm(0, loop = True)    #BGM再生
             self.score = 0
             self.player.hp = 10
             self.player.zandan_missile = 10
@@ -1502,6 +1510,7 @@ class App:
             self.scene = SCENE_TITLE
             self.isOnece1 = True        #中型機生成用
             self.isOnece2 = True        #浮遊enemy真下に攻撃生成用
+            self.isOnece3 = False       #gameoverBGM鳴らす用
             self.player.atk_type = 0
             #list全要素削除
             enemybullets.clear()    #list全要素削除
@@ -1561,11 +1570,15 @@ class App:
             self.draw_help4_scene()
 
         #score表示(f文字列的な)
-        pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
-        pyxel.text(60, 4, f"HIGH SCORE {self.highScore:5}", 6)
+#        pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
+#        pyxel.text(60, 4, f"HIGH SCORE {self.highScore:5}", 6)
 
     #タイトル画面描画用update
     def draw_title_scene(self):
+        #score表示(f文字列的な)
+        pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
+        pyxel.text(60, 4, f"HIGH SCORE {self.highScore:5}", 6)
+
         pyxel.blt(0, 8, 0, 0, 96, 128, 32, 0)
         pyxel.text(0, 62, "--------------------------------", 7)
         pyxel.text(20, 68, "- START PRESS ENTER -", 9)
@@ -1575,6 +1588,10 @@ class App:
 
     #ゲーム画面描画用update
     def draw_play_scene(self):
+        #score表示(f文字列的な)
+        pyxel.text(4, 4, f"SCORE {self.score:5}", 7)
+        pyxel.text(60, 4, f"HIGH SCORE {self.highScore:5}", 6)
+
         #BG描画
         pyxel.bltm(0, 0, 0, self.scroll_x, self.scroll_y, 128, 128, 0)
         #camera再セット
@@ -1653,7 +1670,7 @@ class App:
         pyxel.blt(  7, 64, 0, 24, 56, 8, 8, 0)
 
         pyxel.text(1, 84, "STOMP ACTION:", 9)
-        pyxel.blt(  1, 93, 0, 8, 72, 32, 32, 0)
+        pyxel.blt(  1, 93, 0, 8, 72, 32, 24, 0)
 
     #ヘルプ画面2描画用update
     def draw_help2_scene(self):
