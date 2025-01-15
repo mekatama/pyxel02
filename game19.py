@@ -149,6 +149,7 @@ class Player:
         self.gravity = GRAVITY
         self.hp = PLAYER_HP
         self.direction = 1
+        self.count_atk = 0  #攻撃入力制限用count
         self.isGround = False
         self.isJump = False
         self.isWall = False
@@ -172,6 +173,12 @@ class Player:
                 elif self.direction == -1:
                     Bullet(self.x - 5, self.y, self.direction)
                 self.isAtk = True
+        #攻撃入力制限処理
+        if self.isAtk == True:
+            self.count_atk += 1
+            if self.count_atk > 60:
+                self.count_atk = 0
+                self.isAtk = False
 
         #空中時処理
         if self.isGround == False:
