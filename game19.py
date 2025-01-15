@@ -152,6 +152,7 @@ class Player:
         self.isGround = False
         self.isJump = False
         self.isWall = False
+        self.isAtk = False  #攻撃中flag
         self.is_alive = True
     def update(self):
         #移動入力
@@ -165,10 +166,12 @@ class Player:
             self.dx = 0
         #攻撃入力
         if (pyxel.btn(pyxel.KEY_A) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A)):
-            if self.direction == 1:
-                Bullet(self.x + 5, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
-            elif self.direction == -1:
-                Bullet(self.x + 2, self.y + 4, PLAYER_BULLET_SPEED, self.direction)
+            if self.isAtk == False:
+                if self.direction == 1:
+                    Bullet(self.x + 9, self.y, self.direction)
+                elif self.direction == -1:
+                    Bullet(self.x - 5, self.y, self.direction)
+                self.isAtk = True
 
         #空中時処理
         if self.isGround == False:
@@ -208,39 +211,20 @@ class Player:
         pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
 
 class Bullet:
-    def __init__(self, x, y, speed, dir):
+    def __init__(self, x, y, dir):
         self.x = x
         self.y = y
-        self.new_bullet_x = x
-        self.new_bullet_y = y
-        self.speed = speed
         self.direction = dir
-        self.size = 1
-        self.color = 10 #colorは0～15
         self.count = 0
         self.is_alive = True
         bullets.append(self)
     def update(self):
-        #位置を更新する前に衝突判定
-        self.new_bullet_x = self.x + self.speed * self.direction
-        #移動先でtileと当たり判定
-        if check_bullet_collision(self.new_bullet_x, self.y) == True:
-            self.x = round(self.x / 8) * 8 #丸めて着地
-            #HitParticle
-            hitparticles.append(
-                HitParticle(self.x, self.y)
-            )
-            self.is_alive = False   #タイル接触なら消去
-        else:
-            self.x = self.new_bullet_x
-
-#        self.x += self.speed * self.direction        #弾移動
         self.count += 1
         #一定時間で消去
-        if self.count > 30:            
+        if self.count > 2:            
             self.is_alive = False   #消去
     def draw(self):
-        pyxel.pset(self.x, self.y, self.color)
+        pyxel.rect(self.x, self.y, 4, 8, 7)
 #■Enemy
 class Enemy:
     def __init__(self, x, y, speed, dir, hp):
