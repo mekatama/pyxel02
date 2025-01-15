@@ -247,7 +247,7 @@ class Player:
                 self.count_stop += 1
                 self.count_shot = 0
         #jump入力(敵踏みつけてもジャンプtest)
-        if ((pyxel.btnp(pyxel.KEY_SPACE) and (self.isJump == False) and (self.isGround == True)) or
+        if (((pyxel.btnp(pyxel.KEY_SPACE)  or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A)) and (self.isJump == False) and (self.isGround == True)) or
              self.isStepOn == True):
             self.dy = -1.5
             self.isJump = True
@@ -982,13 +982,13 @@ class App:
         #Player制御
         self.titlePlayer.update()
         #ENTERでゲーム画面に遷移
-        if pyxel.btnr(pyxel.KEY_RETURN):
+        if pyxel.btnr(pyxel.KEY_RETURN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A):
             #サウンド停止
             pyxel.stop()
             pyxel.playm(2, loop = True)    #BGM再生
             self.scene = SCENE_PLAY
         #H_keyでヘルプ画面1に遷移
-        if pyxel.btnr(pyxel.KEY_H):
+        if pyxel.btnr(pyxel.KEY_H) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_B):
 #            pyxel.playm(0, loop = True)    #BGM再生
             self.scene = SCENE_HELP1
 
@@ -1495,7 +1495,7 @@ class App:
             pyxel.playm(1, loop = False)    #BGM再生
             self.isOnece3 = True
         #ENTERでタイトル画面に遷移
-        if pyxel.btnr(pyxel.KEY_RETURN):
+        if pyxel.btnr(pyxel.KEY_RETURN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A):
             #タイトルBGM
             pyxel.playm(0, loop = True)    #BGM再生
             self.score = 0
@@ -1526,25 +1526,22 @@ class App:
     #ヘルプ画面1処理用update
     def update_help1_scene(self):
         #Hでヘルプ画面2に遷移
-        if pyxel.btnr(pyxel.KEY_H):
+        if pyxel.btnr(pyxel.KEY_H) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_B):
             self.scene = SCENE_HELP2
-
     #ヘルプ画面2処理用update
     def update_help2_scene(self):
         #Hでヘルプ画面3に遷移
-        if pyxel.btnr(pyxel.KEY_H):
+        if pyxel.btnr(pyxel.KEY_H) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_B):
             self.scene = SCENE_HELP3
-
     #ヘルプ画面3処理用update
     def update_help3_scene(self):
         #Hでヘルプ画面4に遷移
-        if pyxel.btnr(pyxel.KEY_H):
+        if pyxel.btnr(pyxel.KEY_H) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_B):
             self.scene = SCENE_HELP4
-
     #ヘルプ画面4処理用update
     def update_help4_scene(self):
         #Hでタイトル画面に遷移
-        if pyxel.btnr(pyxel.KEY_H):
+        if pyxel.btnr(pyxel.KEY_H or pyxel.btn(pyxel.GAMEPAD1_BUTTON_B)):
             self.scene = SCENE_TITLE
 
 	#描画関数
@@ -1581,11 +1578,10 @@ class App:
 
         pyxel.blt(0, 8, 0, 0, 96, 128, 32, 0)
         pyxel.text(0, 62, "--------------------------------", 7)
-        pyxel.text(20, 68, "- START PRESS ENTER -", 9)
+        pyxel.text(0, 68, " START PRESS ENTER OR A BUTTON ", 9)
         pyxel.text(0, 74, "--------------------------------", 7)
-        pyxel.text(20, 120, "HOW TO PLAY PRESS H KEY", 7)
+        pyxel.text(4, 120, "HOW TO PLAY PRESS H OR B BUTTON", 7)
         self.titlePlayer.draw()
-
     #ゲーム画面描画用update
     def draw_play_scene(self):
         #score表示(f文字列的な)
@@ -1646,16 +1642,14 @@ class App:
             pyxel.blt(50, 120, 0, 32, 16, 8, 8, 0)
             pyxel.blt(60, 120, 0, 40, 16, 8, 8, 0)
             pyxel.blt(70, 120, 0, 48, 24, 8, 8, 0)
-
     #ゲームオーバー画面描画用update
     def draw_gameover_scene(self):
         pyxel.text(44, 40, "GAME OVER", 7)
-        pyxel.text(32, 80, "- PRESS ENTER -", 7)
-
+        pyxel.text(8, 80, "- PRESS ENTER OR A BUTTON -", 7)
     #ヘルプ画面1描画用update
     def draw_help1_scene(self):
 #       pyxel.text(0, 0, "01234567890123456789012345678901", 7)
-        pyxel.text(44, 3, "NEXT:H KEY", 3)
+        pyxel.text(1, 3, "NEXT:H OR B BUTTON", 3)
         pyxel.text(96, 3, "PAGE 1/4", 10)
         pyxel.text(1, 12, "BASIC ACTION:", 9)
 
@@ -1671,10 +1665,9 @@ class App:
 
         pyxel.text(1, 84, "STOMP ACTION:", 9)
         pyxel.blt(  1, 93, 0, 8, 72, 32, 24, 0)
-
     #ヘルプ画面2描画用update
     def draw_help2_scene(self):
-        pyxel.text(44, 3, "NEXT:H KEY", 3)
+        pyxel.text(1, 3, "NEXT:H OR B BUTTON", 3)
         pyxel.text(96, 3, "PAGE 2/4", 10)
 
         pyxel.text(18, 12, "NORMAL BULLET", 9)
@@ -1691,10 +1684,9 @@ class App:
         pyxel.blt(  0, 82, 0, 48, 0, 16, 8, 0)
         pyxel.text(26, 93, "STRONG. PIERCES", 7)
         pyxel.text(26, 102, "HAS AMMO", 7)
-
     #ヘルプ画面3描画用update
     def draw_help3_scene(self):
-        pyxel.text(44, 3, "NEXT:H KEY", 3)
+        pyxel.text(1, 3, "NEXT:H OR B BUTTON", 3)
         pyxel.text(96, 3, "PAGE 3/4", 10)
 
         pyxel.text(18, 12, "MISSILE ITEM", 9)
@@ -1713,10 +1705,9 @@ class App:
         pyxel.blt(  4, 91, 0, 32, 32, 8, 8, 0)
         pyxel.text(26, 102, "A CONTAINER FULL OF", 7)
         pyxel.text(26, 111, "ENEMIES WILL APPEAR", 7)
-
     #ヘルプ画面4描画用update
     def draw_help4_scene(self):
-        pyxel.text(44, 3, "NEXT:H KEY", 3)
+        pyxel.text(1, 3, "NEXT:H OR B BUTTON", 3)
         pyxel.text(96, 3, "PAGE 4/4", 10)
         pyxel.text(1, 12, "HINT1:", 9)
         pyxel.text(26, 12, "YOU CAN'T ATTACK LEFT OR", 7)
