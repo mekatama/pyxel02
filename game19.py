@@ -26,99 +26,6 @@ enemies = []
 blasts = []
 particles = []
 
-#関数(TileMap(0)のタイルを取得)
-#指定座標のタイルの種類を取得
-def get_tile(tile_x, tile_y):
-    return pyxel.tilemap(0).pget(tile_x, tile_y)
- 
-#関数(足元タイルとのコリジョン判定)
-    #//は商を求める(余りは切り捨てる)
-    #8は今回のplayerが8×8ドットサイズだから
-    #足元の2点だけ判定
-def check_collision_yuka(x, y):
-    x1 = (x + 1) // 8             #キャラx座標左端のTileMapの座標
-    y1 = y // 8             #キャラy座標上端のTileMapの座標
-    x2 = (x + 8 - 1 - 1) // 8   #キャラx座標右端のTileMapの座標
-    y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
-    #tileの種類で判定
-    #左下判定
-    if get_tile(x1,y2) == (1,0):
-        isStop = True
-#        print("左下")
-        return isStop
-    #右下判定
-    if get_tile(x2,y2) == (1,0):
-        isStop = True
-#        print("右下")
-        return isStop
-    return False
-
-#関数(頭上タイルとのコリジョン判定)
-    #//は商を求める(余りは切り捨てる)
-    #8は今回のplayerが8×8ドットサイズだから
-    #頭上の2点だけ判定
-def check_collision_head(x, y):
-    x1 = x // 8             #キャラx座標左端のTileMapの座標
-    y1 = y // 8             #キャラy座標上端のTileMapの座標
-    x2 = (x + 8 - 1) // 8   #キャラx座標右端のTileMapの座標
-    y2 = (y + 8 - 1) // 8   #キャラy座標下端のTileMapの座標
-    #tileの種類で判定
-    #左上判定
-    if get_tile(x1,y1) == (1,0):
-        isStop = True
-#        print("左上")
-        return isStop
-    #右上判定
-    if get_tile(x2,y1) == (1,0):
-        isStop = True
-#        print("右上")
-        return isStop
-    return False
-
-#関数(左右タイルとのコリジョン判定)
-    #//は商を求める(余りは切り捨てる)
-    #8は今回のplayerが8×8ドットサイズだから
-def check_collision_wall(x, y):
-    x1 = x // 8            #キャラx座標左端のTileMapの座標
-    y1 = (y + 1) // 8            #キャラy座標上端のTileMapの座標
-    x2 = (x + 8 - 1) // 8   #キャラx座標右端のTileMapの座標
-    y2 = (y + 8 - 1 - 1) // 8   #キャラy座標下端のTileMapの座標
-    #tileの種類で判定
-    #左上判定
-    if get_tile(x1,y1) == (1,0):
-        isStop = True
-#        print("wall左上")
-        return isStop
-    #右上判定
-    if get_tile(x2,y1) == (1,0):
-        isStop = True
-#        print("wall右上")
-        return isStop
-    #左下判定
-    if get_tile(x1,y2) == (1,0):
-        isStop = True
-#        print("wall左下")
-        return isStop
-    #右下判定
-    if get_tile(x2,y2) == (1,0):
-        isStop = True
-#        print("wall右下")
-        return isStop
-    return False
-
-#関数(タイルとのBulletコリジョン判定)
-    #//は商を求める(余りは切り捨てる)
-    #//bulletはdotなので、一点だけで判定で良さそう
-def check_bullet_collision(x, y):
-    x1 = x // 8             #キャラx座標左端のTileMapの座標
-    y1 = y // 8             #キャラy座標上端のTileMapの座標
-    #tileの種類で判定
-    #左上判定
-    if get_tile(x1,y1) == (1,0):
-        isTileHit = True
-        return isTileHit
-    return False
-
 #関数(List実行)
 def update_list(list):
     for elem in list:
@@ -144,15 +51,9 @@ class Player:
         self.y = y
         self.dx = 0
         self.dy = 0
-        self.new_player_x = x
-        self.new_player_y = y
-        self.gravity = GRAVITY
         self.hp = PLAYER_HP
         self.direction = 1
         self.count_atk = 0  #攻撃入力制限用count
-        self.isGround = False
-        self.isJump = False
-        self.isWall = False
         self.isAtk = False  #攻撃中flag
         self.is_alive = True
     def update(self):
@@ -180,43 +81,11 @@ class Player:
                 self.count_atk = 0
                 self.isAtk = False
 
-        #空中時処理
-        if self.isGround == False:
-            #加速度更新
-            self.dy += self.gravity #重力加速度的な
-        else:
-            self.dy += 0 #変化なし
-        #playerの位置を更新する前に衝突判定
-        self.new_player_x = self.x + self.dx
-        #y座標のみ空中時に計算
-        if self.isGround == False:
-            self.new_player_y = self.y + self.dy
-
-        #移動先での当たり判定
-        #wall判定
-        if check_collision_wall(self.new_player_x, self.y) == True:
-            self.isWall = True
-        else:
-            self.isWall = False
-            self.x = self.new_player_x
-
-        #頭上判定
-        if check_collision_head(self.x, self.new_player_y) == True:
-            self.dy = 1 #下方向に加速させる
-
-        #床判定
-        if check_collision_yuka(self.x, self.new_player_y) == True:
-            self.y = round(self.y / 8) * 8 #丸めて着地
-            self.isGround = True
-            self.isJump = False
-        else:
-            self.isGround = False
-            self.y = self.new_player_y
 
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
-
+#■Bullet
 class Bullet:
     def __init__(self, x, y, dir):
         self.x = x
@@ -239,53 +108,14 @@ class Enemy:
         self.y = y
         self.dx = 0
         self.dy = 0
-        self.new_enemy_x = x
-        self.new_enemy_y = y
-        self.gravity = GRAVITY
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
-        self.isGround = False
-        self.isJump = False
-        self.isWall = False
         self.is_alive = True
         enemies.append(self)
     def update(self):
-        #空中時処理
-        if self.isGround == False:
-            #加速度更新
-            self.dy += self.gravity #重力加速度的な
-        else:
-            self.dy += 0 #変化なし
-        #playerの位置を更新する前に衝突判定
-        self.new_enemy_x = self.x + self.dx
-        #y座標のみ空中時に計算
-        if self.isGround == False:
-            self.new_enemy_y = self.y + self.dy
-
-        #移動先での当たり判定
-        #wall判定
-        if check_collision_wall(self.new_enemy_x, self.y) == True:
-            self.isWall = True
-        else:
-            self.isWall = False
-            self.x = self.new_enemy_x
-
-        #頭上判定
-        if check_collision_head(self.x, self.new_enemy_y) == True:
-            self.dy = 1 #下方向に加速させる
-
-        #床判定
-        if check_collision_yuka(self.x, self.new_enemy_y) == True:
-            self.y = round(self.y / 8) * 8 #丸めて着地
-            self.isGround = True
-            self.isJump = False
-        else:
-            self.isGround = False
-            self.y = self.new_enemy_y
-
+        pass
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
-
 #■HitParticle
 class HitParticle:
     def __init__(self, x, y):
@@ -300,7 +130,6 @@ class HitParticle:
             self.is_alive = False
     def draw(self):
         pyxel.circb(self.x, self.y, 2, 7)
-
 #■Blust
 class Blast:
     def __init__(self, x, y):
@@ -318,7 +147,6 @@ class Blast:
             self.is_alive = False
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16, 0 + (8 * self.motion), 8, 8, 0)
-
 #■Particle
 class Particle:
     def __init__(self, x, y):
@@ -348,7 +176,7 @@ class App:
         #画面サイズの設定　titleはwindow枠にtext出せる
         pyxel.init(WINDOW_W, WINDOW_H, title="2D ACT", fps = 60)
         #editorデータ読み込み(コードと同じフォルダにある)
-        pyxel.load("my_resource17.pyxres")
+        pyxel.load("my_resource19.pyxres")
         self.score = 0
         self.highScore = 0
         #画面遷移の初期化
@@ -360,7 +188,7 @@ class App:
         self.scroll_x = 0
         self.scroll_y = 0
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, 0,20)
+        Enemy(32, pyxel.height / 2, 0, 1, 20)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -502,10 +330,6 @@ class App:
         #camera再セット
         pyxel.camera(self.scroll_x, self.scroll_y)
 
-        pyxel.text(0,   0, "isWall:%s" %self.player.isWall, 7)
-        pyxel.text(0,   6, "isGround:%s" %self.player.isGround, 7)
-        pyxel.text(0,  12, "isJump:%s" %self.player.isJump, 7)
-        pyxel.text(0,  18, "new_y:%f" %self.player.new_player_y, 7)
         pyxel.text(0,  24, "    y:%f" %self.player.y, 7)
         pyxel.text(0,  30, "   dy:%f" %self.player.dy, 7)
 
