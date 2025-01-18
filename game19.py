@@ -81,6 +81,9 @@ class Player:
                 self.count_atk = 0
                 self.isAtk = False
 
+        #Playerの位置を更新
+        self.x = self.x + self.dx
+        #移動停止
 
     def draw(self):
         #editorデータ描画(player)
@@ -181,8 +184,8 @@ class App:
         self.highScore = 0
         #画面遷移の初期化
         self.scene = SCENE_TITLE
-        #Playerインスタンス生成(+1は着地座標調整、確定ではない)
-        self.player = Player(36, pyxel.height / 2 + 1)
+        #Playerインスタンス生成
+        self.player = Player(36, 104)
 
         #BG表示用の座標
         self.scroll_x = 0
