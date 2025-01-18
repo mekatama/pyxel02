@@ -83,7 +83,6 @@ class Player:
 
         #Playerの位置を更新
         self.x = self.x + self.dx
-        #移動停止
 
     def draw(self):
         #editorデータ描画(player)
@@ -111,12 +110,14 @@ class Enemy:
         self.y = y
         self.dx = 0
         self.dy = 0
+        self.speed = speed
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.is_alive = True
         enemies.append(self)
     def update(self):
-        pass
+        #enemyの仮移動
+        self.x += self.speed
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 #■HitParticle
@@ -191,7 +192,7 @@ class App:
         self.scroll_x = 0
         self.scroll_y = 0
         #仮配置
-        Enemy(32, pyxel.height / 2, 0, 1, 20)
+        Enemy(16, 104, 0.1, 1, 20)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
