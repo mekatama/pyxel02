@@ -229,10 +229,10 @@ class App:
         #EnemyとBulletの当たり判定
         for enemy in enemies:
             for bullet in bullets:
-                if (enemy.x + 8    > bullet.x - 2 and
-                    enemy.x        < bullet.x + 2 and
-                    enemy.y + 8    > bullet.y - 2 and
-                    enemy.y        < bullet.y + 2):
+                if (enemy.x + 8    > bullet.x  and
+                    enemy.x        < bullet.x + 4 and
+                    enemy.y + 8    > bullet.y  and
+                    enemy.y        < bullet.y + 8):
                     #Hit時の処理
                     enemy.hp -= 1
                     #HitParticle
