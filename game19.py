@@ -113,11 +113,20 @@ class Enemy:
         self.speed = speed
         self.hp = hp
         self.direction = dir    #移動方向flag(右:1 左:-1)
+        self.countHit = 0       #ヒットストップ時間
+        self.isHit = False
         self.is_alive = True
         enemies.append(self)
     def update(self):
         #enemyの仮移動
-        self.x += self.speed
+        if self.isHit == False:
+            self.x += self.speed
+        #ヒットストップ時間
+        else:
+            self.countHit += 1
+            if self.countHit > 30:
+                self.countHit = 0
+                self.isHit = False
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
 #■HitParticle
@@ -235,6 +244,7 @@ class App:
                     enemy.y        < bullet.y + 8):
                     #Hit時の処理
                     enemy.hp -= 1
+                    enemy.isHit = True
                     #HitParticle
                     hitparticles.append(
                         HitParticle(bullet.x, bullet.y)
