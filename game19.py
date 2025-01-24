@@ -23,6 +23,7 @@ MAP_HEIGHT = 16
 #list用意
 enemybullets = []
 bullets = []
+shield = []
 hitparticles = []
 enemies = []
 blasts = []
@@ -76,6 +77,12 @@ class Player:
                 elif self.direction == -1:
                     Bullet(self.x - 5, self.y, self.direction)
                 self.isAtk = True
+        #ガード入力
+        if (pyxel.btn(pyxel.KEY_Z) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_B)):
+            if self.direction == 1:
+                Shield(self.x + 9, self.y, self.direction)
+            elif self.direction == -1:
+                Shield(self.x - 5, self.y, self.direction)
         #攻撃入力制限処理
         if self.isAtk == True:
             self.count_atk += 1
@@ -89,6 +96,19 @@ class Player:
     def draw(self):
         #editorデータ描画(player)
         pyxel.blt(self.x, self.y, 0, 8, 0, 8 * self.direction, 8, 0)
+#■Shield
+class Shield:
+    def __init__(self, x, y, dir):
+        self.x = x
+        self.y = y
+        self.direction = dir
+        self.count = 0
+        self.is_alive = True
+        shield.append(self)
+    def update(self):
+        pass
+    def draw(self):
+        pyxel.rect(self.x, self.y, 4, 8, 6)
 #■Bullet
 class Bullet:
     def __init__(self, x, y, dir):
@@ -328,6 +348,7 @@ class App:
                 self.scroll_x = STAGE_W - pyxel.width   #スクロール停止
         #list実行
         update_list(bullets)
+        update_list(shield)
         update_list(enemybullets)
         update_list(hitparticles)
         update_list(enemies)
@@ -335,6 +356,7 @@ class App:
         update_list(particles)
         #list更新
         cleanup_list(bullets)
+        cleanup_list(shield)
         cleanup_list(enemybullets)
         cleanup_list(hitparticles)
         cleanup_list(enemies)
@@ -350,6 +372,7 @@ class App:
             self.scene = SCENE_TITLE
             #list全要素削除
             bullets.clear()         #list全要素削除
+            shield.clear()          #list全要素削除
             enemybullets.clear()    #list全要素削除
             hitparticles.clear()    #list全要素削除
             enemies.clear()         #list全要素削除
@@ -394,6 +417,7 @@ class App:
 
         self.player.draw()
         draw_list(bullets)
+        draw_list(shield)
         draw_list(enemybullets)
         draw_list(enemies)
         draw_list(hitparticles)
