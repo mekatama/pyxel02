@@ -1,4 +1,4 @@
-#左右移動アクション
+#格闘アクション
 import pyxel
 import math
 #画面遷移用の変数
@@ -12,6 +12,7 @@ GRAVITY = 0.05
 PLAYER_HP = 1
 PLAYER_SPEED = 1
 PLAYER_BULLET_SPEED = 4
+ENEMY_BULLET_SPEED = 0.5
 STAGE_W = 128 * 2
 SAGE_H = 128 * 1
 LEFT_LIMIT = 40
@@ -20,6 +21,7 @@ TILE_SIZE = 8
 MAP_WIDTH = 16
 MAP_HEIGHT = 16
 #list用意
+enemybullets = []
 bullets = []
 hitparticles = []
 enemies = []
@@ -115,6 +117,7 @@ class Enemy:
         self.direction = dir    #移動方向flag(右:1 左:-1)
         self.countHit = 0       #ヒットストップ時間
         self.isHit = False
+        self.isFire = False
         self.is_alive = True
         enemies.append(self)
     def update(self):
@@ -127,8 +130,33 @@ class Enemy:
             if self.countHit > 30:
                 self.countHit = 0
                 self.isHit = False
+        #攻撃
+        if pyxel.frame_count % 60 == 0:
+            self.isFire = True
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 24, 0, 8, 8, 0)
+#■EnemyBullet
+class EnemyBullet:
+    def __init__(self, x, y, speed, aim):
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.size = 1
+        self.color = 10         #colorは0～15
+        self.count = 0
+        self.aim = aim          #攻撃角度
+        self.is_alive = True
+        enemybullets.append(self)
+    def update(self):
+        #弾用座標
+        self.x += self.speed * math.cos(self.aim)
+        self.y += self.speed * -math.sin(self.aim)
+        #一定時間で消去
+        self.count += 1
+        if self.count > 160:
+            self.is_alive = False   #消去
+    def draw(self):
+        pyxel.circ(self.x, self.y, 1, self.color)
 #■HitParticle
 class HitParticle:
     def __init__(self, x, y):
@@ -201,7 +229,8 @@ class App:
         self.scroll_x = 0
         self.scroll_y = 0
         #仮配置
-        Enemy(16, 104, 0.1, 1, 20)
+        Enemy(16, 70, 0.1, 1, 20)
+#        Enemy(16, 104, 0.1, 1, 20)
 
         #実行開始 更新関数 描画関数
         pyxel.run(self.update, self.draw)
@@ -269,6 +298,19 @@ class App:
 
                         self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
+        #EnemyのPlayer狙い処理
+        for enemy in enemies:
+            #攻撃タイミング
+            if enemy.isFire == True:
+                dx = self.player.x - enemy.x
+                dy = self.player.y - enemy.y
+                enemy.aim = math.atan2(-dy, dx)
+                #敵弾生成
+                enemybullets.append(
+                    EnemyBullet(enemy.x, enemy.y, ENEMY_BULLET_SPEED, enemy.aim)
+                )
+                enemy.isFire = False
+
         #High Score
         if self.score >= self.highScore:
             self.highScore = self.score
@@ -286,12 +328,14 @@ class App:
                 self.scroll_x = STAGE_W - pyxel.width   #スクロール停止
         #list実行
         update_list(bullets)
+        update_list(enemybullets)
         update_list(hitparticles)
         update_list(enemies)
         update_list(blasts)
         update_list(particles)
         #list更新
         cleanup_list(bullets)
+        cleanup_list(enemybullets)
         cleanup_list(hitparticles)
         cleanup_list(enemies)
         cleanup_list(blasts)
@@ -306,6 +350,7 @@ class App:
             self.scene = SCENE_TITLE
             #list全要素削除
             bullets.clear()         #list全要素削除
+            enemybullets.clear()    #list全要素削除
             hitparticles.clear()    #list全要素削除
             enemies.clear()         #list全要素削除
             blasts.clear()          #list全要素削除
@@ -349,6 +394,7 @@ class App:
 
         self.player.draw()
         draw_list(bullets)
+        draw_list(enemybullets)
         draw_list(enemies)
         draw_list(hitparticles)
         draw_list(blasts)
