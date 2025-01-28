@@ -23,7 +23,7 @@ MAP_HEIGHT = 16
 #list用意
 enemybullets = []
 bullets = []
-shield = []
+shields = []
 hitparticles = []
 enemies = []
 blasts = []
@@ -56,8 +56,9 @@ class Player:
         self.dy = 0
         self.hp = PLAYER_HP
         self.direction = 1
-        self.count_atk = 0  #攻撃入力制限用count
-        self.isAtk = False  #攻撃中flag
+        self.count_atk = 0      #攻撃入力制限用count
+        self.isAtk = False      #攻撃中flag
+        self.isShield = False   #ガードflag
         self.is_alive = True
     def update(self):
         #移動入力
@@ -81,8 +82,14 @@ class Player:
         if (pyxel.btn(pyxel.KEY_Z) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_B)):
             if self.direction == 1:
                 Shield(self.x + 9, self.y, self.direction)
+                self.isShield = True
             elif self.direction == -1:
                 Shield(self.x - 5, self.y, self.direction)
+                self.isShield = True
+        #ガード終了
+        if (pyxel.btnr(pyxel.KEY_Z) or pyxel.btnr(pyxel.GAMEPAD1_BUTTON_B)):
+            self.isShield = False
+
         #攻撃入力制限処理
         if self.isAtk == True:
             self.count_atk += 1
@@ -104,8 +111,10 @@ class Shield:
         self.direction = dir
         self.count = 0
         self.is_alive = True
-        shield.append(self)
+        shields.append(self)
     def update(self):
+#        if Player.isShield == False:
+#            self.is_alive = False
         pass
     def draw(self):
         pyxel.rect(self.x, self.y, 4, 8, 6)
@@ -318,6 +327,10 @@ class App:
 
                         self.score += 10
 #                        pyxel.play(1, 0, loop=False)    #SE再生
+        #Shield処理
+        for shield in shields:
+            if self.player.isShield == False:
+                shield.is_alive = False
         #EnemyのPlayer狙い処理
         for enemy in enemies:
             #攻撃タイミング
@@ -348,7 +361,7 @@ class App:
                 self.scroll_x = STAGE_W - pyxel.width   #スクロール停止
         #list実行
         update_list(bullets)
-        update_list(shield)
+        update_list(shields)
         update_list(enemybullets)
         update_list(hitparticles)
         update_list(enemies)
@@ -356,7 +369,7 @@ class App:
         update_list(particles)
         #list更新
         cleanup_list(bullets)
-        cleanup_list(shield)
+        cleanup_list(shields)
         cleanup_list(enemybullets)
         cleanup_list(hitparticles)
         cleanup_list(enemies)
@@ -372,7 +385,7 @@ class App:
             self.scene = SCENE_TITLE
             #list全要素削除
             bullets.clear()         #list全要素削除
-            shield.clear()          #list全要素削除
+            shields.clear()          #list全要素削除
             enemybullets.clear()    #list全要素削除
             hitparticles.clear()    #list全要素削除
             enemies.clear()         #list全要素削除
@@ -417,7 +430,7 @@ class App:
 
         self.player.draw()
         draw_list(bullets)
-        draw_list(shield)
+        draw_list(shields)
         draw_list(enemybullets)
         draw_list(enemies)
         draw_list(hitparticles)
