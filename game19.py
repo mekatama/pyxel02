@@ -334,7 +334,7 @@ class App:
         for shield in shields:
             if self.player.isShield == False:
                 shield.is_alive = False
-        #EnemyのPlayer狙い処理
+        #EnemyBulletのPlayer狙い処理
         for enemy in enemies:
             #攻撃タイミング
             if enemy.isFire == True:
@@ -346,6 +346,15 @@ class App:
                     EnemyBullet(enemy.x, enemy.y, ENEMY_BULLET_SPEED, enemy.aim)
                 )
                 enemy.isFire = False
+        #EnemyBulletとShieldの判定
+        for shield in shields:
+            for enemybullet in enemybullets:
+                if (shield.x + 8    > enemybullet.x  and
+                    shield.x        < enemybullet.x + 4 and
+                    shield.y + 8    > enemybullet.y  and
+                    shield.y        < enemybullet.y + 8):
+                    #Hit時の処理
+                    enemybullet.is_alive = False
 
         #High Score
         if self.score >= self.highScore:
