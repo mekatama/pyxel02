@@ -61,23 +61,28 @@ class Player:
         self.isShield = False   #ガードflag
         self.is_alive = True
     def update(self):
+        print(self.isShield)
         #移動入力
-        if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
-            self.dx = PLAYER_SPEED
-            self.direction = 1  #右向き
-        elif (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
-            self.dx = -1 * PLAYER_SPEED
-            self.direction = -1 #左向き
+        if self.isShield == False:
+            if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
+                self.dx = PLAYER_SPEED
+                self.direction = 1  #右向き
+            elif (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)):
+                self.dx = -1 * PLAYER_SPEED
+                self.direction = -1 #左向き
+            else:
+                self.dx = 0
         else:
             self.dx = 0
         #攻撃入力
-        if (pyxel.btn(pyxel.KEY_A) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A)):
-            if self.isAtk == False:
-                if self.direction == 1:
-                    Bullet(self.x + 9, self.y, self.direction)
-                elif self.direction == -1:
-                    Bullet(self.x - 5, self.y, self.direction)
-                self.isAtk = True
+        if self.isShield == False:
+            if (pyxel.btn(pyxel.KEY_A) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A)):
+                if self.isAtk == False:
+                    if self.direction == 1:
+                        Bullet(self.x + 9, self.y, self.direction)
+                    elif self.direction == -1:
+                        Bullet(self.x - 5, self.y, self.direction)
+                    self.isAtk = True
         #ガード入力
         if (pyxel.btn(pyxel.KEY_Z) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_B)):
             if self.direction == 1:
@@ -113,8 +118,6 @@ class Shield:
         self.is_alive = True
         shields.append(self)
     def update(self):
-#        if Player.isShield == False:
-#            self.is_alive = False
         pass
     def draw(self):
         pyxel.rect(self.x, self.y, 4, 8, 6)
