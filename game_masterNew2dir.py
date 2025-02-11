@@ -22,13 +22,15 @@ class Background:
 # 自機クラス
 class Player:
     #定数
-    MOVE_SPEED = 2  # 移動速度
+    MOVE_SPEED = 2      # 移動速度
+    SHOT_INTERVAL = 6   # 弾の発射間隔
 
     # 自機を初期化してゲームに登録する
     def __init__(self, game, x, y):
         self.game = game    # ゲームへの参照
         self.x = x          # X座標
         self.y = y          # Y座標
+        self.shot_timer = 0 # 弾発射までの残り時間
         # ゲームに自機を登録する
         self.game.player = self
 
@@ -43,6 +45,19 @@ class Player:
         # 自機が画面外に出ないようにする
         self.x = max(self.x, 0)                 #大きい数値を使う
         self.x = min(self.x, pyxel.width - 8)   #小さい数値を使う
+
+        # 弾の発射間隔timer制御
+        if self.shot_timer > 0:  # 弾発射までの残り時間を減らす
+            self.shot_timer -= 1
+
+        # 弾を発射する
+        if pyxel.btn(pyxel.KEY_SPACE) and self.shot_timer == 0:
+            # 自機の弾を生成する(上方向は-90度)
+            Bullet(self.game, Bullet.SIDE_PLAYER, self.x, self.y - 3, -90, 5)
+            # 弾発射音を再生する
+            pyxel.play(3, 0)
+            # 次の弾発射までの残り時間を設定する
+            self.shot_timer = Player.SHOT_INTERVAL
 
     # 自機を描画する
     def draw(self):
@@ -67,6 +82,14 @@ class Enemy:
         # ゲームの敵リストに登録する
         self.game.enemies.append(self)
 
+    # 狙う自機の方向の角度を計算する
+    def calc_player_angle(self):
+        player = self.game.player   # GAME内のplayerの情報にアクセスできる
+        if player is None:          # 自機が存在しない時
+            return 90               # 真下方向90度へ攻撃
+        else:                       # 自機が存在する時
+            return pyxel.atan2(player.y - self.y, player.x - self.x)
+
     # 敵を更新する
     def update(self):
         # 生存時間をカウントする
@@ -76,6 +99,10 @@ class Enemy:
         if self.kind == Enemy.KIND_A:
             # 前方に移動させる
             self.y += 1.2
+            # 一定時間毎に自機の方向に向けて弾を発射する
+            if self.life_time % 50 == 0:
+                player_angle = self.calc_player_angle()
+                Bullet(self.game, Bullet.SIDE_ENEMY, self.x, self.y, player_angle, 2)
 
         # 敵Bを更新する
         elif self.kind == Enemy.KIND_B:
@@ -91,6 +118,10 @@ class Enemy:
         elif self.kind == Enemy.KIND_C:
             # 前方に移動させる
             self.y += 0.8
+            # 一定時間毎に４方向に弾を発射する
+            if self.life_time % 40 == 0:
+                for i in range(4):      # 0,1,2,3の範囲
+                    Bullet(self.game, Bullet.SIDE_ENEMY, self.x, self.y, i * 45 + 22, 2)
 
         # 敵が画面下から出たら敵リストから登録を削除する
         if self.y >= pyxel.height:              # 画面下から出たか
@@ -100,6 +131,49 @@ class Enemy:
     # 敵を描画する
     def draw(self):
         pyxel.blt(self.x, self.y, 0, self.kind * 8 + 8, 0, 8, 8, 0)
+
+# 弾クラス
+class Bullet:
+    #定数
+    SIDE_PLAYER = 0 # 自機の弾
+    SIDE_ENEMY = 1  # 敵の弾
+
+    # 弾を初期化してゲームに登録する
+    def __init__(self, game, side, x, y, angle, speed):
+        self.game = game
+        self.side = side
+        self.x = x
+        self.y = y
+        self.vx = pyxel.cos(angle) * speed  #X軸方向の速度
+        self.vy = pyxel.sin(angle) * speed  #Y軸方向の速度
+
+        # 弾の種類に応じた初期化とゲームの弾リストへの登録を行う
+        if self.side == Bullet.SIDE_PLAYER:
+            game.player_bullets.append(self)
+        else:
+            game.enemy_bullets.append(self)
+
+    # 弾を更新する
+    def update(self):
+        # 弾の座標を更新する
+        self.x += self.vx
+        self.y += self.vy
+
+        # 弾が画面外に出たら弾リストから登録を削除する
+        if (self.x <= -8 or
+            self.x >= pyxel.width or
+            self.y <= -8 or
+            self.y >= pyxel.height
+        ):
+            if self.side == Bullet.SIDE_PLAYER:
+                self.game.player_bullets.remove(self)
+            else:
+                self.game.enemy_bullets.remove(self)
+
+    # 弾を描画する
+    def draw(self):
+        src_x = 0 if self.side == Bullet.SIDE_PLAYER else 8
+        pyxel.blt(self.x, self.y, 0, src_x, 8, 8, 8, 0)
 
 # ゲームクラス(ゲーム全体を管理するクラス)
 class Game:
@@ -121,6 +195,8 @@ class Game:
         self.background = None  # 背景
         self.player = None      # 自機
         self.enemies = []       # 敵のリスト
+        self.player_bullets = []# 自機の弾のリスト
+        self.enemy_bullets = [] # 敵の弾のリスト
 
         # 背景を生成する(背景はシーンによらず常に存在する)
         Background(self)
@@ -138,8 +214,10 @@ class Game:
         if self.scene == Game.SCENE_TITLE:
             # 自機を削除する
             self.player = None  # プレイヤーを削除
-            # 全ての敵を削除する
+            # 全ての弾と敵を削除する
             self.enemies.clear()
+            self.player_bullets.clear() # 自機の弾を削除する処理を追加
+            self.enemy_bullets.clear()  # 敵の弾を削除する処理を追加
             # BGMを再生する
             pyxel.playm(0, loop=True)
         # プレイ画面
@@ -172,6 +250,14 @@ class Game:
         # ループ中に要素の追加・削除が行われても問題ないようにコピーしたリストを使用する
         for enemy in self.enemies.copy():
             enemy.update()
+
+        # 自機の弾を更新する
+        for bullet in self.player_bullets.copy():  # 自機の弾を更新する処理を追加
+            bullet.update()
+
+        # 敵の弾を更新する
+        for bullet in self.enemy_bullets.copy():  # 敵の弾を更新する処理を追加
+            bullet.update()
 
         # シーンを更新する
         if self.scene == Game.SCENE_TITLE:  # タイトル画面
@@ -211,6 +297,14 @@ class Game:
         # 敵を描画する
         for enemy in self.enemies:
             enemy.draw()
+
+        # 自機の弾を描画する
+        for bullet in self.player_bullets:  # 自機の弾を更新する処理を追加
+            bullet.draw()
+
+        # 敵の弾を描画する
+        for bullet in self.enemy_bullets:  # 敵の弾を更新する処理を追加
+            bullet.draw()
 
         # スコアを描画する
         pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
