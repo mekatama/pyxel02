@@ -57,11 +57,13 @@ class Player:
         self.hp = PLAYER_HP
         self.direction = 1
         self.count_atk = 0      #攻撃入力制限用count
+        self.count_Guard = 0    #ガード開始からのカウント
         self.isAtk = False      #攻撃中flag
         self.isShield = False   #ガードflag
+        self.isCounter = False  #跳ね返しflag
         self.is_alive = True
     def update(self):
-        print(self.isShield)
+#        print(self.isShield)
         #移動入力
         if self.isShield == False:
             if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)):
@@ -94,6 +96,17 @@ class Player:
         #ガード終了
         if (pyxel.btnr(pyxel.KEY_Z) or pyxel.btnr(pyxel.GAMEPAD1_BUTTON_B)):
             self.isShield = False
+            self.isCounter = False
+            self.count_Guard = 0
+
+        #跳ね返し用カウント
+        if self.isShield == True:
+            self.count_Guard += 1
+            if self.count_Guard < 10:
+                self.isCounter = True
+            elif self.count_Guard >= 10:
+                self.isCounter = False
+            print(self.isCounter)
 
         #攻撃入力制限処理
         if self.isAtk == True:
