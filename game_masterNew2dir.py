@@ -19,6 +19,35 @@ class Background:
         if self.game.scene != Game.SCENE_TITLE:
             pyxel.blt(0, 0, 1, 0, 0, 120, 160)
 
+# 自機クラス
+class Player:
+    #定数
+    MOVE_SPEED = 2  # 移動速度
+
+    # 自機を初期化してゲームに登録する
+    def __init__(self, game, x, y):
+        self.game = game    # ゲームへの参照
+        self.x = x          # X座標
+        self.y = y          # Y座標
+        # ゲームに自機を登録する
+        self.game.player = self
+
+    # 自機を更新する
+    def update(self):
+        # キー入力で自機を移動させる
+        if pyxel.btn(pyxel.KEY_LEFT):
+            self.x -= Player.MOVE_SPEED
+        if pyxel.btn(pyxel.KEY_RIGHT):
+            self.x += Player.MOVE_SPEED
+
+        # 自機が画面外に出ないようにする
+        self.x = max(self.x, 0)                 #大きい数値を使う
+        self.x = min(self.x, pyxel.width - 8)   #小さい数値を使う
+
+    # 自機を描画する
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 0, 0, 8, 8, 0)
+
 # ゲームクラス(ゲーム全体を管理するクラス)
 class Game:
     #定数
@@ -50,6 +79,8 @@ class Game:
 
         # タイトル画面
         if self.scene == Game.SCENE_TITLE:
+            # 自機を削除する
+            self.player = None  # プレイヤーを削除
             # BGMを再生する
             pyxel.playm(0, loop=True)
         # プレイ画面
@@ -58,15 +89,23 @@ class Game:
             self.score = 0  # スコアを0に戻す
             # BGMを再生する
             pyxel.playm(1, loop=True)
+            # 自機を生成する
+            Player(self, 56, 140)
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
             # 画面表示時間を設定する
             self.display_timer = 60
+            # 自機を削除する
+            self.player = None  # プレイヤーを削除
 
     # ゲーム全体を更新する
     def update(self):
         # 背景を更新する
         self.background.update()
+
+        # 自機を更新する
+        if self.player is not None: #NONE使用時は判定方法が特殊
+            self.player.update()
 
         # シーンを更新する
         if self.scene == Game.SCENE_TITLE:  # タイトル画面
@@ -91,6 +130,10 @@ class Game:
 
         # 背景を描画する
         self.background.draw()
+
+        # 自機を描画する
+        if self.player is not None:
+            self.player.draw()
 
         # スコアを描画する
         pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
