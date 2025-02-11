@@ -31,8 +31,19 @@ class Player:
         self.x = x          # X座標
         self.y = y          # Y座標
         self.shot_timer = 0 # 弾発射までの残り時間
+        self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
         # ゲームに自機を登録する
         self.game.player = self
+
+    # 自機にダメージを与える
+    def add_damage(self):
+        # BGMを止めて爆発音を再生する
+        pyxel.stop()
+        pyxel.play(0, 2)
+        # 自機を削除する
+        self.game.player = None
+        # シーンをゲームオーバー画面に変更する
+        self.game.change_scene(self.game.SCENE_GAMEOVER)
 
     # 自機を更新する
     def update(self):
@@ -73,14 +84,29 @@ class Enemy:
     # 敵を初期化してゲームに登録する
     def __init__(self, game, kind, level, x, y):
         self.game = game
-        self.kind = kind    # 敵の種類
-        self.level = level  # 強さ
+        self.kind = kind                # 敵の種類
+        self.level = level              # 強さ
         self.x = x
         self.y = y
-        self.life_time = 0  # 生存時間
+        self.life_time = 0              # 生存時間
+        self.hit_area = (0, 0, 7, 7)    # 当たり判定の領域
+        self.armor = self.level - 1     # 装甲
 
         # ゲームの敵リストに登録する
         self.game.enemies.append(self)
+
+    # 敵にダメージを与える
+    def add_damage(self):
+        if self.armor > 0:  # 装甲が残っている時
+            self.armor -= 1
+            # ダメージ音を再生する
+            pyxel.play(2, 1, resume=True)  # チャンネル2で割り込み再生させる
+            return
+        # 敵をリストから削除する
+        if self in self.game.enemies:  # 敵リストに登録されている時
+            self.game.enemies.remove(self)
+        # スコアを加算する
+        self.game.score += self.level * 10
 
     # 狙う自機の方向の角度を計算する
     def calc_player_angle(self):
@@ -149,9 +175,21 @@ class Bullet:
 
         # 弾の種類に応じた初期化とゲームの弾リストへの登録を行う
         if self.side == Bullet.SIDE_PLAYER:
+            self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
             game.player_bullets.append(self)
         else:
+            self.hit_area = (2, 2, 5, 5)  # 当たり判定領域
             game.enemy_bullets.append(self)
+
+    # 弾にダメージを与える
+    def add_damage(self):
+        # 弾をリストから削除する
+        if self.side == Bullet.SIDE_PLAYER:
+            if self in self.game.player_bullets:    # 自機の弾リストに登録されている時
+                self.game.player_bullets.remove(self)
+        else:
+            if self in self.game.enemy_bullets:     # 敵の弾リストに登録されている時
+                self.game.enemy_bullets.remove(self)
 
     # 弾を更新する
     def update(self):
@@ -174,6 +212,36 @@ class Bullet:
     def draw(self):
         src_x = 0 if self.side == Bullet.SIDE_PLAYER else 8
         pyxel.blt(self.x, self.y, 0, src_x, 8, 8, 8, 0)
+
+# 当たり判定用の関数
+#   タプルで設定した当たり判定領域を使用して判定
+def check_collision(entity1, entity2):
+    #キャラクター1の当たり判定座標を設定
+    entity1_x1 = entity1.x + entity1.hit_area[0]
+    entity1_y1 = entity1.y + entity1.hit_area[1]
+    entity1_x2 = entity1.x + entity1.hit_area[2]
+    entity1_y2 = entity1.y + entity1.hit_area[3]
+
+    #キャラクター2の当たり判定座標を設定
+    entity2_x1 = entity2.x + entity2.hit_area[0]
+    entity2_y1 = entity2.y + entity2.hit_area[1]
+    entity2_x2 = entity2.x + entity2.hit_area[2]
+    entity2_y2 = entity2.y + entity2.hit_area[3]
+
+    # キャラクター1の左端がキャラクター2の右端より右にある
+    if entity1_x1 > entity2_x2: #成立すれば衝突していない
+        return False
+    # キャラクター1の右端がキャラクター2の左端より左にある
+    if entity1_x2 < entity2_x1: #成立すれば衝突していない
+        return False
+    # キャラクター1の上端がキャラクター2の下端より下にある
+    if entity1_y1 > entity2_y2: #成立すれば衝突していない
+        return False
+    # キャラクター1の下端がキャラクター2の上端より上にある
+    if entity1_y2 < entity2_y1: #成立すれば衝突していない
+        return False
+    # 上記のどれでもなければ重なっている
+    return True #衝突している
 
 # ゲームクラス(ゲーム全体を管理するクラス)
 class Game:
@@ -250,14 +318,29 @@ class Game:
         # ループ中に要素の追加・削除が行われても問題ないようにコピーしたリストを使用する
         for enemy in self.enemies.copy():
             enemy.update()
+            # 自機と敵の当たり判定を行う
+            if self.player is not None and check_collision(self.player, enemy):
+                self.player.add_damage()  # 自機にダメージを与える
 
         # 自機の弾を更新する
         for bullet in self.player_bullets.copy():  # 自機の弾を更新する処理を追加
             bullet.update()
+            # 自機の弾と敵の当たり判定を行う
+            for enemy in self.enemies.copy():
+                if check_collision(enemy, bullet):
+                    bullet.add_damage() # 自機の弾にダメージを与える
+                    enemy.add_damage()  # 敵にダメージを与える
+                    #弾の発射音制御?
+                    if self.player is not None:  # 自機が存在する時
+                        self.player.sound_timer = 5  # 弾発射音を止める時間を設定する
 
         # 敵の弾を更新する
         for bullet in self.enemy_bullets.copy():  # 敵の弾を更新する処理を追加
             bullet.update()
+            # プレイヤーと敵の弾の当たり判定を行う
+            if self.player is not None and check_collision(self.player, bullet):
+                bullet.add_damage()  # 敵の弾にダメージを与える
+                self.player.add_damage()  # 自機にダメージを与える
 
         # シーンを更新する
         if self.scene == Game.SCENE_TITLE:  # タイトル画面
