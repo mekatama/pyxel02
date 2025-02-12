@@ -58,6 +58,56 @@ class Player:
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 0, 0, 8, 8, 0)
 
+# 敵クラス
+class Enemy:
+    #定数
+    KIND_A = 0  # 敵A
+    KIND_B = 1  # 敵B
+    KIND_C = 2  # 敵C
+
+    # 敵を初期化してゲームに登録する
+    def __init__(self, game, kind, level, x, y):
+        self.game = game
+        self.kind = kind                # 敵の種類
+        self.level = level              # 強さ
+        self.x = x
+        self.y = y
+        self.life_time = 0              # 生存時間
+        self.hit_area = (0, 0, 7, 7)    # 当たり判定の領域
+        self.armor = self.level - 1     # 装甲
+        self.is_damaged = False         # ダメージを受けたかどうか
+        # ゲームの敵リストに登録する
+        self.game.enemies.append(self)
+
+    # 敵を更新する
+    def update(self):
+        # 生存時間をカウントする
+        self.life_time += 1
+
+        # 敵Aを更新する
+        if self.kind == Enemy.KIND_A:
+            pass
+
+        # 敵Bを更新する
+        elif self.kind == Enemy.KIND_B:
+            pass
+
+        # 敵Cを更新する
+        elif self.kind == Enemy.KIND_C:
+            pass
+
+    # 敵を描画する
+    def draw(self):
+        if self.is_damaged:
+            #ダメージ演出
+            self.is_damaged = False
+            for i in range(1, 15):
+                pyxel.pal(i, 15)    #カラーパレットの色を置き換える
+            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 8, 0, 8, 8, 0)
+            pyxel.pal() #カラーパレット元に戻す
+        else:
+            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 8, 0, 8, 8, 0)
+
 # ゲームクラス(ゲーム全体を管理するクラス)
 class Game:
     #定数
@@ -75,6 +125,7 @@ class Game:
         self.scene = None       # 現在のシーン
         self.background = None  # 背景
         self.player = None      # 自機
+        self.enemies = []       # 敵のリスト
 
         # 背景を生成する(背景はシーンによらず常に存在する)
         Background(self)
@@ -91,6 +142,8 @@ class Game:
         if self.scene == Game.SCENE_TITLE:
             # 自機を削除する
             self.player = None  # プレイヤーを削除
+            # 全ての弾と敵を削除する
+            self.enemies.clear()
 
         # プレイ画面
         elif self.scene == Game.SCENE_PLAY:
@@ -98,6 +151,10 @@ class Game:
             self.score = 0      # スコアを0に戻す
             # 自機を生成する
             Player(self, 56, 100)
+            #仮の敵を生成する
+            kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
+            Enemy(self, kind, 1, pyxel.rndi(0, 112), 40)
+
 
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
@@ -115,11 +172,17 @@ class Game:
         if self.player is not None: #NONE使用時は判定方法が特殊
             self.player.update()
 
+        # 敵を更新する
+        # ループ中に要素の追加・削除が行われても問題ないようにコピーしたリストを使用する
+        for enemy in self.enemies.copy():
+            enemy.update()
+
         # シーンを更新する
         if self.scene == Game.SCENE_TITLE:  # タイトル画面
             if pyxel.btnp(pyxel.KEY_RETURN):
                 self.change_scene(Game.SCENE_PLAY)
         elif self.scene == Game.SCENE_PLAY:  # プレイ画面
+            # 敵を出現させる予定
             pass
         elif self.scene == Game.SCENE_GAMEOVER:  # ゲームオーバー画面
             if self.display_timer > 0:  # 画面表示時間が残っている時
@@ -138,6 +201,10 @@ class Game:
         # 自機を描画する
         if self.player is not None:
             self.player.draw()
+
+        # 敵を描画する
+        for enemy in self.enemies:
+            enemy.draw()
 
         # スコアを描画する
         pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
