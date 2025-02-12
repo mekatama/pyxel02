@@ -19,6 +19,45 @@ class Background:
         if self.game.scene != Game.SCENE_TITLE:
             pyxel.blt(0, 0, 1, 0, 0, 120, 160)
 
+# 自機クラス
+class Player:
+    #定数
+    MOVE_SPEED = 2      # 移動速度
+    SHOT_INTERVAL = 6   # 弾の発射間隔
+
+    # 自機を初期化してゲームに登録する
+    def __init__(self, game, x, y):
+        self.game = game    # ゲームへの参照
+        self.x = x          # X座標
+        self.y = y          # Y座標
+        self.direction = 1  # 1:右向き -1:左向き
+        self.shot_timer = 0 # 弾発射までの残り時間
+        self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
+        # ゲームに自機を登録する
+        self.game.player = self
+
+    # 自機を更新する
+    def update(self):
+        # キー入力で自機を移動させる
+        if pyxel.btn(pyxel.KEY_LEFT):
+            self.x -= Player.MOVE_SPEED
+            self.direction = -1 #左向き
+        if pyxel.btn(pyxel.KEY_RIGHT):
+            self.x += Player.MOVE_SPEED
+            self.direction = 1  #右向き
+
+        # 自機が画面外に出ないようにする
+        self.x = max(self.x, 0)                 #大きい数値を使う
+        self.x = min(self.x, pyxel.width - 8)   #小さい数値を使う
+
+        # 弾の発射間隔timer制御
+        if self.shot_timer > 0:  # 弾発射までの残り時間を減らす
+            self.shot_timer -= 1
+
+    # 自機を描画する
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 0, 0, 8, 8, 0)
+
 # ゲームクラス(ゲーム全体を管理するクラス)
 class Game:
     #定数
@@ -35,6 +74,7 @@ class Game:
         self.score = 0          # スコア
         self.scene = None       # 現在のシーン
         self.background = None  # 背景
+        self.player = None      # 自機
 
         # 背景を生成する(背景はシーンによらず常に存在する)
         Background(self)
@@ -47,24 +87,33 @@ class Game:
     # シーンを変更する関数
     def change_scene(self, scene):
         self.scene = scene
-
         # タイトル画面
         if self.scene == Game.SCENE_TITLE:
-            pass
+            # 自機を削除する
+            self.player = None  # プレイヤーを削除
 
         # プレイ画面
         elif self.scene == Game.SCENE_PLAY:
             # プレイ状態を初期化する
             self.score = 0      # スコアを0に戻す
+            # 自機を生成する
+            Player(self, 56, 100)
+
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
             # 画面表示時間を設定する
             self.display_timer = 60
+            # 自機を削除する
+            self.player = None  # プレイヤーを削除
 
     # ゲーム全体を更新する
     def update(self):
         # 背景を更新する
         self.background.update()
+
+        # 自機を更新する
+        if self.player is not None: #NONE使用時は判定方法が特殊
+            self.player.update()
 
         # シーンを更新する
         if self.scene == Game.SCENE_TITLE:  # タイトル画面
@@ -85,6 +134,10 @@ class Game:
 
         # 背景を描画する
         self.background.draw()
+
+        # 自機を描画する
+        if self.player is not None:
+            self.player.draw()
 
         # スコアを描画する
         pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
