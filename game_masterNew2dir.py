@@ -116,7 +116,7 @@ class Enemy:
 
     # 狙う自機の方向の角度を計算する
     def calc_player_angle(self):
-        player = self.game.player   # GAME内のplayerの情報にアクセスできる
+        player = self.game.player   # GAME内のplayerの情報にアクセス
         if player is None:          # 自機が存在しない時
             return 90               # 真下方向90度へ攻撃
         else:                       # 自機が存在する時
