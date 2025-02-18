@@ -88,6 +88,14 @@ class Enemy:
         # ゲームの敵リストに登録する
         self.game.enemies.append(self)
 
+    # 狙う自機の方向の角度を計算する
+    def calc_player_angle(self):
+        player = self.game.player   # GAME内のplayerの情報にアクセス
+        if player is None:          # 自機が存在しない時
+            return 90               # 真下方向90度へ攻撃
+        else:                       # 自機が存在する時
+            return pyxel.atan2(player.y - self.y, player.x - self.x)
+
     # 敵を更新する
     def update(self):
         # 生存時間をカウントする
@@ -95,7 +103,10 @@ class Enemy:
 
         # 敵Aを更新する
         if self.kind == Enemy.KIND_A:
-            pass
+            # 一定時間毎に自機の方向に向けて弾を発射する
+            if self.life_time % 50 == 0:
+                player_angle = self.calc_player_angle()
+                Bullet(self.game, Bullet.SIDE_ENEMY, self.x, self.y, player_angle, 2)
 
         # 敵Bを更新する
         elif self.kind == Enemy.KIND_B:
@@ -103,7 +114,10 @@ class Enemy:
 
         # 敵Cを更新する
         elif self.kind == Enemy.KIND_C:
-            pass
+            # 一定時間毎に４方向に弾を発射する
+            if self.life_time % 40 == 0:
+                for i in range(4):      # 0,1,2,3の範囲
+                    Bullet(self.game, Bullet.SIDE_ENEMY, self.x, self.y, i * 45 + 22, 2)
 
     # 敵を描画する
     def draw(self):
@@ -212,7 +226,6 @@ class Game:
             #仮の敵を生成する
             kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
             Enemy(self, kind, 1, pyxel.rndi(0, 112), 40)
-
 
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
