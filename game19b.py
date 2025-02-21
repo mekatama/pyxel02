@@ -293,7 +293,7 @@ class Game:
             Player(self, 56, 100)
             #仮の敵を生成する
             kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
-            Enemy(self, kind, 1, pyxel.rndi(0, 112), 40)
+            Enemy(self, kind, 1, pyxel.rndi(0, 112), 100)
 
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
@@ -315,6 +315,9 @@ class Game:
         # ループ中に要素の追加・削除が行われても問題ないようにコピーしたリストを使用する
         for enemy in self.enemies.copy():
             enemy.update()
+            # 自機と敵の当たり判定を行う
+            if self.player is not None and check_collision(self.player, enemy):
+                self.player.add_damage()  # 自機にダメージを与える
 
         # 自機の弾を更新する
         for bullet in self.player_bullets.copy():   # 自機の弾を更新する処理を追加
@@ -331,6 +334,10 @@ class Game:
         # 敵の弾を更新する
         for bullet in self.enemy_bullets.copy():    # 敵の弾を更新する処理を追加
             bullet.update()
+            # プレイヤーと敵の弾の当たり判定を行う
+            if self.player is not None and check_collision(self.player, bullet):
+                bullet.add_damage()  # 敵の弾にダメージを与える
+                self.player.add_damage()  # 自機にダメージを与える
 
         # シーンを更新する
         if self.scene == Game.SCENE_TITLE:  # タイトル画面
