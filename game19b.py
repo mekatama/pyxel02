@@ -78,7 +78,10 @@ class Player:
 
     # 自機を描画する
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 0, 8, 8, 0)
+        # 4フレーム周期で0と8を交互に繰り返す
+        u = pyxel.frame_count  // 4 % 2 * 8
+        print(u)
+        pyxel.blt(self.x, self.y, 0, 0, 24 + u, 8 * self.direction, 8, 0)
 
 # 敵クラス
 class Enemy:
