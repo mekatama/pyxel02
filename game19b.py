@@ -2,6 +2,7 @@
 import pyxel
 
 # 背景クラス
+# 
 class Background:
     # 背景を初期化してゲームに登録する
     def __init__(self, game):
@@ -17,7 +18,7 @@ class Background:
     def draw(self):
         # タイトル画面以外で背景画像を描画する
         if self.game.scene != Game.SCENE_TITLE:
-            pyxel.blt(0, 0, 1, 0, 0, 120, 160)
+            pyxel.blt(0, 0, 2, 0, 0, 128, 128)
 
 # 自機クラス
 class Player:
@@ -283,7 +284,8 @@ class Game:
         # Pyxelを初期化する
         pyxel.init(128, 128, title="Mega Wing")
         # リソースファイルを読み込む
-        pyxel.load("mega_wing.pyxres")
+#        pyxel.load("mega_wing.pyxres")
+        pyxel.load("my_resource19.pyxres")
         # ゲームの状態を初期化する
         self.score = 0          # スコア
         self.scene = None       # 現在のシーン
@@ -418,7 +420,7 @@ class Game:
 
         # シーンを描画する
         if self.scene == Game.SCENE_TITLE:      # タイトル画面
-            pyxel.blt(0, 18, 2, 0, 0, 120, 120, 15)
+            pyxel.blt(0, 18, 0, 0, 96, 128, 32, 15)
             pyxel.text(31, 148, "- PRESS ENTER -", 6)
         elif self.scene == Game.SCENE_GAMEOVER: # ゲームオーバー画面
             pyxel.text(43, 78, "GAME OVER", 8)
