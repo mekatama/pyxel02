@@ -80,7 +80,6 @@ class Player:
     def draw(self):
         # 4フレーム周期で0と8を交互に繰り返す
         u = pyxel.frame_count  // 4 % 2 * 8
-        print(u)
         pyxel.blt(self.x, self.y, 0, 0, 24 + u, 8 * self.direction, 8, 0)
 
 # 敵クラス
@@ -153,15 +152,17 @@ class Enemy:
 
     # 敵を描画する
     def draw(self):
+        # 4フレーム周期で0と8を交互に繰り返す
+        u = pyxel.frame_count  // 4 % 2 * 8
         if self.is_damaged:
             #ダメージ演出
             self.is_damaged = False
             for i in range(1, 15):
                 pyxel.pal(i, 15)    #カラーパレットの色を置き換える
-            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 8, 0, 8, 8, 0)
+            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 32, 56 + u, 8, 8, 0)
             pyxel.pal() #カラーパレット元に戻す
         else:
-            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 8, 0, 8, 8, 0)
+            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 32, 40 + u, 8, 8, 0)
 
 # 弾クラス
 class Bullet:
@@ -327,7 +328,7 @@ class Game:
             Player(self, 56, 100)
             #仮の敵を生成する
             kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
-            Enemy(self, kind, 1, pyxel.rndi(0, 112), 40)
+            Enemy(self, kind, 4, pyxel.rndi(0, 112), 40)
 
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
