@@ -24,7 +24,7 @@ class Background:
 class Player:
     #定数
     MOVE_SPEED = 2      # 移動速度
-    SHOT_INTERVAL = 6   # 弾の発射間隔
+    SHOT_INTERVAL = 10   # 弾の発射間隔
 
     # 自機を初期化してゲームに登録する
     def __init__(self, game, x, y):
@@ -52,13 +52,14 @@ class Player:
 
     # 自機を更新する
     def update(self):
-        # キー入力で自機を移動させる
-        if pyxel.btn(pyxel.KEY_LEFT):
-            self.x -= Player.MOVE_SPEED
-            self.direction = -1 #左向き
-        if pyxel.btn(pyxel.KEY_RIGHT):
-            self.x += Player.MOVE_SPEED
-            self.direction = 1  #右向き
+        if self.shot_timer == 0:
+            # キー入力で自機を移動させる
+            if pyxel.btn(pyxel.KEY_LEFT):
+                self.x -= Player.MOVE_SPEED
+                self.direction = -1 #左向き
+            if pyxel.btn(pyxel.KEY_RIGHT):
+                self.x += Player.MOVE_SPEED
+                self.direction = 1  #右向き
 
         # 自機が画面外に出ないようにする
         self.x = max(self.x, 0)                 #大きい数値を使う
