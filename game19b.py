@@ -34,6 +34,7 @@ class Player:
         self.direction = 1  # 1:右向き -1:左向き
         self.shot_timer = 0 # 弾発射までの残り時間
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
+#        self.is_attack = False  #攻撃時flag
         # ゲームに自機を登録する
         self.game.player = self
 
@@ -69,8 +70,12 @@ class Player:
 
         # 弾を発射する
         if pyxel.btn(pyxel.KEY_SPACE) and self.shot_timer == 0:
-            # 自機の弾を生成する(上方向は-90度)
-            Bullet(self.game, Bullet.SIDE_PLAYER, self.x, self.y - 3, -90, 5)
+            if self.direction == 1:
+                # 自機の弾を生成する(右方向は0度)
+                Bullet(self.game, Bullet.SIDE_PLAYER, self.x + 8, self.y, 0, 5)
+            elif self.direction == -1:
+                # 自機の弾を生成する(左方向は180度)
+                Bullet(self.game, Bullet.SIDE_PLAYER, self.x - 8, self.y, 180, 5)
             # 弾発射音を再生する
             pyxel.play(3, 0)
             # 次の弾発射までの残り時間を設定する
@@ -176,6 +181,8 @@ class Bullet:
         self.side = side
         self.x = x
         self.y = y
+        self.angle = angle
+        self.life_time = 0  #生存時間
         self.vx = pyxel.cos(angle) * speed  #X軸方向の速度
         self.vy = pyxel.sin(angle) * speed  #Y軸方向の速度
 
@@ -199,9 +206,12 @@ class Bullet:
 
    # 弾を更新する
     def update(self):
+        #生存時間カウント
+        self.life_time += 1
         # 弾の座標を更新する
-        self.x += self.vx
-        self.y += self.vy
+        if self.side == 1:
+            self.x += self.vx
+            self.y += self.vy
 
         # 弾が画面外に出たら弾リストから登録を削除する
         if (self.x <= -8 or
@@ -213,11 +223,19 @@ class Bullet:
                 self.game.player_bullets.remove(self)
             else:
                 self.game.enemy_bullets.remove(self)
+        
+        #playerの弾はすぐに消す
+        if self.side == Bullet.SIDE_PLAYER:
+            if self.life_time % 10 == 0:
+                self.game.player_bullets.remove(self)
 
     # 弾を描画する
     def draw(self):
-        src_x = 0 if self.side == Bullet.SIDE_PLAYER else 8
-        pyxel.blt(self.x, self.y, 0, src_x, 8, 8, 8, 0)
+        if self.side == Bullet.SIDE_PLAYER:
+            dir = 1 if self.angle == 0 else -1
+            pyxel.blt(self.x, self.y, 0, 0, 8, 8 * dir, 8, 0)
+        else:
+            pyxel.blt(self.x, self.y, 0, 0, 8, 8, 8, 0)
 
 # 爆発エフェクトクラス
 class Blast:
@@ -328,7 +346,7 @@ class Game:
             Player(self, 56, 100)
             #仮の敵を生成する
             kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
-            Enemy(self, kind, 4, pyxel.rndi(0, 112), 40)
+            Enemy(self, kind, 4, pyxel.rndi(0, 112), 100)
 
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
