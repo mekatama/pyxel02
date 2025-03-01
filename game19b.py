@@ -266,7 +266,24 @@ class Blast:
         pyxel.circ(self.x, self.y, self.radius, 7)
         pyxel.circb(self.x, self.y, self.radius, 10)
 
-# 当たり判定用の関数
+
+#■Shieldクラス
+class Shield:
+    #定数
+    # 初期化してゲームに登録する
+    def __init__(self, game, x, y, dir):
+        self.game = game
+        self.x = x
+        self.y = y
+        self.direction = dir
+        # ゲームにシールドを登録する
+        self.game.shield = self
+    def update(self):
+        pass
+    def draw(self):
+        pyxel.rect(self.x, self.y, 4, 8, 6)# 当たり判定用の関数
+
+
 #   タプルで設定した当たり判定領域を使用して判定
 def check_collision(entity1, entity2):
     #キャラクター1の当たり判定座標を設定
@@ -318,6 +335,7 @@ class Game:
         self.player_bullets = []# 自機の弾のリスト
         self.enemy_bullets = [] # 敵の弾のリスト
         self.blasts = []        # 爆発エフェクトのリスト
+        self.shieds = None      # シールド
 
         # 背景を生成する(背景はシーンによらず常に存在する)
         Background(self)
@@ -334,6 +352,8 @@ class Game:
         if self.scene == Game.SCENE_TITLE:
             # 自機を削除する
             self.player = None  # プレイヤーを削除
+            # シールドを削除する
+            self.shield = None  # シールドを削除
             # 全ての弾と敵を削除する
             self.enemies.clear()
             self.player_bullets.clear() # 自機の弾を削除する処理を追加
@@ -355,6 +375,8 @@ class Game:
             self.display_timer = 60
             # 自機を削除する
             self.player = None  # プレイヤーを削除
+            # シールドを削除する
+            self.shield = None  # シールドを削除
 
     # ゲーム全体を更新する
     def update(self):
@@ -364,6 +386,10 @@ class Game:
         # 自機を更新する
         if self.player is not None: #NONE使用時は判定方法が特殊
             self.player.update()
+
+        # シールドを更新する
+        if self.shield is not None: #NONE使用時は判定方法が特殊
+            self.shield.update()
 
         # 敵を更新する
         # ループ中に要素の追加・削除が行われても問題ないようにコピーしたリストを使用する
@@ -421,6 +447,10 @@ class Game:
         # 自機を描画する
         if self.player is not None:
             self.player.draw()
+
+        # シールドを描画する
+        if self.shield is not None:
+            self.shield.draw()
 
         # 敵を描画する
         for enemy in self.enemies:
