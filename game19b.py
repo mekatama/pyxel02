@@ -283,15 +283,21 @@ class Shield:
         self.x = x
         self.y = y
         self.direction = dir
+        self.life_time = 0  #生存時間
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
         # ゲームにシールドを登録する
         self.game.shield = self
     def update(self):
-        pass
+        self.life_time += 1 #生存時間カウント
+        #シールド表示判定
+        if self.life_time % 10 == 0:
+            # シールドを削除する
+            self.game.shield = None
+
     def draw(self):
-        pyxel.rect(self.x, self.y, 4, 8, 6)# 当たり判定用の関数
+        pyxel.rect(self.x, self.y, 8, 8, 6)
 
-
+# 当たり判定用の関数
 #   タプルで設定した当たり判定領域を使用して判定
 def check_collision(entity1, entity2):
     #キャラクター1の当たり判定座標を設定
