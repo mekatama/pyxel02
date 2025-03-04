@@ -82,6 +82,13 @@ class Player:
             # 次の弾発射までの残り時間を設定する
             self.shot_timer = Player.SHOT_INTERVAL
 
+        #シールド出す
+        if pyxel.btn(pyxel.KEY_A):
+            if self.direction == 1:
+                Shield(self.game, self.x + 8, self.y, 1)
+            elif self.direction == -1:
+                Shield(self.game, self.x - 8, self.y, -1)
+
     # 自機を描画する
     def draw(self):
         # 4フレーム周期で0と8を交互に繰り返す
@@ -276,6 +283,7 @@ class Shield:
         self.x = x
         self.y = y
         self.direction = dir
+        self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
         # ゲームにシールドを登録する
         self.game.shield = self
     def update(self):
