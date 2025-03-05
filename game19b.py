@@ -25,7 +25,7 @@ class Player:
     #定数
     MOVE_SPEED = 2          # 移動速度
     SHOT_INTERVAL = 10      # 弾の発射間隔
-    SHIELD_INTERVAL = 30    # シールドの入力間隔
+    SHIELD_INTERVAL = 10    # シールドの入力間隔
 
     # 自機を初期化してゲームに登録する
     def __init__(self, game, x, y):
@@ -36,7 +36,7 @@ class Player:
         self.shot_timer = 0     # 弾発射までの残り時間
         self.shield_timer = 0   # シールド出すまでの残り時間
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
-#        self.is_attack = False  #攻撃時flag
+        self.is_stop = False    #攻撃時flag
         # ゲームに自機を登録する
         self.game.player = self
 
@@ -54,7 +54,7 @@ class Player:
 
     # 自機を更新する
     def update(self):
-        if self.shot_timer == 0:
+        if self.is_stop == False:
             # キー入力で自機を移動させる
             if pyxel.btn(pyxel.KEY_LEFT):
                 self.x -= Player.MOVE_SPEED
@@ -87,14 +87,20 @@ class Player:
         # シールドの展開間隔timer制御
         if self.shield_timer > 0:  # シールド展開までの残り時間を減らす
             self.shield_timer -= 1
+        else:
+            # player動く
+            self.is_stop = False
+
         #シールド出す
-        if pyxel.btn(pyxel.KEY_A) and self.shield_timer == 0:
+        if pyxel.btnp(pyxel.KEY_A) and self.shield_timer == 0:
             if self.direction == 1:
                 Shield(self.game, self.x + 8, self.y, 1)
             elif self.direction == -1:
                 Shield(self.game, self.x - 8, self.y, -1)
             # 次のシールド展開までの残り時間を設定する
             self.shield_timer = Player.SHIELD_INTERVAL
+            # player停止する
+            self.is_stop = True
 
     # 自機を描画する
     def draw(self):
