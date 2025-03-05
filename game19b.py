@@ -23,16 +23,18 @@ class Background:
 # 自機クラス
 class Player:
     #定数
-    MOVE_SPEED = 2      # 移動速度
-    SHOT_INTERVAL = 10   # 弾の発射間隔
+    MOVE_SPEED = 2          # 移動速度
+    SHOT_INTERVAL = 10      # 弾の発射間隔
+    SHIELD_INTERVAL = 30    # シールドの入力間隔
 
     # 自機を初期化してゲームに登録する
     def __init__(self, game, x, y):
-        self.game = game    # ゲームへの参照
-        self.x = x          # X座標
-        self.y = y          # Y座標
-        self.direction = 1  # 1:右向き -1:左向き
-        self.shot_timer = 0 # 弾発射までの残り時間
+        self.game = game        # ゲームへの参照
+        self.x = x              # X座標
+        self.y = y              # Y座標
+        self.direction = 1      # 1:右向き -1:左向き
+        self.shot_timer = 0     # 弾発射までの残り時間
+        self.shield_timer = 0   # シールド出すまでの残り時間
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
 #        self.is_attack = False  #攻撃時flag
         # ゲームに自機を登録する
@@ -82,12 +84,17 @@ class Player:
             # 次の弾発射までの残り時間を設定する
             self.shot_timer = Player.SHOT_INTERVAL
 
+        # シールドの展開間隔timer制御
+        if self.shield_timer > 0:  # シールド展開までの残り時間を減らす
+            self.shield_timer -= 1
         #シールド出す
-        if pyxel.btn(pyxel.KEY_A):
+        if pyxel.btn(pyxel.KEY_A) and self.shield_timer == 0:
             if self.direction == 1:
                 Shield(self.game, self.x + 8, self.y, 1)
             elif self.direction == -1:
                 Shield(self.game, self.x - 8, self.y, -1)
+            # 次のシールド展開までの残り時間を設定する
+            self.shield_timer = Player.SHIELD_INTERVAL
 
     # 自機を描画する
     def draw(self):
@@ -284,13 +291,16 @@ class Shield:
         self.y = y
         self.direction = dir
         self.life_time = 0  #生存時間
+        self.is_shield = False  #シールド発生中flag
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
         # ゲームにシールドを登録する
         self.game.shield = self
     def update(self):
+        self.is_shield = True
         self.life_time += 1 #生存時間カウント
         #シールド表示判定
         if self.life_time % 10 == 0:
+            self.is_shield = False
             # シールドを削除する
             self.game.shield = None
 
@@ -349,7 +359,7 @@ class Game:
         self.player_bullets = []# 自機の弾のリスト
         self.enemy_bullets = [] # 敵の弾のリスト
         self.blasts = []        # 爆発エフェクトのリスト
-        self.shieds = None      # シールド
+        self.shield = None      # シールド
 
         # 背景を生成する(背景はシーンによらず常に存在する)
         Background(self)
