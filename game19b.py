@@ -72,17 +72,18 @@ class Player:
             self.shot_timer -= 1
 
         # 弾を発射する
-        if pyxel.btn(pyxel.KEY_SPACE) and self.shot_timer == 0:
-            if self.direction == 1:
-                # 自機の弾を生成する(右方向は0度)
-                Bullet(self.game, Bullet.SIDE_PLAYER, self.x + 8, self.y, 0, 5)
-            elif self.direction == -1:
-                # 自機の弾を生成する(左方向は180度)
-                Bullet(self.game, Bullet.SIDE_PLAYER, self.x - 8, self.y, 180, 5)
-            # 弾発射音を再生する
-            pyxel.play(3, 0)
-            # 次の弾発射までの残り時間を設定する
-            self.shot_timer = Player.SHOT_INTERVAL
+        if self.is_stop == False:
+            if pyxel.btn(pyxel.KEY_SPACE) and self.shot_timer == 0:
+                if self.direction == 1:
+                    # 自機の弾を生成する(右方向は0度)
+                    Bullet(self.game, Bullet.SIDE_PLAYER, self.x + 8, self.y, 0, 5)
+                elif self.direction == -1:
+                    # 自機の弾を生成する(左方向は180度)
+                    Bullet(self.game, Bullet.SIDE_PLAYER, self.x - 8, self.y, 180, 5)
+                # 弾発射音を再生する
+                pyxel.play(3, 0)
+                # 次の弾発射までの残り時間を設定する
+                self.shot_timer = Player.SHOT_INTERVAL
 
         # シールドの展開間隔timer制御
         if self.shield_timer > 0:  # シールド展開までの残り時間を減らす
