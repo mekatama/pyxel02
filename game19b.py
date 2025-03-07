@@ -36,7 +36,8 @@ class Player:
         self.shot_timer = 0     # 弾発射までの残り時間
         self.shield_timer = 0   # シールド出すまでの残り時間
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
-        self.is_stop = False    #攻撃時flag
+        self.is_atk = False     #攻撃時flag
+        self.is_shield = False  #シールド時flag
         # ゲームに自機を登録する
         self.game.player = self
 
@@ -54,7 +55,7 @@ class Player:
 
     # 自機を更新する
     def update(self):
-        if self.is_stop == False:
+        if self.is_shield == False and self.is_atk == False:
             # キー入力で自機を移動させる
             if pyxel.btn(pyxel.KEY_LEFT):
                 self.x -= Player.MOVE_SPEED
@@ -70,9 +71,12 @@ class Player:
         # 弾の発射間隔timer制御
         if self.shot_timer > 0:  # 弾発射までの残り時間を減らす
             self.shot_timer -= 1
+        else:
+            #攻撃終了
+            self.is_atk = False
 
         # 弾を発射する
-        if self.is_stop == False:
+        if self.is_shield == False:   #シールド中は攻撃不可
             if pyxel.btn(pyxel.KEY_SPACE) and self.shot_timer == 0:
                 if self.direction == 1:
                     # 自機の弾を生成する(右方向は0度)
@@ -84,24 +88,27 @@ class Player:
                 pyxel.play(3, 0)
                 # 次の弾発射までの残り時間を設定する
                 self.shot_timer = Player.SHOT_INTERVAL
+                #攻撃中
+                self.is_atk = True
 
         # シールドの展開間隔timer制御
         if self.shield_timer > 0:  # シールド展開までの残り時間を減らす
             self.shield_timer -= 1
         else:
             # player動く
-            self.is_stop = False
+            self.is_shield = False
 
         #シールド出す
-        if pyxel.btnp(pyxel.KEY_A) and self.shield_timer == 0:
-            if self.direction == 1:
-                Shield(self.game, self.x + 8, self.y, 1)
-            elif self.direction == -1:
-                Shield(self.game, self.x - 8, self.y, -1)
-            # 次のシールド展開までの残り時間を設定する
-            self.shield_timer = Player.SHIELD_INTERVAL
-            # player停止する
-            self.is_stop = True
+        if self.is_atk == False:    #攻撃中はシールド出せない
+            if pyxel.btnp(pyxel.KEY_A) and self.shield_timer == 0:
+                if self.direction == 1:
+                    Shield(self.game, self.x + 8, self.y, 1)
+                elif self.direction == -1:
+                    Shield(self.game, self.x - 8, self.y, -1)
+                # 次のシールド展開までの残り時間を設定する
+                self.shield_timer = Player.SHIELD_INTERVAL
+                # player停止する
+                self.is_shield = True
 
     # 自機を描画する
     def draw(self):
