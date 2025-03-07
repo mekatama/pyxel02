@@ -309,6 +309,7 @@ class Shield:
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
         # ゲームにシールドを登録する
         self.game.shield = self
+
     def update(self):
         self.is_shield = True
         self.life_time += 1 #生存時間カウント
@@ -456,6 +457,9 @@ class Game:
             if self.player is not None and check_collision(self.player, bullet):
                 bullet.add_damage()  # 敵の弾にダメージを与える
                 self.player.add_damage()  # 自機にダメージを与える
+            # シールドと敵の弾の当たり判定を行う
+            elif self.shield is not None and check_collision(self.shield, bullet):
+                bullet.add_damage()  # 敵の弾にダメージを与える
 
         # 爆発エフェクトを更新する
         for blast in self.blasts.copy():  # 爆発エフェクトを更新する処理を追加
