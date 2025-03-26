@@ -160,7 +160,7 @@ class Enemy:
             return 90               # 真下方向90度へ攻撃
         else:                       # 自機が存在する時
             return pyxel.atan2(player.y - self.y, player.x - self.x)
-
+            
     # 敵を更新する
     def update(self):
         # 生存時間をカウントする
@@ -217,11 +217,8 @@ class Bullet:
         self.vx = pyxel.cos(angle) * speed  #X軸方向の速度
         self.vy = pyxel.sin(angle) * speed  #Y軸方向の速度
         #反射弾
-        self.x_start = x    #[反射弾]発射座標
-        self.y_start = y    #[反射弾]発射座標
-        self.vx_h = 0       #[反射弾]移動用
-        self.vy_h = 0       #[反射弾]移動用
-        self.angle_h = 0    #[反射弾]角度
+        self.x_start = 0
+        self.y_start = 0
 
         # 弾の種類に応じた初期化とゲームの弾リストへの登録を行う
         if self.side == Bullet.SIDE_PLAYER:
@@ -247,21 +244,8 @@ class Bullet:
             if self in self.game.enemy_bullets:     # 反射弾リストに登録されている時
                 self.game.player_h_bullets.remove(self)
 
-    # 狙う敵の方向の角度を計算する
-    def calc_enemy_angle(self):
-        player = self.game.player   # GAME内のplayerの情報にアクセス
-        return pyxel.atan2(self.y_start - player.y, self.x_start - player.x)
-
    # 弾を更新する
     def update(self):
-        #反射角度の取得
-        if self.game.player is None:# 自機が存在しない時
-            pass
-        else:                       # 自機が存在する時
-            self.angle_h = self.calc_enemy_angle()
-            self.vx_h = pyxel.cos(self.angle_h) * self.speed  #X軸方向の速度
-            self.vy_h = pyxel.sin(self.angle_h) * self.speed  #Y軸方向の速度
-            print(self.angle_h)
         #生存時間カウント
         self.life_time += 1
         # 弾の座標を更新する
@@ -269,10 +253,8 @@ class Bullet:
             self.x += self.vx
             self.y += self.vy
         elif self.side == self.SIDE_PLAYER_H:
-#            print("hannsya")
-            self.x += self.vx_h
-            self.y += self.vy_h
-
+            self.x += self.vx
+            self.y += self.vy
 
         # 弾が画面外に出たら弾リストから登録を削除する
         if (self.x <= -8 or
@@ -337,25 +319,28 @@ class Shield:
         self.game = game
         self.x = x
         self.y = y
-        self.direction = dir
+        self.dir = dir      #描画反転用
         self.life_time = 0  #生存時間
         self.is_shield = False  # シールド発生中flag
-        self.is_once = False    # [反射弾]一回だけ
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
         # ゲームにシールドを登録する
         self.game.shield = self
 
+    # 狙う敵の方向の角度を計算する
+    def calc_enemy_angle(self, x_start, y_start):
+        player = self.game.player   # GAME内のplayerの情報にアクセス
+        return pyxel.atan2(y_start - player.y, x_start - player.x)
+
+   # 反射弾を発射する
+    def shot_reflect(self, dir):
+        Bullet(self.game, Bullet.SIDE_PLAYER_H, self.x, self.y, dir, 5)
+
     def update(self):
         self.is_shield = True
         self.life_time += 1 #生存時間カウント
-        #反射弾を発射
-        if self.is_once == False and self.is_shield == True:
-#            Bullet(self.game, Bullet.SIDE_PLAYER_H, self.x, self.y, 0, 5)
-            self.is_once = True
         #シールド表示判定
         if self.life_time % 10 == 0:
             self.is_shield = False
-            self.is_once = False
             # シールドを削除する
             self.game.shield = None
 
@@ -502,8 +487,10 @@ class Game:
             # シールドと敵の弾の当たり判定を行う
             elif self.shield is not None and check_collision(self.shield, bullet):
                 bullet.add_damage()         # 敵の弾にダメージを与える
-                bullet.calc_enemy_angle()   # 自機から敵への角度を計算
-                print("!!")
+                #反射弾出したい
+                #shield.calc_enemy_angleに弾のstart座標渡して角度出す
+                temp = self.shield.calc_enemy_angle(bullet.x_start, bullet.y_start)
+                self.shield.shot_reflect(temp)
 
         # 反射弾を更新する
         for bullet in self.player_h_bullets.copy():   # 反射弾を更新する処理を追加
