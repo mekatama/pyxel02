@@ -2,7 +2,6 @@
 import pyxel
 
 # 背景クラス
-# 
 class Background:
     # 背景を初期化してゲームに登録する
     def __init__(self, game):
@@ -143,10 +142,12 @@ class Enemy:
             self.armor -= 1
             self.is_damaged = True
             # ダメージ音を再生する
-            pyxel.play(2, 1, resume=True)  # チャンネル2で割り込み再生させる
-            return
+            pyxel.play(2, 1, resume=True)   # チャンネル2で割り込み再生させる
+            return                          # 処理終了
         # 爆発エフェクトを生成する
         Blast(self.game, self.x + 4, self.y + 4)
+        # アイテムを生成する
+        Item(self.game, self.x, self.y)
         # 敵をリストから削除する
         if self in self.game.enemies:  # 敵リストに登録されている時
             self.game.enemies.remove(self)
@@ -217,8 +218,8 @@ class Bullet:
         self.vx = pyxel.cos(angle) * speed  #X軸方向の速度
         self.vy = pyxel.sin(angle) * speed  #Y軸方向の速度
         #反射弾
-        self.x_start = 0
-        self.y_start = 0
+        self.x_start = x
+        self.y_start = y
 
         # 弾の種類に応じた初期化とゲームの弾リストへの登録を行う
         if self.side == Bullet.SIDE_PLAYER:
@@ -310,7 +311,6 @@ class Blast:
         pyxel.circ(self.x, self.y, self.radius, 7)
         pyxel.circb(self.x, self.y, self.radius, 10)
 
-
 #■Shieldクラス
 class Shield:
     #定数
@@ -346,6 +346,26 @@ class Shield:
 
     def draw(self):
         pyxel.rect(self.x, self.y, 8, 8, 6)
+
+# アイテムクラス
+class Item:
+    #定数
+
+    # 初期化してゲームに登録する
+    def __init__(self, game, x, y):
+        self.game = game
+        self.x = x
+        self.y = y
+        # アイテムリストに登録する
+        game.items.append(self)
+
+    # 爆発エフェクトを更新する
+    def update(self):
+        pass
+
+    # 爆発エフェクトを描画する
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 56, 32, 8, 8, 0)
 
 # 当たり判定用の関数
 #   タプルで設定した当たり判定領域を使用して判定
@@ -401,6 +421,7 @@ class Game:
         self.player_h_bullets = []  # 反射弾のリスト
         self.blasts = []        # 爆発エフェクトのリスト
         self.shield = None      # シールド
+        self.items = []         # アイテムのリスト
 
         # 背景を生成する(背景はシーンによらず常に存在する)
         Background(self)
@@ -419,11 +440,12 @@ class Game:
             self.player = None  # プレイヤーを削除
             # シールドを削除する
             self.shield = None  # シールドを削除
-            # 全ての弾と敵を削除する
+            # 全ての弾と敵とアイテムを削除する
             self.enemies.clear()
-            self.player_bullets.clear() # 自機の弾を削除する処理を追加
-            self.enemy_bullets.clear()  # 敵の弾を削除する処理を追加
-            self.player_h_bullets.clear() # 反射弾を削除する処理を追加
+            self.player_bullets.clear()     # 自機の弾を削除する処理を追加
+            self.enemy_bullets.clear()      # 敵の弾を削除する処理を追加
+            self.player_h_bullets.clear()   # 反射弾を削除する処理を追加
+            self.items.clear()              # アイテムを削除する処理を追加
 
         # プレイ画面
         elif self.scene == Game.SCENE_PLAY:
@@ -433,7 +455,7 @@ class Game:
             Player(self, 56, 100)
             #仮の敵を生成する
             kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
-            Enemy(self, 0, 4, pyxel.rndi(0, 112), 50)
+            Enemy(self, 1, 4, pyxel.rndi(0, 112), 100)
 
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
@@ -508,6 +530,10 @@ class Game:
         for blast in self.blasts.copy():  # 爆発エフェクトを更新する処理を追加
             blast.update()
 
+        # アイテムを更新する
+        for item in self.items.copy():  # アイテムを更新する処理を追加
+            item.update()
+
         # シーンを更新する
         if self.scene == Game.SCENE_TITLE:  # タイトル画面
             if pyxel.btnp(pyxel.KEY_RETURN):
@@ -556,6 +582,10 @@ class Game:
         # 爆発エフェクトを描画する
         for blast in self.blasts:  # 爆発エフェクトを更新する処理を追加
             blast.draw()
+
+        # アイテムを描画する
+        for item in self.items:  # アイテムを更新する処理を追加
+            item.draw()
 
         # スコアを描画する
         pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
