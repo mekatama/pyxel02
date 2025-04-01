@@ -356,14 +356,21 @@ class Item:
         self.game = game
         self.x = x
         self.y = y
+        self.hit_area = (0, 0, 8, 8)    # 当たり判定の領域
         # アイテムリストに登録する
         game.items.append(self)
 
-    # 爆発エフェクトを更新する
+     # アイテムにダメージを与える
+    def add_damage(self):
+        # アイテムをリストから削除する
+        if self in self.game.items:    # アイテムリストに登録されている時
+            self.game.items.remove(self)
+
+    # アイテムを更新する
     def update(self):
         pass
 
-    # 爆発エフェクトを描画する
+    # アイテムを描画する
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 56, 32, 8, 8, 0)
 
@@ -533,6 +540,9 @@ class Game:
         # アイテムを更新する
         for item in self.items.copy():  # アイテムを更新する処理を追加
             item.update()
+            # 自機とアイテムの当たり判定を行う
+            if self.player is not None and check_collision(self.player, item):
+                item.add_damage()  # アイテムにダメージを与える
 
         # シーンを更新する
         if self.scene == Game.SCENE_TITLE:  # タイトル画面
