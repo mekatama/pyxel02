@@ -25,6 +25,7 @@ class Player:
     MOVE_SPEED = 2          # 移動速度
     SHOT_INTERVAL = 10      # 弾の発射間隔
     SHIELD_INTERVAL = 10    # シールドの入力間隔
+    HP = 3                  # 初期HP
 
     # 自機を初期化してゲームに登録する
     def __init__(self, game, x, y):
@@ -34,6 +35,7 @@ class Player:
         self.direction = 1      # 1:右向き -1:左向き
         self.shot_timer = 0     # 弾発射までの残り時間
         self.shield_timer = 0   # シールド出すまでの残り時間
+        self.hp = Player.HP     # HP
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
         self.is_atk = False     #攻撃時flag
         self.is_shield = False  #シールド時flag
@@ -362,6 +364,9 @@ class Item:
 
      # アイテムにダメージを与える
     def add_damage(self):
+        player = self.game.player   # GAME内のplayerの情報にアクセス
+        player.hp += 1              # HP回復
+        print(player.hp)
         # アイテムをリストから削除する
         if self in self.game.items:    # アイテムリストに登録されている時
             self.game.items.remove(self)
