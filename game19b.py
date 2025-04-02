@@ -120,9 +120,9 @@ class Player:
 # 敵クラス
 class Enemy:
     #定数
-    KIND_A = 0  # 敵A
-    KIND_B = 1  # 敵B
-    KIND_C = 2  # 敵C
+    KIND_A = 0  # 敵A(空中)
+    KIND_B = 1  # 敵B(地上停止)
+    KIND_C = 2  # 敵C(地上移動)
 
     # 敵を初期化してゲームに登録する
     def __init__(self, game, kind, level, x, y):
@@ -149,6 +149,7 @@ class Enemy:
         # 爆発エフェクトを生成する
         Blast(self.game, self.x + 4, self.y + 4)
         # アイテムを生成する
+        # ■■■■後からランダムにする■■■■
         Item(self.game, self.x, self.y)
         # 敵をリストから削除する
         if self in self.game.enemies:  # 敵リストに登録されている時
@@ -182,10 +183,7 @@ class Enemy:
 
         # 敵Cを更新する
         elif self.kind == Enemy.KIND_C:
-            # 一定時間毎に４方向に弾を発射する
-            if self.life_time % 40 == 0:
-                for i in range(4):      # 0,1,2,3の範囲
-                    Bullet(self.game, Bullet.SIDE_ENEMY, self.x, self.y, i * 45 + 22, 2)
+            pass
 
     # 敵を描画する
     def draw(self):
@@ -470,7 +468,12 @@ class Game:
             #仮の敵を生成する
             kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
 #            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
+            #[test敵A]
             Enemy(self, 0, 1, pyxel.rndi(0, 112), 50)
+            #[test敵B]
+            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
+            #[test敵C]
+            Enemy(self, 2, 1, pyxel.rndi(0, 112), 100)
 
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
