@@ -373,7 +373,9 @@ class Item:
 
     # アイテムを更新する
     def update(self):
-        pass
+        #空中に生成されたらy=100まで移動して停止
+        if self.y < 100:
+            self.y += 1
 
     # アイテムを描画する
     def draw(self):
@@ -467,7 +469,8 @@ class Game:
             Player(self, 56, 100)
             #仮の敵を生成する
             kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
-            Enemy(self, 1, 4, pyxel.rndi(0, 112), 100)
+#            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
+            Enemy(self, 0, 1, pyxel.rndi(0, 112), 50)
 
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
