@@ -170,18 +170,21 @@ class Enemy:
         # 生存時間をカウントする
         self.life_time += 1
 
-        # 敵Aを更新する
+        # 敵A(空中)を更新する
         if self.kind == Enemy.KIND_A:
-            # 一定時間毎に自機の方向に向けて弾を発射する
-            if self.life_time % 50 == 0:
-                player_angle = self.calc_player_angle()
-                Bullet(self.game, Bullet.SIDE_ENEMY, self.x, self.y, player_angle, 2)
+            if self.y <= 50:    #登場
+                self.y += 5
+            else:               #攻撃
+                # 一定時間毎に自機の方向に向けて弾を発射する
+                if self.life_time % 50 == 0:
+                    player_angle = self.calc_player_angle()
+                    Bullet(self.game, Bullet.SIDE_ENEMY, self.x, self.y, player_angle, 2)
 
-        # 敵Bを更新する
+        # 敵B(地上停止)を更新する
         elif self.kind == Enemy.KIND_B:
             pass
 
-        # 敵Cを更新する
+        # 敵C(地上移動)を更新する
         elif self.kind == Enemy.KIND_C:
             pass
 
@@ -469,11 +472,11 @@ class Game:
             kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
 #            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
             #[test敵A]
-            Enemy(self, 0, 1, pyxel.rndi(0, 112), 50)
+            Enemy(self, 0, 1, pyxel.rndi(0, 112), -10)
             #[test敵B]
-            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
+#            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
             #[test敵C]
-            Enemy(self, 2, 1, pyxel.rndi(0, 112), 100)
+#            Enemy(self, 2, 1, pyxel.rndi(0, 112), 100)
 
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
