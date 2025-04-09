@@ -196,7 +196,10 @@ class Enemy:
 
         # 敵C(地上移動)を更新する
         elif self.kind == Enemy.KIND_C:
-            pass
+            if self.dir == 1:   #左から
+                self.x += 2
+            elif self.dir == -1:#右から
+                self.x -= 2
 
     # 敵を描画する
     def draw(self):
@@ -485,9 +488,10 @@ class Game:
 #            Enemy(self, 0, 1, pyxel.rndi(0, 112), -10)
             #[test敵B]
 #            Enemy(self, 1, 1, -10, 100, 1)
-            Enemy(self, 1, 1, 138, 100, -1)
+#            Enemy(self, 1, 1, 138, 100, -1)
             #[test敵C]
-#            Enemy(self, 2, 1, pyxel.rndi(0, 112), 100)
+#            Enemy(self, 2, 1, -10, 100, 1)
+            Enemy(self, 2, 1, 138, 100, -1)
 
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
