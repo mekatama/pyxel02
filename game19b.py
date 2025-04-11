@@ -116,6 +116,7 @@ class Player:
         # 4フレーム周期で0と8を交互に繰り返す
         u = pyxel.frame_count  // 4 % 2 * 8
         pyxel.blt(self.x, self.y, 0, 0, 24 + u, 8 * self.direction, 8, 0)
+        pyxel.text(self.x - 4,  self.y - 6, "HP:%i" %self.hp, 7)
 
 # 敵クラス
 class Enemy:
@@ -491,7 +492,7 @@ class Game:
 #            Enemy(self, 1, 1, 138, 100, -1)
             #[test敵C]
 #            Enemy(self, 2, 1, -10, 100, 1)
-            Enemy(self, 2, 1, 138, 100, -1)
+#            Enemy(self, 2, 1, 138, 100, -1)
 
         # ゲームオーバー画面
         elif self.scene == Game.SCENE_GAMEOVER:
