@@ -24,6 +24,7 @@ class Player:
     #定数
     MOVE_SPEED = 2          # 移動速度
     SHOT_INTERVAL = 10      # 弾の発射間隔
+    HP_INTERVAL = 120       # HP減る間隔
     SHIELD_INTERVAL = 10    # シールドの入力間隔
     HP = 3                  # 初期HP
 
@@ -35,6 +36,7 @@ class Player:
         self.direction = 1      # 1:右向き -1:左向き
         self.shot_timer = 0     # 弾発射までの残り時間
         self.shield_timer = 0   # シールド出すまでの残り時間
+        self.hp_timer = Player.HP_INTERVAL# HP減らすタイマー
         self.hp = Player.HP     # HP
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
         self.is_atk = False     #攻撃時flag
@@ -64,6 +66,14 @@ class Player:
             if pyxel.btn(pyxel.KEY_RIGHT):
                 self.x += Player.MOVE_SPEED
                 self.direction = 1  #右向き
+
+        # 弾の発射間隔timer制御
+        if self.hp_timer > 0:  # HP減らすまでの残り時間を減らす
+            self.hp_timer -= 1
+        else:
+            #HP減らす
+            self.hp -= 1
+            self.hp_timer = Player.HP_INTERVAL  # 初期化
 
         # 自機が画面外に出ないようにする
         self.x = max(self.x, 0)                 #大きい数値を使う
@@ -110,6 +120,9 @@ class Player:
                 self.shield_timer = Player.SHIELD_INTERVAL
                 # player停止する
                 self.is_shield = True
+        #HP徐々に減る
+        if pyxel.frame_count % 120 == 0:
+            pass
 
     # 自機を描画する
     def draw(self):
