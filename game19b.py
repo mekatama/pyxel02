@@ -259,7 +259,7 @@ class Bullet:
             self.hit_area = (2, 2, 5, 5)  # 当たり判定領域
             game.enemy_bullets.append(self)
         elif self.side == Bullet.SIDE_PLAYER_H:
-            self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
+            self.hit_area = (0, 0, 8, 8)  # 当たり判定領域
             game.player_h_bullets.append(self)
 
      # 弾にダメージを与える
