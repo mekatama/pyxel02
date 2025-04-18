@@ -85,7 +85,10 @@ class Player:
         # 4フレーム周期で0と8を交互に繰り返す
         u = pyxel.frame_count  // 4 % 2 * 8
         pyxel.blt(self.x, self.y, 0, 0, 24 + u, 8, 8, 0)
+        # HP描画
         pyxel.text(self.x - 4,  self.y - 6, "HP:%i" %self.hp, 7)
+        # ホーミング攻撃範囲
+        pyxel.circb(self.x + 4, self.y + 4, 24, 10)
 
 # 敵クラス
 class Enemy:
