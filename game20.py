@@ -56,10 +56,16 @@ class Player:
             self.x -= Player.MOVE_SPEED
         if pyxel.btn(pyxel.KEY_RIGHT):
             self.x += Player.MOVE_SPEED
+        if pyxel.btn(pyxel.KEY_UP):
+            self.y -= Player.MOVE_SPEED
+        if pyxel.btn(pyxel.KEY_DOWN):
+            self.y += Player.MOVE_SPEED
 
         # 自機が画面外に出ないようにする
         self.x = max(self.x, 0)                 #大きい数値を使う
         self.x = min(self.x, pyxel.width - 8)   #小さい数値を使う
+        self.y = max(self.y, 0)                 #大きい数値を使う
+        self.y = min(self.y, pyxel.height - 8)   #小さい数値を使う
 
         # 弾の発射間隔timer制御
         if self.shot_timer > 0:  # 弾発射までの残り時間を減らす
