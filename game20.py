@@ -93,18 +93,17 @@ class Player:
 # 敵クラス
 class Enemy:
     #定数
-    KIND_A = 0  # 敵A(空中)
-    KIND_B = 1  # 敵B(地上停止)
-    KIND_C = 2  # 敵C(地上移動)
+    KIND_A = 0  # 敵A()
+    KIND_B = 1  # 敵B()
+    KIND_C = 2  # 敵C()
 
     # 敵を初期化してゲームに登録する
-    def __init__(self, game, kind, level, x, y, dir):
+    def __init__(self, game, kind, level, x, y):
         self.game = game
         self.kind = kind                # 敵の種類
         self.level = level              # 強さ
         self.x = x
         self.y = y
-        self.dir = dir                  # 1:左 -1:右
         self.life_time = 0              # 生存時間
         self.hit_area = (0, 0, 7, 7)    # 当たり判定の領域
         self.armor = self.level - 1     # 装甲
@@ -165,10 +164,10 @@ class Enemy:
             self.is_damaged = False
             for i in range(1, 15):
                 pyxel.pal(i, 15)    #カラーパレットの色を置き換える
-            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 32, 56 + u, 8 * self.dir, 8, 0)
+            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 32, 56 + u, 8, 8, 0)
             pyxel.pal() #カラーパレット元に戻す
         else:
-            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 32, 40 + u, 8 * self.dir, 8, 0)
+            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 32, 40 + u, 8, 8, 0)
 
 # 弾クラス
 class Bullet:
@@ -400,7 +399,7 @@ class Game:
 #            kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
 #            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
             #[test敵A]
-#            Enemy(self, 0, 1, pyxel.rndi(0, 112), -10)
+            Enemy(self, 0, 1, 64, 32)
             #[test敵B]
 #            Enemy(self, 1, 1, -10, 100, 1)
 #            Enemy(self, 1, 1, 138, 100, -1)
