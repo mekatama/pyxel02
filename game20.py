@@ -49,6 +49,23 @@ class Player:
         # シーンをゲームオーバー画面に変更する
         self.game.change_scene(self.game.SCENE_GAMEOVER)
 
+    # 狙う敵の方向の角度を計算する
+    def calc_enemy_angle(self, x_start, y_start):
+        player = self.game.player   # GAME内のplayerの情報にアクセス
+        return pyxel.atan2(y_start - player.y, x_start - player.x)
+
+    # 反射弾を発射する
+    def shot_reflect(self, dir):
+        Bullet(self.game, Bullet.SIDE_PLAYER_H, self.x, self.y, dir, 5)
+
+    # 敵との距離判定
+    def lockon_distance(self, x1, y1):
+        player = self.game.player   # GAME内のplayerの情報にアクセス
+        dx = player.x - x1
+        dy = player.y - y1
+        distance = pyxel.sqrt(dx * dx + dy * dy)
+        print(distance)
+
     # 自機を更新する
     def update(self):
         # キー入力で自機を移動させる
@@ -430,6 +447,8 @@ class Game:
             # 自機と敵の当たり判定を行う
             if self.player is not None and check_collision(self.player, enemy):
                 self.player.add_damage()  # 自機にダメージを与える
+            # 自機と敵の距離判定を行う
+            self.player.lockon_distance(enemy.x, enemy.y)  # 距離測定
 
         # 自機の弾を更新する
         for bullet in self.player_bullets.copy():   # 自機の弾を更新する処理を追加
