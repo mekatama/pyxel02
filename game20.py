@@ -33,6 +33,7 @@ class Player:
         self.y = y              # Y座標
         self.shot_timer = 0     # 弾発射までの残り時間
         self.hp = Player.HP     # HP
+        self.is_lockon = False  # lockon flag
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
         # ゲームに自機を登録する
         self.game.player = self
@@ -50,9 +51,9 @@ class Player:
         self.game.change_scene(self.game.SCENE_GAMEOVER)
 
     # 狙う敵の方向の角度を計算する
-    def calc_enemy_angle(self, x_start, y_start):
+    def calc_enemy_angle(self, enemy_x, enemy_y):
         player = self.game.player   # GAME内のplayerの情報にアクセス
-        return pyxel.atan2(y_start - player.y, x_start - player.x)
+        return pyxel.atan2(enemy_y - player.y, enemy_x - player.x)
 
     # 反射弾を発射する
     def shot_reflect(self, dir):
@@ -61,10 +62,14 @@ class Player:
     # 敵との距離判定
     def lockon_distance(self, x1, y1):
         player = self.game.player   # GAME内のplayerの情報にアクセス
-        dx = player.x - x1
-        dy = player.y - y1
-        distance = pyxel.sqrt(dx * dx + dy * dy)
-        print(distance)
+        if player.is_lockon == False:
+            dx = player.x - x1
+            dy = player.y - y1
+            distance = pyxel.sqrt(dx * dx + dy * dy)
+            print(distance)
+            if distance < 32:
+                self.is_lockon = True
+                print(self.is_lockon)
 
     # 自機を更新する
     def update(self):
@@ -141,6 +146,8 @@ class Enemy:
         # アイテムを生成する
         # ■■■■後からランダムにする■■■■
         Item(self.game, self.x, self.y)
+        # playerのloskon解除
+        self.game.player.is_lockon = False
         # 敵をリストから削除する
         if self in self.game.enemies:  # 敵リストに登録されている時
             self.game.enemies.remove(self)
@@ -237,12 +244,8 @@ class Bullet:
         #生存時間カウント
         self.life_time += 1
         # 弾の座標を更新する
-        if self.side == self.SIDE_ENEMY:
-            self.x += self.vx
-            self.y += self.vy
-        elif self.side == self.SIDE_PLAYER_H:
-            self.x += self.vx
-            self.y += self.vy
+        self.x += self.vx
+        self.y += self.vy
 
         # 弾が画面外に出たら弾リストから登録を削除する
         if (self.x <= -8 or
@@ -417,6 +420,7 @@ class Game:
 #            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
             #[test敵A]
             Enemy(self, 0, 1, 64, 32)
+            Enemy(self, 0, 1, 100, 32)
             #[test敵B]
 #            Enemy(self, 1, 1, -10, 100, 1)
 #            Enemy(self, 1, 1, 138, 100, -1)
