@@ -57,10 +57,6 @@ class Player:
         player = self.game.player   # GAME内のplayerの情報にアクセス
         return pyxel.atan2(enemy_y - player.y, enemy_x - player.x)
 
-    # 反射弾を発射する
-    def shot_reflect(self, dir):
-        Bullet(self.game, Bullet.SIDE_PLAYER_H, self.x, self.y, dir, 5)
-
     # 敵との距離判定
     def lockon_distance(self, x1, y1):
         player = self.game.player   # GAME内のplayerの情報にアクセス
@@ -119,7 +115,7 @@ class Player:
         pyxel.circb(self.x + 4, self.y + 4, 24, 10)
         # lockon時にline表示
         if self.is_lockon == True:
-            pyxel.line(self.x, self.y, self.enemy_x, self.enemy_y, 7)
+            pyxel.line(self.x + 4, self.y + 4, self.enemy_x + 4, self.enemy_y + 4, 7)
 
 # 敵クラス
 class Enemy:
@@ -428,8 +424,8 @@ class Game:
 #            kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
 #            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
             #[test敵A]
-            Enemy(self, 0, 1, 64, 32)
-            Enemy(self, 0, 1, 100, 32)
+            Enemy(self, 0, 10, 64, 32)
+            Enemy(self, 0, 10, 100, 32)
             #[test敵B]
 #            Enemy(self, 1, 1, -10, 100, 1)
 #            Enemy(self, 1, 1, 138, 100, -1)
@@ -483,18 +479,6 @@ class Game:
             if self.player is not None and check_collision(self.player, bullet):
                 bullet.add_damage()         # 敵の弾にダメージを与える
                 self.player.add_damage()    # 自機にダメージを与える
-
-        # 反射弾を更新する
-        for bullet in self.player_h_bullets.copy():   # 反射弾を更新する処理を追加
-            bullet.update()
-            # 反射弾と敵の当たり判定を行う
-            for enemy in self.enemies.copy():
-                if check_collision(enemy, bullet):
-                    bullet.add_damage() # 自機の弾にダメージを与える
-                    enemy.add_damage()  # 敵にダメージを与える
-                    #弾の発射音制御?
-                    if self.player is not None:  # 自機が存在する時
-                        self.player.sound_timer = 5  # 弾発射音を止める時間を設定する
 
         # 爆発エフェクトを更新する
         for blast in self.blasts.copy():  # 爆発エフェクトを更新する処理を追加
