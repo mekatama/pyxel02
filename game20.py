@@ -70,10 +70,9 @@ class Player:
             dx = player.x - x1
             dy = player.y - y1
             distance = pyxel.sqrt(dx * dx + dy * dy)
-            print(distance)
+#            print(distance)
             if distance < 32:
                 self.is_lockon = True
-                print(self.is_lockon)
 
     # 自機を更新する
     def update(self):
@@ -97,10 +96,13 @@ class Player:
         if self.shot_timer > 0:  # 弾発射までの残り時間を減らす
             self.shot_timer -= 1
 
+        # lockonしたenemyとの角度
+        dir = self.calc_enemy_angle(self.enemy_x, self.enemy_y)
+
         # 弾を発射する
-        if pyxel.btn(pyxel.KEY_SPACE) and self.shot_timer == 0:
+        if self.is_lockon and self.shot_timer == 0:
             # 自機の弾を生成する(右方向は0度)
-            Bullet(self.game, Bullet.SIDE_PLAYER, self.x + 8, self.y, 0, 5)
+            Bullet(self.game, Bullet.SIDE_PLAYER, self.x + 8, self.y, dir, 5)
             # 弾発射音を再生する
             pyxel.play(3, 0)
             # 次の弾発射までの残り時間を設定する
@@ -450,6 +452,7 @@ class Game:
         # 自機を更新する
         if self.player is not None: #NONE使用時は判定方法が特殊
             self.player.update()
+#            def calc_enemy_angle(self, enemy_x, enemy_y):
 
         # 敵を更新する
         # ループ中に要素の追加・削除が行われても問題ないようにコピーしたリストを使用する
