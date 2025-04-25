@@ -31,6 +31,8 @@ class Player:
         self.game = game        # ゲームへの参照
         self.x = x              # X座標
         self.y = y              # Y座標
+        self.enemy_x = 0        # 敵のX座標
+        self.enemy_y = 0        # 敵のY座標
         self.shot_timer = 0     # 弾発射までの残り時間
         self.hp = Player.HP     # HP
         self.is_lockon = False  # lockon flag
@@ -63,6 +65,8 @@ class Player:
     def lockon_distance(self, x1, y1):
         player = self.game.player   # GAME内のplayerの情報にアクセス
         if player.is_lockon == False:
+            self.enemy_x = x1
+            self.enemy_y = y1
             dx = player.x - x1
             dy = player.y - y1
             distance = pyxel.sqrt(dx * dx + dy * dy)
@@ -111,6 +115,9 @@ class Player:
         pyxel.text(self.x - 4,  self.y - 6, "HP:%i" %self.hp, 7)
         # ホーミング攻撃範囲
         pyxel.circb(self.x + 4, self.y + 4, 24, 10)
+        # lockon時にline表示
+        if self.is_lockon == True:
+            pyxel.line(self.x, self.y, self.enemy_x, self.enemy_y, 7)
 
 # 敵クラス
 class Enemy:
