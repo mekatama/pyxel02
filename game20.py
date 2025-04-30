@@ -34,6 +34,7 @@ class Player:
         self.enemy_x = 0        # 敵のX座標
         self.enemy_y = 0        # 敵のY座標
         self.shot_timer = 0     # 弾発射までの残り時間
+        self.shot_power = 1     # 弾の威力
         self.hp = Player.HP     # HP
         self.is_lockon = False  # lockon flag
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
@@ -84,6 +85,13 @@ class Player:
             self.y -= Player.MOVE_SPEED
         if pyxel.btn(pyxel.KEY_DOWN):
             self.y += Player.MOVE_SPEED
+
+        # キー入力で攻撃力up
+        if pyxel.btn(pyxel.KEY_A):
+            self.shot_power = 2
+        else:
+            self.shot_power = 1
+        print(self.shot_power)
 
         # 自機が画面外に出ないようにする
         self.x = max(self.x, 0)                 #大きい数値を使う
