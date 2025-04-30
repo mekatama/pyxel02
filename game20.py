@@ -55,7 +55,10 @@ class Player:
     # 狙う敵の方向の角度を計算する
     def calc_enemy_angle(self, enemy_x, enemy_y):
         player = self.game.player   # GAME内のplayerの情報にアクセス
-        return pyxel.atan2(enemy_y - player.y, enemy_x - player.x)
+        if player is None:          # 自機が存在しない時
+            return 90               # 真下方向90度へ攻撃
+        else:                       # 自機が存在する時
+            return pyxel.atan2(enemy_y - player.y, enemy_x - player.x)
 
     # 敵との距離判定
     def lockon_distance(self, x1, y1):
@@ -162,10 +165,7 @@ class Enemy:
     # 狙う自機の方向の角度を計算する
     def calc_player_angle(self):
         player = self.game.player   # GAME内のplayerの情報にアクセス
-        if player is None:          # 自機が存在しない時
-            return 90               # 真下方向90度へ攻撃
-        else:                       # 自機が存在する時
-            return pyxel.atan2(player.y - self.y, player.x - self.x)
+        return pyxel.atan2(player.y - self.y, player.x - self.x)
             
     # 敵を更新する
     def update(self):
@@ -265,11 +265,6 @@ class Bullet:
             elif self.side == Bullet.SIDE_PLAYER_H:
                 self.game.player_h_bullets.remove(self)
         
-        #playerの弾はすぐに消す
-        if self.side == Bullet.SIDE_PLAYER:
-            if self.life_time % 10 == 0:
-                self.game.player_bullets.remove(self)
-
     # 弾を描画する
     def draw(self):
         if self.side == Bullet.SIDE_PLAYER:
@@ -458,7 +453,8 @@ class Game:
             if self.player is not None and check_collision(self.player, enemy):
                 self.player.add_damage()  # 自機にダメージを与える
             # 自機と敵の距離判定を行う
-            self.player.lockon_distance(enemy.x, enemy.y)  # 距離測定
+            if self.player is not None:
+                self.player.lockon_distance(enemy.x, enemy.y)  # 距離測定
 
         # 自機の弾を更新する
         for bullet in self.player_bullets.copy():   # 自機の弾を更新する処理を追加
