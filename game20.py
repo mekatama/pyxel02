@@ -424,8 +424,8 @@ class Game:
 #            kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
 #            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
             #[test敵A]
-            Enemy(self, 0, 10, 64, 32)
-            Enemy(self, 0, 10, 100, 32)
+#            Enemy(self, 0, 10, 64, 32)
+#            Enemy(self, 0, 10, 100, 32)
             #[test敵B]
 #            Enemy(self, 1, 1, -10, 100, 1)
 #            Enemy(self, 1, 1, 138, 100, -1)
@@ -496,12 +496,12 @@ class Game:
             if pyxel.btnp(pyxel.KEY_RETURN):
                 self.change_scene(Game.SCENE_PLAY)
         elif self.scene == Game.SCENE_PLAY:  # プレイ画面
-            """
             #enemy生成
             if pyxel.frame_count % 120 == 0:
-                kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
+#                kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
+                kind = Enemy.KIND_A
                 if kind == Enemy.KIND_A:
-                    Enemy(self, 0, 1, pyxel.rndi(0, 112), -10, 1)
+                    Enemy(self, 0, 1, pyxel.rndi(0, 112), pyxel.rndi(0, 112))
                 elif kind == Enemy.KIND_B:
                     if pyxel.rndi(0, 1) == 0:
                         Enemy(self, 1, 1, -10, 100, 1)
@@ -512,7 +512,6 @@ class Game:
                         Enemy(self, 2, 1, -10, 100, 1)
                     else:
                         Enemy(self, 2, 1, 138, 100, -1)
-            """
         elif self.scene == Game.SCENE_GAMEOVER:  # ゲームオーバー画面
             if self.display_timer > 0:  # 画面表示時間が残っている時
                 self.display_timer -= 1
