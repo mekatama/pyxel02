@@ -127,6 +127,9 @@ class Player:
         # lockon時にline表示
         if self.is_lockon == True:
             pyxel.line(self.x + 4, self.y + 4, self.enemy_x + 4, self.enemy_y + 4, 7)
+        # powerup表示
+        if self.shot_power == 2:
+            pyxel.text(self.x - 2,  self.y + 8, "pow", 7)
 
 # 敵クラス
 class Enemy:
