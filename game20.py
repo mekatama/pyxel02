@@ -91,7 +91,7 @@ class Player:
             self.shot_power = 2
         else:
             self.shot_power = 1
-        print(self.shot_power)
+#        print(self.shot_power)
 
         # 自機が画面外に出ないようにする
         self.x = max(self.x, 0)                 #大きい数値を使う
@@ -152,7 +152,8 @@ class Enemy:
     # 敵にダメージを与える
     def add_damage(self):
         if self.armor > 0:  # 装甲が残っている時
-            self.armor -= 1
+            self.armor -= self.game.player.shot_power
+#            self.armor -= 1
             self.is_damaged = True
             # ダメージ音を再生する
             pyxel.play(2, 1, resume=True)   # チャンネル2で割り込み再生させる
@@ -505,7 +506,7 @@ class Game:
 #                kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
                 kind = Enemy.KIND_A
                 if kind == Enemy.KIND_A:
-                    Enemy(self, 0, 1, pyxel.rndi(0, 112), pyxel.rndi(0, 112))
+                    Enemy(self, 0, 10, pyxel.rndi(0, 112), pyxel.rndi(0, 112))
                 elif kind == Enemy.KIND_B:
                     if pyxel.rndi(0, 1) == 0:
                         Enemy(self, 1, 1, -10, 100, 1)
