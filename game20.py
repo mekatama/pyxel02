@@ -35,6 +35,7 @@ class Player:
         self.enemy_y = 0        # 敵のY座標
         self.shot_timer = 0     # 弾発射までの残り時間
         self.shot_power = 1     # 弾の威力
+        self.shot_enagy = 100   # powerup用リソース
         self.hp = Player.HP     # HP
         self.is_lockon = False  # lockon flag
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
@@ -87,10 +88,14 @@ class Player:
             self.y += Player.MOVE_SPEED
 
         # キー入力で攻撃力up
-        if pyxel.btn(pyxel.KEY_A):
-            self.shot_power = 2
-        else:
-            self.shot_power = 1
+        if pyxel.btn(pyxel.KEY_A) & self.is_lockon == True:
+            #enagyあればpowerup
+            if self.shot_enagy > 0:
+                self.shot_power = 2
+                self.shot_enagy -= 1
+                print(self.shot_enagy)
+            else:
+                self.shot_power = 1
 #        print(self.shot_power)
 
         # 自機が画面外に出ないようにする
@@ -329,8 +334,7 @@ class Item:
      # アイテムにダメージを与える
     def add_damage(self):
         player = self.game.player   # GAME内のplayerの情報にアクセス
-        player.hp += 1              # HP回復
-        print(player.hp)
+        player.shot_enagy += 10     # enagy回復
         # アイテムをリストから削除する
         if self in self.game.items:    # アイテムリストに登録されている時
             self.game.items.remove(self)
