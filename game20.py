@@ -88,15 +88,20 @@ class Player:
             self.y += Player.MOVE_SPEED
 
         # キー入力で攻撃力up
-        if pyxel.btn(pyxel.KEY_A) & self.is_lockon == True:
-            #enagyあればpowerup
-            if self.shot_enagy > 0:
-                self.shot_power = 2
-                self.shot_enagy -= 1
-                print(self.shot_enagy)
+        if self.is_lockon == True:
+            if pyxel.btn(pyxel.KEY_A):
+                #enagyあればpowerup
+                if self.shot_enagy > 0:
+                    self.shot_power = 2
+                    self.shot_enagy -= 1
+    #                print(self.shot_enagy)
+                else:
+                    self.shot_power = 1
             else:
                 self.shot_power = 1
-#        print(self.shot_power)
+        else:
+            self.shot_power = 1
+        print(self.shot_power)
 
         # 自機が画面外に出ないようにする
         self.x = max(self.x, 0)                 #大きい数値を使う
@@ -135,6 +140,8 @@ class Player:
         # powerup表示
         if self.shot_power == 2:
             pyxel.text(self.x - 2,  self.y + 8, "pow", 7)
+        else:
+            pyxel.text(-10, -10, "pow", 7)
 
 # 敵クラス
 class Enemy:
