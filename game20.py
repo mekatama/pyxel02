@@ -325,6 +325,34 @@ class Blast:
         pyxel.circ(self.x, self.y, self.radius, 7)
         pyxel.circb(self.x, self.y, self.radius, 10)
 
+# 敵予兆クラス
+class Sign:
+    #定数
+    START_RADIUS = 1    # 開始時の半径
+    END_RADIUS = 4      # 終了時の半径
+
+    # 初期化してゲームに登録する
+    def __init__(self, game, x, y):
+        self.game = game
+        self.x = x
+        self.y = y
+        self.radius = Sign.START_RADIUS  # 爆発の半径
+        # ゲームの爆発エフェクトリストに登録する
+        game.signs.append(self)
+
+    # 敵予兆を更新する
+    def update(self):
+        # 半径を大きくする
+        self.radius += 0.1
+        # 半径が最大になったら敵予兆リストから登録を削除する
+        if self.radius > Sign.END_RADIUS:
+            self.game.signs.remove(self)
+
+    # 敵予兆を描画する
+    def draw(self):
+        pyxel.circ(self.x, self.y, self.radius, 7)
+        pyxel.circb(self.x, self.y, self.radius, 10)
+
 # アイテムクラス
 class Item:
     #定数
@@ -409,6 +437,7 @@ class Game:
         self.player_h_bullets = []  # 反射弾のリスト
         self.blasts = []        # 爆発エフェクトのリスト
         self.items = []         # アイテムのリスト
+        self.signs = []         # 敵予兆のリスト
 
         # 背景を生成する(背景はシーンによらず常に存在する)
         Background(self)
@@ -431,6 +460,7 @@ class Game:
             self.enemy_bullets.clear()      # 敵の弾を削除する処理を追加
             self.player_h_bullets.clear()   # 反射弾を削除する処理を追加
             self.items.clear()              # アイテムを削除する処理を追加
+            self.signs.clear()              # 敵予兆を削除する処理を追加
 
         # プレイ画面
         elif self.scene == Game.SCENE_PLAY:
@@ -438,6 +468,7 @@ class Game:
             self.score = 0      # スコアを0に戻す
             # 自機を生成する
             Player(self, 56, 100)
+            Sign(self, 64, 64)
             #仮の敵を生成する
 #            kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
 #            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
@@ -502,6 +533,10 @@ class Game:
         # 爆発エフェクトを更新する
         for blast in self.blasts.copy():  # 爆発エフェクトを更新する処理を追加
             blast.update()
+
+        # 敵予兆を更新する
+        for sign in self.signs.copy():  # 敵予兆を更新する処理を追加
+            sign.update()
 
         # アイテムを更新する
         for item in self.items.copy():  # アイテムを更新する処理を追加
@@ -568,6 +603,10 @@ class Game:
         # 爆発エフェクトを描画する
         for blast in self.blasts:  # 爆発エフェクトを更新する処理を追加
             blast.draw()
+
+        # 敵予兆を描画する
+        for sign in self.signs:  # 敵予兆を更新する処理を追加
+            sign.draw()
 
         # アイテムを描画する
         for item in self.items:  # アイテムを更新する処理を追加
