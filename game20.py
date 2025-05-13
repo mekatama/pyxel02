@@ -35,7 +35,7 @@ class Player:
         self.enemy_y = 0        # 敵のY座標
         self.shot_timer = 0     # 弾発射までの残り時間
         self.shot_power = 1     # 弾の威力
-        self.shot_enagy = 100   # powerup用リソース
+        self.shot_energy = 100   # powerup用リソース
         self.hp = Player.HP     # HP
         self.is_lockon = False  # lockon flag
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
@@ -90,11 +90,11 @@ class Player:
         # キー入力で攻撃力up
         if self.is_lockon == True:
             if pyxel.btn(pyxel.KEY_A):
-                #enagyあればpowerup
-                if self.shot_enagy > 0:
+                #energyあればpowerup
+                if self.shot_energy > 0:
                     self.shot_power = 2
-                    self.shot_enagy -= 1
-    #                print(self.shot_enagy)
+                    self.shot_energy -= 1
+    #                print(self.shot_energy)
                 else:
                     self.shot_power = 1
             else:
@@ -341,7 +341,7 @@ class Item:
      # アイテムにダメージを与える
     def add_damage(self):
         player = self.game.player   # GAME内のplayerの情報にアクセス
-        player.shot_enagy += 10     # enagy回復
+        player.shot_energy += 10     # energy回復
         # アイテムをリストから削除する
         if self in self.game.items:    # アイテムリストに登録されている時
             self.game.items.remove(self)
@@ -575,6 +575,9 @@ class Game:
 
         # スコアを描画する
         pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
+        # energyを描画する
+        if self.player is not None:
+            pyxel.text(35, 11, f"ENERGY {self.player.shot_energy:5}", 7)
 
         # シーンを描画する
         if self.scene == Game.SCENE_TITLE:      # タイトル画面
