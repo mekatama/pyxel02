@@ -468,7 +468,6 @@ class Game:
             self.score = 0      # スコアを0に戻す
             # 自機を生成する
             Player(self, 56, 100)
-            Sign(self, 64, 64)
             #仮の敵を生成する
 #            kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
 #            Enemy(self, 1, 1, pyxel.rndi(0, 112), 100)
@@ -555,7 +554,8 @@ class Game:
 #                kind = pyxel.rndi(Enemy.KIND_A, Enemy.KIND_C)
                 kind = Enemy.KIND_A
                 if kind == Enemy.KIND_A:
-                    Enemy(self, 0, 10, pyxel.rndi(0, 112), pyxel.rndi(0, 112))
+#                    Enemy(self, 0, 10, pyxel.rndi(0, 112), pyxel.rndi(0, 112))
+                    Sign(self, pyxel.rndi(0, 112), pyxel.rndi(0, 112))
                 elif kind == Enemy.KIND_B:
                     if pyxel.rndi(0, 1) == 0:
                         Enemy(self, 1, 1, -10, 100, 1)
