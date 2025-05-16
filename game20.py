@@ -101,7 +101,6 @@ class Player:
                 self.shot_power = 1
         else:
             self.shot_power = 1
-        print(self.shot_power)
 
         # 自機が画面外に出ないようにする
         self.x = max(self.x, 0)                 #大きい数値を使う
@@ -178,7 +177,7 @@ class Enemy:
         # アイテムを生成する
         # ■■■■後からランダムにする■■■■
         Item(self.game, self.x, self.y)
-        # playerのloskon解除
+        # playerのlockon解除
         self.game.player.is_lockon = False
         # 敵をリストから削除する
         if self in self.game.enemies:  # 敵リストに登録されている時
@@ -337,8 +336,13 @@ class Sign:
         self.x = x
         self.y = y
         self.radius = Sign.START_RADIUS  # 爆発の半径
+        self.is_go = False  #敵生成flag
         # ゲームの爆発エフェクトリストに登録する
         game.signs.append(self)
+
+     # 予兆後に敵を生成
+    def spawn_enemy(self):
+        Enemy(self.game, 0, 10, self.x, self.y)
 
     # 敵予兆を更新する
     def update(self):
@@ -346,6 +350,7 @@ class Sign:
         self.radius += 0.1
         # 半径が最大になったら敵予兆リストから登録を削除する
         if self.radius > Sign.END_RADIUS:
+            self.is_go = True
             self.game.signs.remove(self)
 
     # 敵予兆を描画する
@@ -536,6 +541,8 @@ class Game:
         # 敵予兆を更新する
         for sign in self.signs.copy():  # 敵予兆を更新する処理を追加
             sign.update()
+            if sign.is_go == True:
+                sign.spawn_enemy()
 
         # アイテムを更新する
         for item in self.items.copy():  # アイテムを更新する処理を追加
