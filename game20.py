@@ -1,5 +1,7 @@
 #格闘アクション
 import pyxel
+#グローバル変数
+g_enemy_id = 0   #enemyのID
 
 # 背景クラス
 class Background:
@@ -150,12 +152,13 @@ class Enemy:
     KIND_C = 2  # 敵C()
 
     # 敵を初期化してゲームに登録する
-    def __init__(self, game, kind, level, x, y):
+    def __init__(self, game, kind, level, x, y, id):
         self.game = game
         self.kind = kind                # 敵の種類
         self.level = level              # 強さ
         self.x = x
         self.y = y
+        self.id = id                    # 敵ID
         self.life_time = 0              # 生存時間
         self.hit_area = (0, 0, 7, 7)    # 当たり判定の領域
         self.armor = self.level - 1     # 装甲
@@ -291,7 +294,6 @@ class Bullet:
     # 弾を描画する
     def draw(self):
         if self.side == Bullet.SIDE_PLAYER:
-#            pyxel.circ(self.x, self.y, 2, 7)
             pyxel.blt(self.x, self.y, 0, 16, 8, 8, 8, 0)
         else:
             pyxel.blt(self.x, self.y, 0, 0, 8, 8, 8, 0)
@@ -342,7 +344,10 @@ class Sign:
 
      # 予兆後に敵を生成
     def spawn_enemy(self):
-        Enemy(self.game, 0, 10, self.x, self.y)
+        #グローバル変数宣言
+        global g_enemy_id
+        g_enemy_id += 1
+        Enemy(self.game, 0, 10, self.x, self.y, g_enemy_id)
 
     # 敵予兆を更新する
     def update(self):
@@ -466,6 +471,9 @@ class Game:
             self.player_h_bullets.clear()   # 反射弾を削除する処理を追加
             self.items.clear()              # アイテムを削除する処理を追加
             self.signs.clear()              # 敵予兆を削除する処理を追加
+            #グローバル変数宣言
+            global g_enemy_id
+            g_enemy_id = 0                  #敵ID初期化
 
         # プレイ画面
         elif self.scene == Game.SCENE_PLAY:
