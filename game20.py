@@ -118,7 +118,7 @@ class Player:
         # 弾を発射する
         if self.is_lockon and self.shot_timer == 0:
             # 自機の弾を生成する(右方向は0度)
-            Bullet(self.game, Bullet.SIDE_PLAYER, self.x + 8, self.y, dir, 5)
+            Bullet(self.game, Bullet.SIDE_PLAYER, self.x, self.y, dir, 5)
             # 弾発射音を再生する
             pyxel.play(3, 0)
             # 次の弾発射までの残り時間を設定する
@@ -245,7 +245,7 @@ class Bullet:
 
         # 弾の種類に応じた初期化とゲームの弾リストへの登録を行う
         if self.side == Bullet.SIDE_PLAYER:
-            self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
+            self.hit_area = (2, 2, 5, 5)  # 当たり判定領域
             game.player_bullets.append(self)
         elif self.side == Bullet.SIDE_ENEMY:
             self.hit_area = (2, 2, 5, 5)  # 当たり判定領域
@@ -291,8 +291,8 @@ class Bullet:
     # 弾を描画する
     def draw(self):
         if self.side == Bullet.SIDE_PLAYER:
-            dir = 1 if self.angle == 0 else -1
-            pyxel.blt(self.x, self.y, 0, 0, 8, 8 * dir, 8, 0)
+#            pyxel.circ(self.x, self.y, 2, 7)
+            pyxel.blt(self.x, self.y, 0, 16, 8, 8, 8, 0)
         else:
             pyxel.blt(self.x, self.y, 0, 0, 8, 8, 8, 0)
 
@@ -541,6 +541,7 @@ class Game:
         # 敵予兆を更新する
         for sign in self.signs.copy():  # 敵予兆を更新する処理を追加
             sign.update()
+            #敵を生成
             if sign.is_go == True:
                 sign.spawn_enemy()
 
