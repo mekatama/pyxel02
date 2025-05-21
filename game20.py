@@ -35,6 +35,7 @@ class Player:
         self.y = y              # Y座標
         self.enemy_x = 0        # 敵のX座標
         self.enemy_y = 0        # 敵のY座標
+        self.enemy_id = 0       # 敵のID
         self.shot_timer = 0     # 弾発射までの残り時間
         self.shot_power = 1     # 弾の威力
         self.shot_energy = 100   # powerup用リソース
@@ -65,7 +66,7 @@ class Player:
             return pyxel.atan2(enemy_y - player.y, enemy_x - player.x)
 
     # 敵との距離判定
-    def lockon_distance(self, x1, y1):
+    def lockon_distance(self, x1, y1, id):
         player = self.game.player   # GAME内のplayerの情報にアクセス
         if player.is_lockon == False:
             self.enemy_x = x1
@@ -73,9 +74,10 @@ class Player:
             dx = player.x - x1
             dy = player.y - y1
             distance = pyxel.sqrt(dx * dx + dy * dy)
-#            print(distance)
             if distance < 32:
+                self.enemy_id = id
                 self.is_lockon = True
+#                print(self.enemy_id)
 
     # 自機を更新する
     def update(self):
@@ -169,7 +171,8 @@ class Enemy:
     # 敵にダメージを与える
     def add_damage(self):
         if self.armor > 0:  # 装甲が残っている時
-            self.armor -= self.game.player.shot_power
+            if self.game.player is not None:
+                self.armor -= self.game.player.shot_power
 #            self.armor -= 1
             self.is_damaged = True
             # ダメージ音を再生する
@@ -181,7 +184,8 @@ class Enemy:
         # ■■■■後からランダムにする■■■■
         Item(self.game, self.x, self.y)
         # playerのlockon解除
-        self.game.player.is_lockon = False
+        if self.id == self.game.player.enemy_id:
+            self.game.player.is_lockon = False
         # 敵をリストから削除する
         if self in self.game.enemies:  # 敵リストに登録されている時
             self.game.enemies.remove(self)
@@ -520,7 +524,8 @@ class Game:
                 self.player.add_damage()  # 自機にダメージを与える
             # 自機と敵の距離判定を行う
             if self.player is not None:
-                self.player.lockon_distance(enemy.x, enemy.y)  # 距離測定
+                #敵IDも確認
+                self.player.lockon_distance(enemy.x, enemy.y, enemy.id)  # 距離測定
 
         # 自機の弾を更新する
         for bullet in self.player_bullets.copy():   # 自機の弾を更新する処理を追加
