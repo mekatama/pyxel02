@@ -1,4 +1,4 @@
-#格闘アクション
+#ロックオンtest
 import pyxel
 #グローバル変数
 g_enemy_id = 0   #enemyのID
