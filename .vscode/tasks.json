@@ -6,7 +6,7 @@
 		{
 			"label": "python",
 			"type": "shell",
-			"command": "python pyxel02//game18.py",
+			"command": "python pyxel02//game20.py",
 			"problemMatcher": [],
 			"group": {
 				"kind": "build",
