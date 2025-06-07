@@ -1,7 +1,66 @@
 import pyxel
-from scenes import ClearScene, GameOverScene, PlayScene, TitleScene
+from scenes import GameOverScene, PlayScene, TitleScene
+
+# ゲームクラス
+class Game:
+    # ゲームを初期化する
+    def __init__(self):
+        # Pyxelを初期化する
+        pyxel.init(128, 128, title="master")
+        # リソースファイルを読み込む
+        pyxel.load("assets/my_resource20.pyxres")
+        # ゲームの状態を初期化する
+        self.player = None                  # プレイヤー
+        self.enemies = []                   # 敵のリスト
+        self.player_bullets = []            # 自機の弾のリスト
+        self.enemy_bullets = []             # 敵の弾のリスト
+        self.player_h_bullets = []          # 反射弾のリスト
+        self.blasts = []                    # 爆発エフェクトのリスト
+        self.items = []                     # アイテムのリスト
+        self.scenes = {                     # シーンの辞書
+            "title": TitleScene(self),
+            "play": PlayScene(self),
+            "gameover": GameOverScene(self),
+        }
+        self.scene_name = None  # 現在のシーン名
+        self.screen_x = 0  # フィールド表示範囲の左端のX座標
+        self.score = 0  # 得点
+
+        # シーンをタイトル画面に変更する
+        self.change_scene("title")
+
+        # ゲームの実行を開始する
+        pyxel.run(self.update, self.draw)
+
+    # シーンを変更する
+    def change_scene(self, scene_name):
+        self.scene_name = scene_name
+        self.scenes[self.scene_name].start()
+
+    # プレイヤーを描画する
+    def draw_player(self):
+        # プレイヤーを描画する
+        if self.player is not None:  # プレイヤーが存在する時
+            self.player.draw()
+
+    # 敵を描画する
+    def draw_enemies(self):
+        # 敵を描画する
+        for enemy in self.enemies:
+            enemy.draw()
 
 
+    # ゲームを更新する
+    def update(self):
+        # 現在のシーンを更新する
+        self.scenes[self.scene_name].update()
+
+    # ゲームを描画する
+    def draw(self):
+        # 現在のシーンを描画する
+        self.scenes[self.scene_name].draw()
+
+"""
 # ゲームクラス
 class Game:
     # ゲームを初期化する
@@ -20,7 +79,6 @@ class Game:
             "title": TitleScene(self),
             "play": PlayScene(self),
             "gameover": GameOverScene(self),
-            "clear": ClearScene(self),
         }  # シーンの辞書
         self.scene_name = None  # 現在のシーン名
         self.screen_x = 0  # フィールド表示範囲の左端のX座標
@@ -77,3 +135,4 @@ class Game:
 
         # スコアを描画する
         pyxel.text(45, 4, f"SCORE {self.score:4}", 7)
+"""

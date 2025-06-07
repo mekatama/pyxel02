@@ -1,8 +1,36 @@
 import pyxel
 
-
 # タイトル画面クラス
 class TitleScene:
+    # タイトル画面を初期化する
+    def __init__(self, game):
+        self.game = game  # ゲームクラス
+
+    # タイトル画面を開始する
+    def start(self):
+        # 自機を削除する
+        self.player = None  # プレイヤーを削除
+        # 全ての弾と敵とアイテムを削除する
+        self.enemies.clear()
+        self.player_bullets.clear()     # 自機の弾を削除する処理を追加
+        self.enemy_bullets.clear()      # 敵の弾を削除する処理を追加
+        self.player_h_bullets.clear()   # 反射弾を削除する処理を追加
+        self.items.clear()              # アイテムを削除する処理を追加
+
+    def update(self):
+        # キー入力をチェックする
+        if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
+            # プレイ画面に切り替える
+            self.game.change_scene("play")
+
+    def draw(self):
+        # 画面をクリアする
+        pyxel.cls(0)
+        # タイトル画像を描画する
+        pyxel.blt(0, 18, 0, 0, 96, 128, 32, 15)
+        # テキストを描画する
+        pyxel.text(31, 148, "- PRESS ENTER -", 6)
+
     """
     # タイトル画面を初期化する
     def __init__(self, game):

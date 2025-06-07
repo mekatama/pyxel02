@@ -1,12 +1,32 @@
 import pyxel
 
-
 # ゲームオーバー画面クラス
 class GameOverScene:
     # ゲームオーバー画面を初期化する
     def __init__(self, game):
         self.game = game
 
+    # ゲームオーバー画面を開始する
+    def start(self):
+        # 画面表示時間を設定する
+        self.display_timer = 60
+
+    # ゲームオーバー画面を更新する
+    def update(self):
+        # ゲームオーバー画面の表示時間を設定する
+        if self.display_timer > 0:  # 画面表示時間が残っている時
+            self.display_timer -= 1
+        else:                       # 画面表示時間が0になった時
+            self.game.change_scene("title")
+
+    # ゲームオーバー画面を描画する
+    def draw(self):
+        # 画面をクリアする
+        pyxel.cls(0)
+        # テキストを描画する
+        pyxel.text(43, 78, "GAME OVER", 8)
+
+    """
     # ゲームオーバー画面を開始する
     def start(self):
         # 現在のプレイヤーの位置を保存する
@@ -53,3 +73,4 @@ class GameOverScene:
         pyxel.rect(6, 49, 116, 30, 0)
         pyxel.rectb(6, 49, 116, 30, 7)
         pyxel.text(47, 62, "GAME OVER", 7)
+    """
