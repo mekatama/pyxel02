@@ -1,4 +1,6 @@
 import pyxel
+#後で見直す
+"""
 from collision import get_tile_type
 from constants import (
     SCROLL_BORDER_X,
@@ -7,7 +9,8 @@ from constants import (
     TILE_SLIME1_POINT,
     TILE_SLIME2_POINT,
 )
-from entities import Flower, Mummy, Player, Slime
+"""
+from entities import Player, Enemy, Bullet, Blast, Item, Background
 
 
 # プレイ画面クラス
@@ -15,7 +18,51 @@ class PlayScene:
     # プレイ画面を初期化する
     def __init__(self, game):
         self.game = game
+    # プレイ画面を開始する
+    def start(self):
+        # プレイ画面の状態を初期化する
+        game = self.game        # ゲームクラス
+        game.score = 0          # スコア
+        Player(self, 56, 100)   # 自機を生成する
+        #仮の敵を生成する
 
+    # プレイ画面を更新する
+    def update(self):
+        game = self.game
+        player = game.player
+        enemies = game.enemies
+
+        # プレイヤーを更新する
+        if player is not None: #NONE使用時は判定方法が特殊
+            player.update()
+
+        # 敵を更新する
+        for enemy in enemies.copy():
+            enemy.update()
+            """
+            # 自機と敵の当たり判定を行う
+            if self.player is not None and check_collision(self.player, enemy):
+                self.player.add_damage()  # 自機にダメージを与える
+            """
+
+    # プレイ画面を描画する
+    def draw(self):
+        # 画面をクリアする
+        pyxel.cls(0)
+
+        # フィールドを描画する
+        self.game.draw_field()
+
+        # プレイヤーを描画する
+        self.game.draw_player()
+
+        # 敵を描画する
+        self.game.draw_enemies()
+
+        # スコアを描画する
+        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
+
+    """
     # プレイ画面を開始する
     def start(self):
         # 変更前のマップに戻す
@@ -123,3 +170,4 @@ class PlayScene:
 
         # 敵を描画する
         self.game.draw_enemies()
+    """
