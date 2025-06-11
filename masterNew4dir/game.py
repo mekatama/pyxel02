@@ -11,6 +11,8 @@ class Game:
         pyxel.load("assets/my_resource20.pyxres")
         # ゲームの状態を初期化する
         self.player = None                  # プレイヤー
+        self.player_bullets = []            # 自機の弾のリスト
+        self.enemies = []                   # 敵のリスト
         self.scenes = {                     # シーンの辞書
             "title": TitleScene(self),
             "play": PlayScene(self),
@@ -35,6 +37,12 @@ class Game:
         # プレイヤーを描画する
         if self.player is not None:  # プレイヤーが存在する時
             self.player.draw()
+
+    # 敵を描画する
+    def draw_enemies(self):
+        # 敵を描画する
+        for enemy in self.enemies:
+            enemy.draw()
 
     # ゲームを更新する
     def update(self):
