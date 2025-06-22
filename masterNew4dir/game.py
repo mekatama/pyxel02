@@ -34,13 +34,14 @@ class Game:
 
     # プレイヤーを描画する
     def draw_player(self):
-        # プレイヤーを描画する
         if self.player is not None:  # プレイヤーが存在する時
             self.player.draw()
-
+    # 弾(プレイヤー)を描画する
+    def draw_player_bullets(self):
+        for player_bullet in self.player_bullets:
+            player_bullet.draw()
     # 敵を描画する
     def draw_enemies(self):
-        # 敵を描画する
         for enemy in self.enemies:
             enemy.draw()
 

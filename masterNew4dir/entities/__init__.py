@@ -7,7 +7,6 @@
 # のようにまとめてインポートできるようにする
 
 from .player import Player          # プレイヤークラス
-from .bullet import Bullet          # 弾クラス
 from .zako1 import Zako1            # 敵クラス
 
 """

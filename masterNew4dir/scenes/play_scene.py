@@ -1,5 +1,6 @@
 import pyxel
-from entities import Player, Bullet, Zako1
+from entities import Player, Zako1
+#from entities import Player, Bullet, Zako1
 
 # プレイ画面クラス
 class PlayScene:
@@ -14,24 +15,32 @@ class PlayScene:
         game.player = Player(game, 0, 0)  # プレイヤー
         #仮の敵を生成する
         self.spawn_enemy(64, 64)
-
+    """
+    # 弾(プレイヤー)を出現させる
+    def spawn_player_bullet(self, x, y):
+        game = self.game
+        player_bullets = game.player_bullets
+        player_bullets.append(Bullet(game, x, y))
+    """
     # 敵を出現させる
     def spawn_enemy(self, x, y):
         game = self.game
         enemies = game.enemies
         enemies.append(Zako1(game, x, y))
 
-
     # プレイ画面を更新する
     def update(self):
         game = self.game
         player = game.player
+        player_bullets = game.player_bullets
         enemies = game.enemies
 
         # プレイヤーを更新する
         if player is not None: #NONE使用時は判定方法が特殊
             player.update()
-
+        # 弾(プレイヤー)を更新する
+        for player_bullet in player_bullets.copy():
+            player_bullet.update()
         # 敵を更新する
         for enemy in enemies.copy():
             enemy.update()
@@ -53,6 +62,8 @@ class PlayScene:
         pyxel.cls(0)
         # プレイヤーを描画する
         self.game.draw_player()
+        # 弾(プレイヤー)を描画する
+        self.game.draw_player_bullets()
         # 敵を描画する
         self.game.draw_enemies()
 

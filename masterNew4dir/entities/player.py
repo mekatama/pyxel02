@@ -10,6 +10,7 @@ class Player:
     MOVE_SPEED = 2          # 移動速度
     SHOT_INTERVAL = 10      # 弾の発射間隔
     HP = 3                  # 初期HP
+    player_bullets = []     # 自機の弾のリスト
 
     # プレイヤーを初期化する
     def __init__(self, game, x, y):
@@ -32,6 +33,10 @@ class Player:
         if pyxel.btn(pyxel.KEY_DOWN):
             self.y += Player.MOVE_SPEED
 
+        # Aキー入力で攻撃
+        if pyxel.btn(pyxel.KEY_A):
+            BulletPlayer(self.game, self.x, self.y)
+
         # 自機が画面外に出ないようにする
         self.x = max(self.x, 0)                 #大きい数値を使う
         self.x = min(self.x, pyxel.width - 8)   #小さい数値を使う
@@ -45,101 +50,47 @@ class Player:
         pyxel.blt(self.x, self.y, 0, 0, 24 + u, 8, 8, 0)
         pyxel.text(self.x - 4,  self.y - 6, "HP:%i" %self.hp, 7)
 
-    """
-    # プレイヤーを初期化する
+# 弾クラス
+class BulletPlayer:
+    #定数
+
+    # 弾を初期化してゲームに登録する
     def __init__(self, game, x, y):
-        self.game = game  # ゲームクラス
-        self.x = x  # X座標
-        self.y = y  # Y座標
-        self.dx = 0  # X軸方向の移動距離
-        self.dy = 0  # Y軸方向の移動距離
-        self.direction = 1  # 左右の移動方向
-        self.jump_counter = 0  # ジャンプ時間
-
-    # プレイヤーを更新する
-    def update(self):
-        # キー入力に応じて左右に移動する
-        if pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(
-            pyxel.GAMEPAD1_BUTTON_DPAD_LEFT
-        ):  # 左キーまたはゲームパッド左ボタンが押されている時
-            self.dx = -2
-            self.direction = -1
-
-        if pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(
-            pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT
-        ):  # 右キーまたはゲームパッド右ボタンが押されている時
-            self.dx = 2
-            self.direction = 1
-
-        # 下方向に加速する
-        if self.jump_counter > 0:  # ジャンプ中
-            self.jump_counter -= 1  # ジャンプ時間を減らす
-        else:  # ジャンプしていない時
-            self.dy = min(self.dy + 1, 4)  # 下方向に加速する
-
-        # タイルとの接触処理
-        for i in [1, 6]:
-            for j in [1, 6]:
-                x = self.x + j
-                y = self.y + i
-                tile_type = get_tile_type(x, y)
-
-                if tile_type == TILE_GEM:  # 宝石に触れた時
-                    # スコアを加算する
-                    self.game.score += 10
-
-                    # 宝石タイルを消す
-                    pyxel.tilemaps[0].pset(x // 8, y // 8, (0, 0))
-
-                    # 効果音を再生する
-                    pyxel.play(3, 1)
-
-                if self.dy >= 0 and tile_type == TILE_MUSHROOM:  # キノコに触れた時
-                    # ジャンプの距離を設定する
-                    self.dy = -6
-                    self.jump_counter = 6
-
-                    # 効果音を再生する
-                    pyxel.play(3, 2)
-
-                if tile_type == TILE_EXIT:  # 出口に到達した時
-                    self.game.change_scene("clear")
-                    return
-
-                if tile_type in [TILE_SPIKE, TILE_LAVA]:  # トゲ又は溶岩に触れた時
-                    self.game.change_scene("gameover")
-                    return
-
-        # ジャンプする
-        if (
-            self.dy >= 0
-            and (
-                in_collision(self.x, self.y + 8) or in_collision(self.x + 7, self.y + 8)
-            )
-            and (pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B))
-        ):
-            # 上昇中ではなく、プレイヤーの左下又は右下が床に接している状態で
-            # スペースキーまたはゲームパッドのBボタンが押された時
-            self.dy = -6
-            self.jump_counter = 2
-            pyxel.play(3, 0)
-
-        # 押し戻し処理
-        self.x, self.y = push_back(self.x, self.y, self.dx, self.dy)
-
-        # 横方向の移動を減速する
-        self.dx = int(self.dx * 0.8)
-
-    # プレイヤーを描画する
-    def draw(self):
-        # 画像の参照X座標を決める
-        u = pyxel.frame_count // 4 % 2 * 8 + 8
-        # 4フレーム周期で0と8を交互に繰り返す
-
-        # 画像の幅を決める
-        w = 8 if self.direction > 0 else -8
-        # 移動方向が正の場合は8にしてそのまま描画、負の場合は-8にして左右反転させる
-
-        # 画像を描画する
-        pyxel.blt(self.x, self.y, 0, u, 64, w, 8, 15)
+        self.game = game
+        self.x = x
+        self.y = y
+        self.life_time = 0  #生存時間
+        self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
+        game.player_bullets.append(self)
     """
+     # 弾にダメージを与える
+    def add_damage(self):
+        # 弾をリストから削除する
+        if self.side == Bullet.SIDE_PLAYER:
+            if self in self.game.player_bullets:    # 自機の弾リストに登録されている時
+                self.game.player_bullets.remove(self)
+        elif self.side == Bullet.SIDE_ENEMY:
+            if self in self.game.enemy_bullets:     # 敵の弾リストに登録されている時
+                self.game.enemy_bullets.remove(self)
+        elif self.side == Bullet.SIDE_PLAYER_H:
+            if self in self.game.enemy_bullets:     # 反射弾リストに登録されている時
+                self.game.player_h_bullets.remove(self)
+    """
+   # 弾を更新する
+    def update(self):
+        #生存時間カウント
+        self.life_time += 1
+        # 弾の座標を更新する
+        self.x += 2
+#        self.y += 2
+        # 弾が画面外に出たら弾リストから登録を削除する
+        if (self.x <= -8 or
+            self.x >= pyxel.width or
+            self.y <= -8 or
+            self.y >= pyxel.height
+        ):
+            self.game.player_bullets.remove(self)
+        
+    # 弾を描画する
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 0, 8, 8, 8, 0)
