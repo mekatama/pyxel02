@@ -33,9 +33,15 @@ class Player:
         if pyxel.btn(pyxel.KEY_DOWN):
             self.y += Player.MOVE_SPEED
 
+        # 弾の発射間隔timer制御
+        if self.shot_timer > 0:  # 弾発射までの残り時間を減らす
+            self.shot_timer -= 1
+
         # Aキー入力で攻撃
-        if pyxel.btn(pyxel.KEY_A):
+        if pyxel.btn(pyxel.KEY_A) and self.shot_timer == 0:
             BulletPlayer(self.game, self.x, self.y)
+            # 次の弾発射までの残り時間を設定する
+            self.shot_timer = Player.SHOT_INTERVAL
 
         # 自機が画面外に出ないようにする
         self.x = max(self.x, 0)                 #大きい数値を使う
