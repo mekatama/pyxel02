@@ -23,15 +23,17 @@ class Zako1:
         self.is_damaged = False         # ダメージを受けたかどうか
 #        # ゲームの敵リストに登録する
 #        self.game.enemies.append(self)
-    """
     # 敵にダメージを与える
     def add_damage(self):
-        if self.armor > 0:  # 装甲が残っている時
-            self.armor -= 1
-            self.is_damaged = True
+        if self in self.game.enemies:  # 敵リストに登録されている時
+            self.game.enemies.remove(self)
+#        if self.armor > 0:  # 装甲が残っている時
+#            self.armor -= 1
+#            self.is_damaged = True
             # ダメージ音を再生する
-            pyxel.play(2, 1, resume=True)   # チャンネル2で割り込み再生させる
-            return                          # 処理終了
+#            pyxel.play(2, 1, resume=True)   # チャンネル2で割り込み再生させる
+#            return                          # 処理終了
+        """
         # 爆発エフェクトを生成する
         Blast(self.game, self.x + 4, self.y + 4)
         # アイテムを生成する
@@ -42,7 +44,8 @@ class Zako1:
             self.game.enemies.remove(self)
         # スコアを加算する
         self.game.score += self.level * 10
-
+        """
+    """
     # 狙う自機の方向の角度を計算する
     def calc_player_angle(self):Zako1Zako1
         player = self.game.player   # GAME内のplayerの情報にアクセス

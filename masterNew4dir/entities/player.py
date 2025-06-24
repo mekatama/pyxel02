@@ -68,20 +68,13 @@ class BulletPlayer:
         self.life_time = 0  #生存時間
         self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
         game.player_bullets.append(self)
-    """
+
      # 弾にダメージを与える
     def add_damage(self):
         # 弾をリストから削除する
-        if self.side == Bullet.SIDE_PLAYER:
-            if self in self.game.player_bullets:    # 自機の弾リストに登録されている時
-                self.game.player_bullets.remove(self)
-        elif self.side == Bullet.SIDE_ENEMY:
-            if self in self.game.enemy_bullets:     # 敵の弾リストに登録されている時
-                self.game.enemy_bullets.remove(self)
-        elif self.side == Bullet.SIDE_PLAYER_H:
-            if self in self.game.enemy_bullets:     # 反射弾リストに登録されている時
-                self.game.player_h_bullets.remove(self)
-    """
+        if self in self.game.player_bullets:    # 自機の弾リストに登録されている時
+            self.game.player_bullets.remove(self)
+
    # 弾を更新する
     def update(self):
         #生存時間カウント

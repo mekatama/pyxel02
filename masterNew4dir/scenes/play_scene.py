@@ -2,6 +2,36 @@ import pyxel
 from entities import Player, Zako1
 #from entities import Player, Bullet, Zako1
 
+# 当たり判定用の関数
+#   タプルで設定した当たり判定領域を使用して判定
+def check_collision(entity1, entity2):
+    #キャラクター1の当たり判定座標を設定
+    entity1_x1 = entity1.x + entity1.hit_area[0]
+    entity1_y1 = entity1.y + entity1.hit_area[1]
+    entity1_x2 = entity1.x + entity1.hit_area[2]
+    entity1_y2 = entity1.y + entity1.hit_area[3]
+
+    #キャラクター2の当たり判定座標を設定
+    entity2_x1 = entity2.x + entity2.hit_area[0]
+    entity2_y1 = entity2.y + entity2.hit_area[1]
+    entity2_x2 = entity2.x + entity2.hit_area[2]
+    entity2_y2 = entity2.y + entity2.hit_area[3]
+
+    # キャラクター1の左端がキャラクター2の右端より右にある
+    if entity1_x1 > entity2_x2: #成立すれば衝突していない
+        return False
+    # キャラクター1の右端がキャラクター2の左端より左にある
+    if entity1_x2 < entity2_x1: #成立すれば衝突していない
+        return False
+    # キャラクター1の上端がキャラクター2の下端より下にある
+    if entity1_y1 > entity2_y2: #成立すれば衝突していない
+        return False
+    # キャラクター1の下端がキャラクター2の上端より上にある
+    if entity1_y2 < entity2_y1: #成立すれば衝突していない
+        return False
+    # 上記のどれでもなければ重なっている
+    return True #衝突している
+
 # プレイ画面クラス
 class PlayScene:
     # プレイ画面を初期化する
@@ -15,13 +45,7 @@ class PlayScene:
         game.player = Player(game, 0, 0)  # プレイヤー
         #仮の敵を生成する
         self.spawn_enemy(64, 64)
-    """
-    # 弾(プレイヤー)を出現させる
-    def spawn_player_bullet(self, x, y):
-        game = self.game
-        player_bullets = game.player_bullets
-        player_bullets.append(Bullet(game, x, y))
-    """
+
     # 敵を出現させる
     def spawn_enemy(self, x, y):
         game = self.game
@@ -41,10 +65,15 @@ class PlayScene:
         # 弾(プレイヤー)を更新する
         for player_bullet in player_bullets.copy():
             player_bullet.update()
+            # 弾(プレイヤー)と敵が接触したら消去
+            for enemy in enemies.copy():
+                if check_collision(enemy, player_bullet):
+                    player_bullet.add_damage()  # 自機の弾にダメージを与える
+                    enemy.add_damage()          # 敵にダメージを与える
+
         # 敵を更新する
         for enemy in enemies.copy():
             enemy.update()
-
             # プレイヤーと敵が接触したらゲームオーバーにする
             if abs(player.x - enemy.x) < 6 and abs(player.y - enemy.y) < 6:
                 game.change_scene("gameover")
