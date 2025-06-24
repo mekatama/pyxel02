@@ -19,32 +19,32 @@ class Zako1:
 #        self.dir = dir                  # 1:左 -1:右
         self.life_time = 0              # 生存時間
         self.hit_area = (0, 0, 7, 7)    # 当たり判定の領域
-#        self.armor = self.level - 1     # 装甲
+        self.armor = 2                   # 装甲
         self.is_damaged = False         # ダメージを受けたかどうか
 #        # ゲームの敵リストに登録する
 #        self.game.enemies.append(self)
     # 敵にダメージを与える
     def add_damage(self):
-        if self in self.game.enemies:  # 敵リストに登録されている時
-            self.game.enemies.remove(self)
-#        if self.armor > 0:  # 装甲が残っている時
-#            self.armor -= 1
-#            self.is_damaged = True
+#        if self in self.game.enemies:  # 敵リストに登録されている時
+#            self.game.enemies.remove(self)
+        if self.armor > 0:  # 装甲が残っている時
+            self.armor -= 1
+            self.is_damaged = True
             # ダメージ音を再生する
 #            pyxel.play(2, 1, resume=True)   # チャンネル2で割り込み再生させる
-#            return                          # 処理終了
+            return                          # 処理終了
         """
         # 爆発エフェクトを生成する
         Blast(self.game, self.x + 4, self.y + 4)
         # アイテムを生成する
         # ■■■■後からランダムにする■■■■
         Item(self.game, self.x, self.y)
+        """
         # 敵をリストから削除する
         if self in self.game.enemies:  # 敵リストに登録されている時
             self.game.enemies.remove(self)
         # スコアを加算する
-        self.game.score += self.level * 10
-        """
+#        self.game.score += self.level * 10
     """
     # 狙う自機の方向の角度を計算する
     def calc_player_angle(self):Zako1Zako1
@@ -82,7 +82,7 @@ class Zako1:
             self.is_damaged = False
             for i in range(1, 15):
                 pyxel.pal(i, 15)    #カラーパレットの色を置き換える
-            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 32, 56 + u, 8 * self.dir, 8, 0)
+            pyxel.blt(self.x, self.y, 0, 8 + 32, 56 + u, 8, 8, 0)
             pyxel.pal() #カラーパレット元に戻す
         else:
             pyxel.blt(self.x, self.y, 0, 32, 40 + u, 8, 8, 0)
