@@ -7,16 +7,13 @@ class Zako1:
     KIND_A = 0  # 敵A(空中)
     KIND_B = 1  # 敵B(地上停止)
     KIND_C = 2  # 敵C(地上移動)
+    enemy_blasts = []        # 爆発エフェクトのリスト
 
     # 敵を初期化してゲームに登録する
-#    def __init__(self, game, kind, level, x, y, dir):
     def __init__(self, game, x, y):
         self.game = game
-#        self.kind = kind                # 敵の種類
-#        self.level = level              # 強さ
         self.x = x
         self.y = y
-#        self.dir = dir                  # 1:左 -1:右
         self.life_time = 0              # 生存時間
         self.hit_area = (0, 0, 7, 7)    # 当たり判定の領域
         self.armor = 2                   # 装甲
@@ -33,9 +30,9 @@ class Zako1:
             # ダメージ音を再生する
 #            pyxel.play(2, 1, resume=True)   # チャンネル2で割り込み再生させる
             return                          # 処理終了
-        """
         # 爆発エフェクトを生成する
-        Blast(self.game, self.x + 4, self.y + 4)
+        Enemy_Blast(self.game, self.x + 4, self.y + 4)
+        """
         # アイテムを生成する
         # ■■■■後からランダムにする■■■■
         Item(self.game, self.x, self.y)
@@ -87,3 +84,31 @@ class Zako1:
         else:
             pyxel.blt(self.x, self.y, 0, 32, 40 + u, 8, 8, 0)
 #            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 32, 40 + u, 8 * self.dir, 8, 0)
+
+# 爆発エフェクトクラス
+class Enemy_Blast:
+    #定数
+    START_RADIUS = 1    # 開始時の半径
+    END_RADIUS = 8      # 終了時の半径
+
+    # 初期化してゲームに登録する
+    def __init__(self, game, x, y):
+        self.game = game
+        self.x = x
+        self.y = y
+        self.radius = Enemy_Blast.START_RADIUS  # 爆発の半径
+        # ゲームの爆発エフェクトリストに登録する
+        game.enemy_blasts.append(self)
+
+    # 爆発エフェクトを更新する
+    def update(self):
+        # 半径を大きくする
+        self.radius += 1
+        # 半径が最大になったら爆発エフェクトリストから登録を削除する
+        if self.radius > Enemy_Blast.END_RADIUS:
+            self.game.enemy_blasts.remove(self)
+
+    # 爆発エフェクトを描画する
+    def draw(self):
+        pyxel.circ(self.x, self.y, self.radius, 7)
+        pyxel.circb(self.x, self.y, self.radius, 10)
