@@ -14,6 +14,7 @@ class Game:
         self.player_bullets = []    # 自機の弾のリスト
         self.enemies = []           # 敵のリスト
         self.enemy_blasts = []      # 爆発エフェクトのリスト
+        self.enemy_bullets = []     # 敵の弾のリスト
         self.scenes = {                     # シーンの辞書
             "title": TitleScene(self),
             "play": PlayScene(self),
@@ -49,6 +50,10 @@ class Game:
     def draw_enemy_blasts(self):
         for enemy_blast in self.enemy_blasts:
             enemy_blast.draw()
+    # 敵の弾を描画する
+    def draw_enemy_bullets(self):
+        for enemy_bullet in self.enemy_bullets:
+            enemy_bullet.draw()
 
     # ゲームを更新する
     def update(self):

@@ -59,10 +59,12 @@ class PlayScene:
         player_bullets = game.player_bullets
         enemies = game.enemies
         enemy_blasts = game.enemy_blasts
+        enemy_bullets = game.enemy_bullets
 
         # プレイヤーを更新する
         if player is not None: #NONE使用時は判定方法が特殊
             player.update()
+
         # 弾(プレイヤー)を更新する
         for player_bullet in player_bullets.copy():
             player_bullet.update()
@@ -80,9 +82,13 @@ class PlayScene:
                 game.change_scene("gameover")
                 return
 
-        # 敵を更新する
+        # 敵の爆発を更新する
         for enemy_blast in enemy_blasts.copy():
             enemy_blast.update()
+
+        # 敵の弾を更新する
+        for enemy_bullet in enemy_bullets.copy():
+            enemy_bullet.update()
 
         # [debug]キー入力をチェックする
         if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
@@ -102,6 +108,8 @@ class PlayScene:
         self.game.draw_enemies()
         # 敵の爆発を描画する
         self.game.draw_enemy_blasts()
+        # 敵の弾を描画する
+        self.game.draw_enemy_bullets()
 
         # スコアを描画する
 #        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
