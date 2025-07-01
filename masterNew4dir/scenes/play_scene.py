@@ -89,6 +89,11 @@ class PlayScene:
         # 敵の弾を更新する
         for enemy_bullet in enemy_bullets.copy():
             enemy_bullet.update()
+            # 弾(enemy)とplayerが接触したら消去
+            if player is not None and check_collision(player, enemy_bullet):
+                enemy_bullet.add_damage()         # 敵の弾にダメージを与える
+                game.change_scene("gameover")
+                return
 
         # [debug]キー入力をチェックする
         if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):

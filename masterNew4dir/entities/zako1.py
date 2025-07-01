@@ -19,12 +19,9 @@ class Zako1:
         self.hit_area = (0, 0, 7, 7)    # 当たり判定の領域
         self.armor = 2                   # 装甲
         self.is_damaged = False         # ダメージを受けたかどうか
-#        # ゲームの敵リストに登録する
-#        self.game.enemies.append(self)
+
     # 敵にダメージを与える
     def add_damage(self):
-#        if self in self.game.enemies:  # 敵リストに登録されている時
-#            self.game.enemies.remove(self)
         if self.armor > 0:  # 装甲が残っている時
             self.armor -= 1
             self.is_damaged = True
