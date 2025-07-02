@@ -1,5 +1,5 @@
 import pyxel
-from entities import Player, Zako1
+from entities import Player, Zako1, Bomb
 #from entities import Player, Bullet, Zako1
 
 # 当たり判定用の関数
@@ -45,6 +45,8 @@ class PlayScene:
         game.player = Player(game, 0, 0)  # プレイヤー
         #仮の敵を生成する
         self.spawn_enemy(64, 64)
+        #仮の爆弾を生成する
+        self.spawn_bomb(64, 100)
 
     # 敵を出現させる
     def spawn_enemy(self, x, y):
@@ -52,11 +54,18 @@ class PlayScene:
         enemies = game.enemies
         enemies.append(Zako1(game, x, y))
 
+    # 爆弾を出現させる
+    def spawn_bomb(self, x, y):
+        game = self.game
+        bombs = game.bombs
+        bombs.append(Bomb(game, x, y))
+
     # プレイ画面を更新する
     def update(self):
         game = self.game
         player = game.player
         player_bullets = game.player_bullets
+        bombs = game.bombs
         enemies = game.enemies
         enemy_blasts = game.enemy_blasts
         enemy_bullets = game.enemy_bullets
@@ -95,6 +104,10 @@ class PlayScene:
                 game.change_scene("gameover")
                 return
 
+        # 爆弾を更新する
+        for bomb in bombs.copy():
+            bomb.update()
+
         # [debug]キー入力をチェックする
         if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
             # プレイ画面に切り替える
@@ -115,6 +128,8 @@ class PlayScene:
         self.game.draw_enemy_blasts()
         # 敵の弾を描画する
         self.game.draw_enemy_bullets()
+        # 爆弾を描画する
+        self.game.draw_bombs()
 
         # スコアを描画する
 #        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)

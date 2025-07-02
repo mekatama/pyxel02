@@ -12,6 +12,7 @@ class Game:
         # ゲームの状態を初期化する
         self.player = None          # プレイヤー
         self.player_bullets = []    # 自機の弾のリスト
+        self.bombs = []             # 爆弾のリスト
         self.enemies = []           # 敵のリスト
         self.enemy_blasts = []      # 爆発エフェクトのリスト
         self.enemy_bullets = []     # 敵の弾のリスト
@@ -54,6 +55,10 @@ class Game:
     def draw_enemy_bullets(self):
         for enemy_bullet in self.enemy_bullets:
             enemy_bullet.draw()
+    # 爆弾を描画する
+    def draw_bombs(self):
+        for bomb in self.bombs:
+            bomb.draw()
 
     # ゲームを更新する
     def update(self):
