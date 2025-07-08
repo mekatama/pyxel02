@@ -48,6 +48,7 @@ class Player:
         self.x = min(self.x, pyxel.width - 8)   #小さい数値を使う
         self.y = max(self.y, 0)                 #大きい数値を使う
         self.y = min(self.y, pyxel.height - 8)   #小さい数値を使う
+        print(self.y)
 
     # プレイヤーを描画する
     def draw(self):

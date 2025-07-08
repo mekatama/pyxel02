@@ -22,6 +22,7 @@ class Game:
             "gameover": GameOverScene(self),
         }
         self.scene_name = None  # 現在のシーン名
+        self.screen_x = 0  # フィールド表示範囲の左端のX座標
         self.score = 0  # 得点
 
         # シーンをタイトル画面に変更する
@@ -35,10 +36,19 @@ class Game:
         self.scene_name = scene_name
         self.scenes[self.scene_name].start()
 
+    # フィールドを描画する
+    def draw_field(self):
+        pyxel.bltm(0, 0, 0, self.screen_x, 0, 128, 128)
+
     # プレイヤーを描画する
     def draw_player(self):
+        # カメラ位置(描画の原点)を変更する
+#        pyxel.camera(self.screen_x, 0)
         if self.player is not None:  # プレイヤーが存在する時
             self.player.draw()
+        # カメラ位置を戻す
+#        pyxel.camera()
+
     # 弾(プレイヤー)を描画する
     def draw_player_bullets(self):
         for player_bullet in self.player_bullets:

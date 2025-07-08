@@ -10,7 +10,7 @@ class Bomb:
         self.game = game
         self.x = x
         self.y = y
-        self.life_time = 0              # 生存時間
+        self.isBomb = False             # 
         self.hit_area = (0, 0, 7, 7)    # 当たり判定の領域
 
     # 爆弾にダメージを与える
@@ -18,11 +18,17 @@ class Bomb:
         # 爆弾をリストから削除する
         if self in self.game.bombs:  # 爆弾リストに登録されている時
             self.game.bombs.remove(self)
-            
+
+    # 爆弾にダメージを与える
+    def bomb_get(self):
+        if self.isBomb == False:
+            self.isBomb = True
+
     # 爆弾を更新する
     def update(self):
-        # 生存時間をカウントする
-        self.life_time += 1
+        if self.isBomb == True:
+            self.x = self.game.player.x
+            self.y = self.game.player.y + 8
 
     # 爆弾を描画する
     def draw(self):

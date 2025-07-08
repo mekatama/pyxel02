@@ -1,6 +1,13 @@
 import pyxel
 from entities import Player, Zako1, Bomb
 #from entities import Player, Bullet, Zako1
+from constants import (
+    SCROLL_BORDER_X,
+    TILE_FLOWER_POINT,
+    TILE_MUMMY_POINT,
+    TILE_SLIME1_POINT,
+    TILE_SLIME2_POINT,
+)
 
 # 当たり判定用の関数
 #   タプルで設定した当たり判定領域を使用して判定
@@ -42,7 +49,7 @@ class PlayScene:
         # プレイ画面の状態を初期化する
         game = self.game        # ゲームクラス
         game.score = 0          # スコア
-        game.player = Player(game, 0, 0)  # プレイヤー
+        game.player = Player(game, 16, 16)  # プレイヤー
         #仮の敵を生成する
         self.spawn_enemy(64, 64)
         #仮の爆弾を生成する
@@ -73,6 +80,16 @@ class PlayScene:
         # プレイヤーを更新する
         if player is not None: #NONE使用時は判定方法が特殊
             player.update()
+
+        # プレイヤーの移動範囲を制限する
+        player.x = min(max(player.x, game.screen_x), 248)
+        player.y = max(player.y, 0)
+
+        # プレイヤーがスクロール境界を越えたら画面をスクロールする
+        if player.x > game.screen_x + SCROLL_BORDER_X:
+            last_screen_x = game.screen_x
+            game.screen_x = min(player.x - SCROLL_BORDER_X, 32 * 8)
+            # 240タイル分以上は右にスクロールさせない
 
         # 弾(プレイヤー)を更新する
         for player_bullet in player_bullets.copy():
@@ -107,6 +124,9 @@ class PlayScene:
         # 爆弾を更新する
         for bomb in bombs.copy():
             bomb.update()
+            # 爆弾とplayerが接触したら消去
+            if player is not None and check_collision(player, bomb):
+                bomb.bomb_get()
 
         # [debug]キー入力をチェックする
         if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
@@ -118,6 +138,8 @@ class PlayScene:
     def draw(self):
         # 画面をクリアする
         pyxel.cls(0)
+        # フィールドを描画する
+        self.game.draw_field()
         # プレイヤーを描画する
         self.game.draw_player()
         # 弾(プレイヤー)を描画する
