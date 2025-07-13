@@ -1,14 +1,8 @@
 import pyxel
 from entities import Player, Zako1, Bomb
-#from entities import Player, Bullet, Zako1
 from constants import (
-    SCROLL_BORDER_X,
     SCROLL_BORDER_X_RIGHT,
     SCROLL_BORDER_X_LEFT,
-    TILE_FLOWER_POINT,
-    TILE_MUMMY_POINT,
-    TILE_SLIME1_POINT,
-    TILE_SLIME2_POINT,
 )
 
 # 当たり判定用の関数
@@ -98,23 +92,6 @@ class PlayScene:
             last_screen_x = game.screen_x
             game.screen_x = min(player.x - SCROLL_BORDER_X_LEFT, 32 * 8)
             # 32タイル分以上は右にスクロールさせない
-
-        """
-        LEFT_LIMIT = 40
-        RIGHT_LIMIT = WINDOW_W - 40 #調整項目
-        #画面スクロール処理
-        #左へスクロール
-        if self.player.x < self.scroll_x + LEFT_LIMIT:  #左判定ライン到達
-            self.scroll_x = self.player.x - LEFT_LIMIT  #BG用座標更新
-            if self.scroll_x < 0:                       #BGの端到達判定
-                self.scroll_x = 0                       #スクロール停止
-        #右へスクロール
-        if self.scroll_x + RIGHT_LIMIT < self.player.x: #右判定ライン到達
-            self.scroll_x = self.player.x - RIGHT_LIMIT #BG用座標更新
-            if STAGE_W - pyxel.width < self.scroll_x:   #BGの端到達判定
-                self.scroll_x = STAGE_W - pyxel.width   #スクロール停止
-        """
-
 
         # 弾(プレイヤー)を更新する
         for player_bullet in player_bullets.copy():

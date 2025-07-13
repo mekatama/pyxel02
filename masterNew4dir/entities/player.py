@@ -1,8 +1,6 @@
 import pyxel
-"""
 from collision import get_tile_type, in_collision, push_back
-from constants import TILE_EXIT, TILE_GEM, TILE_LAVA, TILE_MUSHROOM, TILE_SPIKE
-"""
+from constants import TILE_EXIT, TILE_GEM, TILE_BOMB, TILE_SPIKE
 
 # プレイヤークラス
 class Player:
@@ -42,13 +40,36 @@ class Player:
             BulletPlayer(self.game, self.x, self.y)
             # 次の弾発射までの残り時間を設定する
             self.shot_timer = Player.SHOT_INTERVAL
+        """
+        # 自機が画面外に出ないようにする(一画面用)
+        self.x = max(self.x, 0)                 #大きい数値を使う
+        self.x = min(self.x, pyxel.width - 8)   #小さい数値を使う
+        self.y = max(self.y, 0)                 #大きい数値を使う
+        self.y = min(self.y, pyxel.height - 8)   #小さい数値を使う
+        """
 
-        # 自機が画面外に出ないようにする
-#        self.x = max(self.x, 0)                 #大きい数値を使う
-#        self.x = min(self.x, pyxel.width - 8)   #小さい数値を使う
-#        self.y = max(self.y, 0)                 #大きい数値を使う
-#        self.y = min(self.y, pyxel.height - 8)   #小さい数値を使う
-        print(self.x)
+        # タイルとの接触処理
+        for i in [1, 6]:
+            for j in [1, 6]:
+                x = self.x + j
+                y = self.y + i
+                tile_type = get_tile_type(x, y)
+
+                if tile_type == TILE_GEM:  # 宝石に触れた時
+                    # スコアを加算する
+                    self.game.score += 10
+                    # 宝石タイルを消す
+                    pyxel.tilemaps[0].pset(x // 8, y // 8, (0, 0))
+                    # 効果音を再生する
+#                    pyxel.play(3, 1)
+
+#                if tile_type == TILE_EXIT:  # 出口に到達した時
+#                    self.game.change_scene("clear")
+#                    return
+
+                if tile_type == TILE_SPIKE:  # トゲ又に触れた時
+                    self.game.change_scene("gameover")
+                    return
 
     # プレイヤーを描画する
     def draw(self):
