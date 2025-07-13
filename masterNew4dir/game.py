@@ -9,6 +9,7 @@ class Game:
         pyxel.init(128, 128, title="master")
         # リソースファイルを読み込む
         pyxel.load("assets/my_resource20.pyxres")
+        pyxel.tilemaps[2].blt(0, 0, 0, 0, 0, 256, 16)  # 変更前のマップをコピーする
         # ゲームの状態を初期化する
         self.player = None          # プレイヤー
         self.player_bullets = []    # 自機の弾のリスト
