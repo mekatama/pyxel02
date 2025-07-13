@@ -44,11 +44,11 @@ class Player:
             self.shot_timer = Player.SHOT_INTERVAL
 
         # 自機が画面外に出ないようにする
-        self.x = max(self.x, 0)                 #大きい数値を使う
-        self.x = min(self.x, pyxel.width - 8)   #小さい数値を使う
-        self.y = max(self.y, 0)                 #大きい数値を使う
-        self.y = min(self.y, pyxel.height - 8)   #小さい数値を使う
-        print(self.y)
+#        self.x = max(self.x, 0)                 #大きい数値を使う
+#        self.x = min(self.x, pyxel.width - 8)   #小さい数値を使う
+#        self.y = max(self.y, 0)                 #大きい数値を使う
+#        self.y = min(self.y, pyxel.height - 8)   #小さい数値を使う
+        print(self.x)
 
     # プレイヤーを描画する
     def draw(self):

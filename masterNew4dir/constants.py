@@ -1,6 +1,8 @@
 # 定数モジュール
 
-SCROLL_BORDER_X = 80  # スクロール境界X座標
+SCROLL_BORDER_X = 70  # スクロール境界X座標
+SCROLL_BORDER_X_RIGHT = 70      # スクロール境界X座標
+SCROLL_BORDER_X_LEFT = 128 - 70 # スクロール境界X座標
 # プレイヤーがこの座標を超えたらスクロールさせる
 
 # タイル種別

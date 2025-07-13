@@ -3,6 +3,8 @@ from entities import Player, Zako1, Bomb
 #from entities import Player, Bullet, Zako1
 from constants import (
     SCROLL_BORDER_X,
+    SCROLL_BORDER_X_RIGHT,
+    SCROLL_BORDER_X_LEFT,
     TILE_FLOWER_POINT,
     TILE_MUMMY_POINT,
     TILE_SLIME1_POINT,
@@ -49,7 +51,7 @@ class PlayScene:
         # プレイ画面の状態を初期化する
         game = self.game        # ゲームクラス
         game.score = 0          # スコア
-        game.player = Player(game, 16, 16)  # プレイヤー
+        game.player = Player(game, 64, 16)  # プレイヤー
         #仮の敵を生成する
         self.spawn_enemy(64, 64)
         #仮の爆弾を生成する
@@ -83,13 +85,36 @@ class PlayScene:
 
         # プレイヤーの移動範囲を制限する
         player.x = min(max(player.x, game.screen_x), 248)
+        player.x = max(max(player.x, game.screen_x), 0)
         player.y = max(player.y, 0)
 
-        # プレイヤーがスクロール境界を越えたら画面をスクロールする
-        if player.x > game.screen_x + SCROLL_BORDER_X:
+        # プレイヤーが右移動スクロール境界を越えたら画面をスクロールする
+        if player.x > game.screen_x + SCROLL_BORDER_X_RIGHT:
             last_screen_x = game.screen_x
-            game.screen_x = min(player.x - SCROLL_BORDER_X, 32 * 8)
-            # 240タイル分以上は右にスクロールさせない
+            game.screen_x = min(player.x - SCROLL_BORDER_X_RIGHT, 32 * 8)
+            # 32タイル分以上は右にスクロールさせない
+        # プレイヤーが左移動スクロール境界を越えたら画面をスクロールする
+        if player.x < game.screen_x + SCROLL_BORDER_X_LEFT:
+            last_screen_x = game.screen_x
+            game.screen_x = min(player.x - SCROLL_BORDER_X_LEFT, 32 * 8)
+            # 32タイル分以上は右にスクロールさせない
+
+        """
+        LEFT_LIMIT = 40
+        RIGHT_LIMIT = WINDOW_W - 40 #調整項目
+        #画面スクロール処理
+        #左へスクロール
+        if self.player.x < self.scroll_x + LEFT_LIMIT:  #左判定ライン到達
+            self.scroll_x = self.player.x - LEFT_LIMIT  #BG用座標更新
+            if self.scroll_x < 0:                       #BGの端到達判定
+                self.scroll_x = 0                       #スクロール停止
+        #右へスクロール
+        if self.scroll_x + RIGHT_LIMIT < self.player.x: #右判定ライン到達
+            self.scroll_x = self.player.x - RIGHT_LIMIT #BG用座標更新
+            if STAGE_W - pyxel.width < self.scroll_x:   #BGの端到達判定
+                self.scroll_x = STAGE_W - pyxel.width   #スクロール停止
+        """
+
 
         # 弾(プレイヤー)を更新する
         for player_bullet in player_bullets.copy():
