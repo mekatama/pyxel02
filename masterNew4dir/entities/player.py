@@ -40,6 +40,10 @@ class Player:
             BulletPlayer(self.game, self.x, self.y)
             # 次の弾発射までの残り時間を設定する
             self.shot_timer = Player.SHOT_INTERVAL
+
+        # Aキー入力で攻撃
+        if pyxel.btn(pyxel.KEY_S):
+            BombPlayer(self.game, self.x, self.y)
         """
         # 自機が画面外に出ないようにする(一画面用)
         self.x = max(self.x, 0)                 #大きい数値を使う
@@ -48,7 +52,10 @@ class Player:
         self.y = min(self.y, pyxel.height - 8)   #小さい数値を使う
         """
 
-        # タイルとの接触処理
+        # タイルとの接触処理        # Aキー入力で攻撃
+        if pyxel.btn(pyxel.KEY_A) and self.shot_timer == 0:
+            BulletPlayer(self.game, self.x, self.y)
+
         for i in [1, 6]:
             for j in [1, 6]:
                 x = self.x + j
@@ -62,6 +69,10 @@ class Player:
                     pyxel.tilemaps[0].pset(x // 8, y // 8, (0, 0))
                     # 効果音を再生する
 #                    pyxel.play(3, 1)
+
+                if tile_type == TILE_BOMB:  # BOMBに触れた時
+                    # タイルを消す
+                    pyxel.tilemaps[0].pset(x // 8, y // 8, (0, 0))
 
 #                if tile_type == TILE_EXIT:  # 出口に到達した時
 #                    self.game.change_scene("clear")
@@ -111,6 +122,38 @@ class BulletPlayer:
             self.y >= pyxel.height
         ):
             self.game.player_bullets.remove(self)
+        
+    # 弾を描画する
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 0, 8, 8, 8, 0)
+
+# BOMBクラス
+class BombPlayer:
+    #定数
+
+    # 弾を初期化してゲームに登録する
+    def __init__(self, game, x, y):
+        self.game = game
+        self.x = x
+        self.y = y
+        self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
+#        game.player_bullets.append(self)
+
+    """
+     # 弾にダメージを与える
+    def add_damage(self):
+        # 弾をリストから削除する
+        if self in self.game.player_bullets:    # 自機の弾リストに登録されている時
+            self.game.player_bullets.remove(self)
+    """
+
+   # 弾を更新する
+    def update(self):
+        #生存時間カウント
+        self.life_time += 1
+        # 弾の座標を更新する
+#        self.x += 2
+        self.y += 2
         
     # 弾を描画する
     def draw(self):

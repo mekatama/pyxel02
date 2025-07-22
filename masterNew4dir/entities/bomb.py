@@ -24,11 +24,13 @@ class Bomb:
         if self.isBomb == False:
             self.isBomb = True
 
-    # 爆弾を更新する
+    # 爆弾を更新するgame.
     def update(self):
         if self.isBomb == True:
             self.x = self.game.player.x
+#            self.x = self.game.screen_x
             self.y = self.game.player.y + 8
+#        print(self.x)
 
     # 爆弾を描画する
     def draw(self):

@@ -51,7 +51,7 @@ class PlayScene:
         #仮の敵を生成する
         self.spawn_enemy(64, 64)
         #仮の爆弾を生成する
-        self.spawn_bomb(64, 100)
+#        self.spawn_bomb(64, 100)
 
     # 敵を出現させる
     def spawn_enemy(self, x, y):
@@ -59,18 +59,21 @@ class PlayScene:
         enemies = game.enemies
         enemies.append(Zako1(game, x, y))
 
+    """
     # 爆弾を出現させる
     def spawn_bomb(self, x, y):
         game = self.game
         bombs = game.bombs
         bombs.append(Bomb(game, x, y))
+    """
 
     # プレイ画面を更新する
     def update(self):
         game = self.game
         player = game.player
         player_bullets = game.player_bullets
-        bombs = game.bombs
+        player_bomb = game.player_bomb
+#        bombs = game.bombs
         enemies = game.enemies
         enemy_blasts = game.enemy_blasts
         enemy_bullets = game.enemy_bullets
@@ -126,12 +129,17 @@ class PlayScene:
                 return
 
         # 爆弾を更新する
+        if player_bomb is not None: #NONE使用時は判定方法が特殊
+            player_bomb.update()
+
+        """
+        # 爆弾を更新する
         for bomb in bombs.copy():
             bomb.update()
             # 爆弾とplayerが接触したら消去
             if player is not None and check_collision(player, bomb):
                 bomb.bomb_get()
-
+        """
         # [debug]キー入力をチェックする
         if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
             # プレイ画面に切り替える
@@ -155,7 +163,8 @@ class PlayScene:
         # 敵の弾を描画する
         self.game.draw_enemy_bullets()
         # 爆弾を描画する
-        self.game.draw_bombs()
+        self.game.draw_player_bomb()
+#        self.game.draw_bombs()
 
         # スコアを描画する
 #        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
