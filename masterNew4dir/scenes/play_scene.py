@@ -1,5 +1,5 @@
 import pyxel
-from entities import Player, Zako1, Bomb
+from entities import Player, Zako1
 from constants import (
     SCROLL_BORDER_X_RIGHT,
     SCROLL_BORDER_X_LEFT,
@@ -50,8 +50,6 @@ class PlayScene:
         game.player = Player(game, 64, 16)  # プレイヤー
         #仮の敵を生成する
         self.spawn_enemy(64, 64)
-        #仮の爆弾を生成する
-#        self.spawn_bomb(64, 100)
 
     # 敵を出現させる
     def spawn_enemy(self, x, y):
@@ -59,21 +57,12 @@ class PlayScene:
         enemies = game.enemies
         enemies.append(Zako1(game, x, y))
 
-    """
-    # 爆弾を出現させる
-    def spawn_bomb(self, x, y):
-        game = self.game
-        bombs = game.bombs
-        bombs.append(Bomb(game, x, y))
-    """
-
     # プレイ画面を更新する
     def update(self):
         game = self.game
         player = game.player
         player_bullets = game.player_bullets
-        player_bomb = game.player_bomb
-#        bombs = game.bombs
+        player_bombs = game.player_bombs
         enemies = game.enemies
         enemy_blasts = game.enemy_blasts
         enemy_bullets = game.enemy_bullets
@@ -107,6 +96,13 @@ class PlayScene:
                     player_bullet.add_damage()  # 自機の弾にダメージを与える
                     enemy.add_damage()          # 敵にダメージを与える
 
+        # 爆弾を更新する
+        for player_bomb in player_bombs.copy():
+            player_bomb.update()
+            # 爆弾とplayerが接触したら消去
+#            if player is not None and check_collision(player, bomb):
+#                bomb.bomb_get()
+
         # 敵を更新する
         for enemy in enemies.copy():
             enemy.update()
@@ -128,18 +124,6 @@ class PlayScene:
                 game.change_scene("gameover")
                 return
 
-        # 爆弾を更新する
-        if player_bomb is not None: #NONE使用時は判定方法が特殊
-            player_bomb.update()
-
-        """
-        # 爆弾を更新する
-        for bomb in bombs.copy():
-            bomb.update()
-            # 爆弾とplayerが接触したら消去
-            if player is not None and check_collision(player, bomb):
-                bomb.bomb_get()
-        """
         # [debug]キー入力をチェックする
         if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
             # プレイ画面に切り替える
@@ -156,15 +140,14 @@ class PlayScene:
         self.game.draw_player()
         # 弾(プレイヤー)を描画する
         self.game.draw_player_bullets()
+        # 爆弾を描画する
+        self.game.draw_player_bombs()
         # 敵を描画する
         self.game.draw_enemies()
         # 敵の爆発を描画する
         self.game.draw_enemy_blasts()
         # 敵の弾を描画する
         self.game.draw_enemy_bullets()
-        # 爆弾を描画する
-        self.game.draw_player_bomb()
-#        self.game.draw_bombs()
 
         # スコアを描画する
 #        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)

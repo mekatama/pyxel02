@@ -9,6 +9,7 @@ class Player:
     SHOT_INTERVAL = 10      # 弾の発射間隔
     HP = 3                  # 初期HP
     player_bullets = []     # 自機の弾のリスト
+    player_bombs = []       # 自機の爆弾のリスト
 
     # プレイヤーを初期化する
     def __init__(self, game, x, y):
@@ -41,7 +42,7 @@ class Player:
             # 次の弾発射までの残り時間を設定する
             self.shot_timer = Player.SHOT_INTERVAL
 
-        # Aキー入力で攻撃
+        # Sキー入力で攻撃
         if pyxel.btn(pyxel.KEY_S):
             BombPlayer(self.game, self.x, self.y)
         """
@@ -51,11 +52,6 @@ class Player:
         self.y = max(self.y, 0)                 #大きい数値を使う
         self.y = min(self.y, pyxel.height - 8)   #小さい数値を使う
         """
-
-        # タイルとの接触処理        # Aキー入力で攻撃
-        if pyxel.btn(pyxel.KEY_A) and self.shot_timer == 0:
-            BulletPlayer(self.game, self.x, self.y)
-
         for i in [1, 6]:
             for j in [1, 6]:
                 x = self.x + j
@@ -92,7 +88,6 @@ class Player:
 # 弾クラス
 class BulletPlayer:
     #定数
-
     # 弾を初期化してゲームに登録する
     def __init__(self, game, x, y):
         self.game = game
@@ -131,30 +126,31 @@ class BulletPlayer:
 class BombPlayer:
     #定数
 
-    # 弾を初期化してゲームに登録する
+    # 爆弾を初期化してゲームに登録する
     def __init__(self, game, x, y):
         self.game = game
         self.x = x
         self.y = y
         self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
-#        game.player_bullets.append(self)
+        game.player_bombs.append(self)
 
     """
-     # 弾にダメージを与える
+     # 爆弾にダメージを与える
     def add_damage(self):
         # 弾をリストから削除する
         if self in self.game.player_bullets:    # 自機の弾リストに登録されている時
             self.game.player_bullets.remove(self)
     """
 
-   # 弾を更新する
+   # 爆弾を更新する
     def update(self):
         #生存時間カウント
-        self.life_time += 1
+#        self.life_time += 1
         # 弾の座標を更新する
 #        self.x += 2
         self.y += 2
+        print(self.y)
         
-    # 弾を描画する
+    # 爆弾を描画する
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 0, 8, 8, 8, 0)
