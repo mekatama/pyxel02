@@ -16,6 +16,7 @@ class Player:
         self.game = game        # ゲームへの参照
         self.x = x              # X座標
         self.y = y              # Y座標
+        self.isBomb = False     # Bomb所持flag
         self.shot_timer = 0     # 弾発射までの残り時間
         self.hp = Player.HP     # HP
         self.hit_area = (1, 1, 6, 6)  # 当たり判定の領域 (x1,y1,x2,y2) 
@@ -42,9 +43,10 @@ class Player:
             # 次の弾発射までの残り時間を設定する
             self.shot_timer = Player.SHOT_INTERVAL
 
-        # Sキー入力で攻撃
-        if pyxel.btn(pyxel.KEY_S):
+        # Sキー入力で爆弾発射
+        if pyxel.btn(pyxel.KEY_S) and self.isBomb == True:
             BombPlayer(self.game, self.x, self.y)
+            self.isBomb = False
         """
         # 自機が画面外に出ないようにする(一画面用)
         self.x = max(self.x, 0)                 #大きい数値を使う
@@ -67,6 +69,7 @@ class Player:
 #                    pyxel.play(3, 1)
 
                 if tile_type == TILE_BOMB:  # BOMBに触れた時
+                    self.isBomb = True
                     # タイルを消す
                     pyxel.tilemaps[0].pset(x // 8, y // 8, (0, 0))
 
