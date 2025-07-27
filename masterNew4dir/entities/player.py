@@ -1,6 +1,6 @@
 import pyxel
 from collision import get_tile_type, in_collision, push_back
-from constants import TILE_EXIT, TILE_GEM, TILE_BOMB, TILE_SPIKE
+from constants import TILE_EXIT, TILE_GEM, TILE_BOMB, TILE_SPIKE, TILE_WALL
 
 # プレイヤークラス
 class Player:
@@ -78,6 +78,10 @@ class Player:
 #                    return
 
                 if tile_type == TILE_SPIKE:  # トゲ又に触れた時
+                    self.game.change_scene("gameover")
+                    return
+
+                if tile_type == TILE_WALL:  # 壁に触れた時
                     self.game.change_scene("gameover")
                     return
 
