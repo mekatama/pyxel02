@@ -45,6 +45,7 @@ class Game:
     def draw_player(self):
         # カメラ位置(描画の原点)を変更する
         pyxel.camera(self.screen_x, 0)
+        # 描画
         if self.player is not None:  # プレイヤーが存在する時
             self.player.draw()
         # カメラ位置を戻す
@@ -52,8 +53,13 @@ class Game:
 
     # 弾(プレイヤー)を描画する
     def draw_player_bullets(self):
+        # カメラ位置(描画の原点)を変更する
+        pyxel.camera(self.screen_x, 0)
+        # 描画
         for player_bullet in self.player_bullets:
             player_bullet.draw()
+        # カメラ位置を戻す
+        pyxel.camera()
     # 爆弾を描画する
     def draw_player_bombs(self):
         for player_bomb in self.player_bombs:

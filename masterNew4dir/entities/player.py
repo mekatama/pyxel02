@@ -54,6 +54,7 @@ class Player:
         self.y = max(self.y, 0)                 #大きい数値を使う
         self.y = min(self.y, pyxel.height - 8)   #小さい数値を使う
         """
+        # タイルとの当たり判定
         for i in [1, 6]:
             for j in [1, 6]:
                 x = self.x + j
