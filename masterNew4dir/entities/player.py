@@ -16,6 +16,7 @@ class Player:
         self.game = game        # ゲームへの参照
         self.x = x              # X座標
         self.y = y              # Y座標
+        self.dir = 1            # 1:right -1:left
         self.isBomb = False     # Bomb所持flag
         self.shot_timer = 0     # 弾発射までの残り時間
         self.hp = Player.HP     # HP
@@ -26,8 +27,10 @@ class Player:
         # キー入力で自機を移動させる
         if pyxel.btn(pyxel.KEY_LEFT):
             self.x -= Player.MOVE_SPEED
+            self.dir = -1
         if pyxel.btn(pyxel.KEY_RIGHT):
             self.x += Player.MOVE_SPEED
+            self.dir = 1
         if pyxel.btn(pyxel.KEY_UP):
             self.y -= Player.MOVE_SPEED
         if pyxel.btn(pyxel.KEY_DOWN):
@@ -94,7 +97,7 @@ class Player:
     def draw(self):
         # 4フレーム周期で0と8を交互に繰り返す
         u = pyxel.frame_count  // 4 % 2 * 8
-        pyxel.blt(self.x, self.y, 0, 0, 24 + u, 8, 8, 0)
+        pyxel.blt(self.x, self.y, 0, 0, 24 + u, 8 * self.dir, 8, 0)
         pyxel.text(self.x - 4,  self.y - 6, "HP:%i" %self.hp, 7)
 
 # 弾クラス
@@ -105,6 +108,7 @@ class BulletPlayer:
         self.game = game
         self.x = x
         self.y = y
+#        self.dir = dir
         self.life_time = 0  #生存時間
         self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
         game.player_bullets.append(self)
@@ -120,6 +124,7 @@ class BulletPlayer:
         #生存時間カウント
         self.life_time += 1
         # 弾の座標を更新する
+        
         self.x += 2
 #        self.y += 2
         # 弾が画面外に出たら弾リストから登録を削除する
