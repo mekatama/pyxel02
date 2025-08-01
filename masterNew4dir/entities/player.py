@@ -6,7 +6,7 @@ from constants import TILE_EXIT, TILE_GEM, TILE_BOMB, TILE_SPIKE, TILE_WALL, TIL
 class Player:
     #定数
     MOVE_SPEED = 2          # 移動速度
-    SHOT_INTERVAL = 10      # 弾の発射間隔
+    SHOT_INTERVAL = 20      # 弾の発射間隔
     HP = 3                  # 初期HP
     player_bullets = []     # 自機の弾のリスト
     player_bombs = []       # 自機の爆弾のリスト
@@ -37,8 +37,8 @@ class Player:
         if self.shot_timer > 0:  # 弾発射までの残り時間を減らす
             self.shot_timer -= 1
 
-        # Aキー入力で攻撃
-        if pyxel.btn(pyxel.KEY_A) and self.shot_timer == 0:
+        # auto攻撃
+        if self.shot_timer == 0:
             BulletPlayer(self.game, self.x, self.y)
             # 次の弾発射までの残り時間を設定する
             self.shot_timer = Player.SHOT_INTERVAL
