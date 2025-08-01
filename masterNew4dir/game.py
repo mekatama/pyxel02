@@ -62,20 +62,40 @@ class Game:
         pyxel.camera()
     # 爆弾を描画する
     def draw_player_bombs(self):
+        # カメラ位置(描画の原点)を変更する
+        pyxel.camera(self.screen_x, 0)
+        # 描画
         for player_bomb in self.player_bombs:
             player_bomb.draw()
+        # カメラ位置を戻す
+        pyxel.camera()
     # 敵を描画する
     def draw_enemies(self):
+        # カメラ位置(描画の原点)を変更する
+        pyxel.camera(self.screen_x, 0)
+        # 描画
         for enemy in self.enemies:
             enemy.draw()
+        # カメラ位置を戻す
+        pyxel.camera()
     # 敵の爆発を描画する
     def draw_enemy_blasts(self):
+        # カメラ位置(描画の原点)を変更する
+        pyxel.camera(self.screen_x, 0)
+        # 描画
         for enemy_blast in self.enemy_blasts:
             enemy_blast.draw()
+        # カメラ位置を戻す
+        pyxel.camera()
     # 敵の弾を描画する
     def draw_enemy_bullets(self):
+        # カメラ位置(描画の原点)を変更する
+        pyxel.camera(self.screen_x, 0)
+        # 描画
         for enemy_bullet in self.enemy_bullets:
             enemy_bullet.draw()
+        # カメラ位置を戻す
+        pyxel.camera()
 
     # ゲームを更新する
     def update(self):
