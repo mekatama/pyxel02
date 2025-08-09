@@ -32,7 +32,10 @@ class Player:
     def update(self):
         # キー入力で自機を移動させる
         if pyxel.btn(pyxel.KEY_LEFT):
-            self.x -= Player.MOVE_SPEED
+            if self.isDash == False:
+                self.x -= Player.MOVE_SPEED
+            else:
+                self.x -= Player.DASH_SPEED
             self.dir = -1
             self.type = 0
         if pyxel.btn(pyxel.KEY_RIGHT):
@@ -43,10 +46,16 @@ class Player:
             self.dir = 1
             self.type = 0
         if pyxel.btn(pyxel.KEY_UP):
-            self.y -= Player.MOVE_SPEED
+            if self.isDash == False:
+                self.y -= Player.MOVE_SPEED
+            else:
+                self.y -= Player.DASH_SPEED
             self.type = 1
         if pyxel.btn(pyxel.KEY_DOWN):
-            self.y += Player.MOVE_SPEED
+            if self.isDash == False:
+                self.y += Player.MOVE_SPEED
+            else:
+                self.y += Player.DASH_SPEED
             self.type = 2
         if pyxel.btnr(pyxel.KEY_UP) or pyxel.btnr(pyxel.KEY_DOWN):
             self.type = 0
