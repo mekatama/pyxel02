@@ -1,8 +1,11 @@
 import pyxel
 from entities import Player, Zako1
+from collision import get_tile_type
 from constants import (
     SCROLL_BORDER_X_RIGHT,
     SCROLL_BORDER_X_LEFT,
+    TILE_ZAKO1_POINT,
+    TILE_ZAKO2_POINT
 )
 
 # 当たり判定用の関数
@@ -49,13 +52,34 @@ class PlayScene:
         game.score = 0          # スコア
         game.player = Player(game, 64, 16)  # プレイヤー
         #仮の敵を生成する
-        self.spawn_enemy(64, 64)
+#        self.spawn_enemy(64, 64)
+        # 敵を出現させる
+        self.spawn_enemy(0, 127)    #画面x座標0～127が表示されたら
 
     # 敵を出現させる
-    def spawn_enemy(self, x, y):
+    def spawn_enemy(self, left_x, right_x):
         game = self.game
         enemies = game.enemies
-        enemies.append(Zako1(game, x, y))
+        # 判定範囲のタイルを計算する
+        left_x = pyxel.ceil(left_x / 8)     # x 以上の最小の整数を返す
+        right_x = pyxel.floor(right_x / 8)  # x 以下の最大の整数を返す
+
+        # 判定範囲のタイルに応じて敵を出現させる
+        for tx in range(left_x, right_x + 1):
+            for ty in range(16):
+                x = tx * 8
+                y = ty * 8
+                tile_type = get_tile_type(x, y)
+
+                if tile_type == TILE_ZAKO1_POINT:  # 出現位置の時
+                    enemies.append(Zako1(game, x, y))
+#                elif tile_type == TILE_ZAKO2_POINT:  # 出現位置の時
+#                    enemies.append(Zako2(game, x, y, True))
+                else:
+                    continue
+
+                # 出現位置タイルを消す
+                pyxel.tilemaps[0].pset(tx, ty, (0, 0))
 
     # プレイ画面を更新する
     def update(self):
@@ -81,11 +105,19 @@ class PlayScene:
             last_screen_x = game.screen_x
             game.screen_x = min(player.x - SCROLL_BORDER_X_RIGHT, 32 * 8)
             # 32タイル分以上は右にスクロールさせない
+
+            # スクロールした幅に応じて敵を出現させる
+            self.spawn_enemy(last_screen_x + 128, game.screen_x + 127)
+
+
         # プレイヤーが左移動スクロール境界を越えたら画面をスクロールする
         if player.x < game.screen_x + SCROLL_BORDER_X_LEFT:
             last_screen_x = game.screen_x
             game.screen_x = min(player.x - SCROLL_BORDER_X_LEFT, 32 * 8)
             # 32タイル分以上は右にスクロールさせない
+
+            # スクロールした幅に応じて敵を出現させる
+            self.spawn_enemy(last_screen_x + 128, game.screen_x + 127)
 
         # 弾(プレイヤー)を更新する
         for player_bullet in player_bullets.copy():

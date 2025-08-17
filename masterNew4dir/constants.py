@@ -13,6 +13,7 @@ TILE_SPIKE = 4  # ダメージ
 TILE_WALL = 5  # ダメージ
 TILE_ROAD = 6  # ダメージ
 TILE_ZAKO1_POINT = 7  # ZAKO1出現位置
+TILE_ZAKO2_POINT = 8  # ZAKO1出現位置
 
 # タイル→タイル種別変換テーブル
 TILE_TO_TILETYPE = {
