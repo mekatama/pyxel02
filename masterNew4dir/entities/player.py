@@ -1,7 +1,9 @@
 import pyxel
 from collision import get_tile_type, in_collision, push_back
 from constants import TILE_EXIT, TILE_GEM, TILE_BOMB, TILE_SPIKE, TILE_WALL, TILE_ROAD
- 
+from .bomb import Bomb              # ボムクラス
+from .player_bullet import PlayerBullet              # 
+
 # プレイヤークラス
 class Player:
     #定数
@@ -10,8 +12,6 @@ class Player:
     SHOT_INTERVAL = 20      # 弾の発射間隔
     DASH_INTERVAL = 2       # dash間隔
     HP = 3                  # 初期HP
-    player_bullets = []     # 自機の弾のリスト
-    player_bombs = []       # 自機の爆弾のリスト
 
     # プレイヤーを初期化する
     def __init__(self, game, x, y):
@@ -78,13 +78,17 @@ class Player:
 
         # auto攻撃
         if self.shot_timer == 0:
-            BulletPlayer(self.game, self.x, self.y, self.dir, self.type)
+            self.game.player_bullets.append(
+                PlayerBullet(self.game, self.x, self.y, self.dir, self.type)
+            )
             # 次の弾発射までの残り時間を設定する
             self.shot_timer = Player.SHOT_INTERVAL
 
         # 爆弾所持で、Sキー入力で爆弾発射
         if pyxel.btnp(pyxel.KEY_S) and self.isBomb == True:
-            BombPlayer(self.game, self.x, self.y)
+            self.game.bombs.append(
+                Bomb(self.game, self.x, self.y)
+            )
             self.isBomb = False
         # 爆弾未所持で、Sキー入力で特殊移動
         if pyxel.btnp(pyxel.KEY_S) and self.isBomb == False:
@@ -92,6 +96,14 @@ class Player:
                 self.isDash = True
                 self.isDashInput = True
                 self.dash_timer = Player.DASH_INTERVAL
+
+        # test、Dキー入力で爆弾発射
+        if pyxel.btnp(pyxel.KEY_D):
+            print("d push")
+            self.game.player_bullets.append(
+                PlayerBullet(self.game, self.x, self.y, self.dir, self.type)
+            )
+
         """
         # 自機が画面外に出ないようにする(一画面用)
         self.x = max(self.x, 0)                 #大きい数値を使う
@@ -141,83 +153,3 @@ class Player:
         u = pyxel.frame_count  // 4 % 2 * 8
         pyxel.blt(self.x, self.y, 0, 0, 24 + u, 8 * self.dir, 8, 0)
         pyxel.text(self.x - 4,  self.y - 6, "HP:%i" %self.hp, 7)
-
-# 弾クラス
-class BulletPlayer:
-    #定数
-    SHOT_SPEED_X = 4        # shot speed x
-    SHOT_SPEED_Y = 4        # shot speed y
-    # 弾を初期化してゲームに登録する
-    def __init__(self, game, x, y, dir, type):
-        self.game = game
-        self.x = x
-        self.y = y
-        self.dir = dir
-        self.type = type
-        self.life_time = 0  #生存時間
-        self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
-        game.player_bullets.append(self)
-
-     # 弾にダメージを与える
-    def add_damage(self):
-        # 弾をリストから削除する
-        if self in self.game.player_bullets:    # 自機の弾リストに登録されている時
-            self.game.player_bullets.remove(self)
-
-   # 弾を更新する
-    def update(self):
-        #生存時間カウント
-        self.life_time += 1
-        # 弾の座標を更新する(type 0:横 1:上 2:下)
-        if self.type == 0:
-            self.x += BulletPlayer.SHOT_SPEED_X * self.dir
-        elif self.type == 1:
-            self.x += BulletPlayer.SHOT_SPEED_X * self.dir
-            self.y -= BulletPlayer.SHOT_SPEED_Y
-        elif self.type == 2:
-            self.x += BulletPlayer.SHOT_SPEED_X * self.dir
-            self.y += BulletPlayer.SHOT_SPEED_Y
-        """
-        # 弾が画面外に出たら弾リストから登録を削除する
-        if (self.x <= -8 or
-            self.x >= pyxel.width or
-            self.y <= -8 or
-            self.y >= pyxel.height
-        ):
-            self.game.player_bullets.remove(self)
-        """
-    # 弾を描画する
-    def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 8, 8, 8, 0)
-
-# BOMBクラス
-class BombPlayer:
-    #定数
-
-    # 爆弾を初期化してゲームに登録する
-    def __init__(self, game, x, y):
-        self.game = game
-        self.x = x
-        self.y = y
-        self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
-        game.player_bombs.append(self)
-
-    """
-     # 爆弾にダメージを与える
-    def add_damage(self):
-        # 弾をリストから削除する
-        if self in self.game.player_bullets:    # 自機の弾リストに登録されている時
-            self.game.player_bullets.remove(self)
-    """
-
-   # 爆弾を更新する
-    def update(self):
-        #生存時間カウント
-#        self.life_time += 1
-        # 弾の座標を更新する
-#        self.x += 2
-        self.y += 2
-        
-    # 爆弾を描画する
-    def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 8, 8, 8, 0)

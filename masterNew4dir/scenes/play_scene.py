@@ -1,5 +1,6 @@
 import pyxel
 from entities import Player, Zako1
+
 from collision import get_tile_type
 from constants import (
     SCROLL_BORDER_X_RIGHT,
@@ -91,6 +92,9 @@ class PlayScene:
         enemy_blasts = game.enemy_blasts
         enemy_bullets = game.enemy_bullets
 
+        #test
+        bombs = game.bombs
+
         # プレイヤーを更新する
         if player is not None: #NONE使用時は判定方法が特殊
             player.update()
@@ -161,6 +165,13 @@ class PlayScene:
             # プレイ画面に切り替える
             self.game.change_scene("gameover")
 
+        # testを更新する
+        for bomb in bombs.copy():
+            bomb.update()
+            # 爆弾とplayerが接触したら消去
+#            if player is not None and check_collision(player, bomb):
+#                bomb.bomb_get()
+
 
     # プレイ画面を描画する
     def draw(self):
@@ -180,6 +191,9 @@ class PlayScene:
         self.game.draw_enemy_blasts()
         # 敵の弾を描画する
         self.game.draw_enemy_bullets()
+
+        # test爆弾を描画する
+        self.game.draw_bombs()
 
         # スコアを描画する
 #        pyxel.text(39, 4, f"SCORE {self.score:5}", 7)
