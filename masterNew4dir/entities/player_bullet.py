@@ -14,7 +14,6 @@ class PlayerBullet:
         self.type = type
         self.life_time = 0  #生存時間
         self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
-#        game.player_bullets.append(self)
 
      # 弾にダメージを与える
     def add_damage(self):

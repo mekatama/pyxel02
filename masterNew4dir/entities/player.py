@@ -1,8 +1,9 @@
 import pyxel
 from collision import get_tile_type, in_collision, push_back
 from constants import TILE_EXIT, TILE_GEM, TILE_BOMB, TILE_SPIKE, TILE_WALL, TILE_ROAD
-from .bomb import Bomb              # ボムクラス
-from .player_bullet import PlayerBullet              # 
+
+from .bomb import Bomb                  # ボムクラス
+from .player_bullet import PlayerBullet # playerのBulletクラス 
 
 # プレイヤークラス
 class Player:

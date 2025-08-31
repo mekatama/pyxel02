@@ -1,5 +1,7 @@
 import pyxel
 #from collision import in_collision, push_back
+from .enemy_blast import Enemy_Blast    # enemyの爆発effectクラス 
+from .enemy_bullet import Enemy_Bullet  # enemyのBulletクラス 
 
 # 敵クラス
 class Zako1:
@@ -7,7 +9,6 @@ class Zako1:
     KIND_A = 0  # 敵A(空中)
     KIND_B = 1  # 敵B(地上停止)
     KIND_C = 2  # 敵C(地上移動)
-    enemy_blasts = []        # 爆発エフェクトのリスト
     enemy_bullets = []     # 敵の弾のリスト
 
     # 敵を初期化してゲームに登録する
@@ -29,7 +30,9 @@ class Zako1:
 #            pyxel.play(2, 1, resume=True)   # チャンネル2で割り込み再生させる
             return                          # 処理終了
         # 爆発エフェクトを生成する
-        Enemy_Blast(self.game, self.x + 4, self.y + 4)
+        self.game.enemy_blasts.append(
+           Enemy_Blast(self.game, self.x + 4, self.y + 4)
+        )
         """
         # アイテムを生成する
         # ■■■■後からランダムにする■■■■
@@ -56,7 +59,9 @@ class Zako1:
         self.life_time += 1
         # [仮]Aキー入力で攻撃
         if pyxel.btn(pyxel.KEY_A):
-            Enemy_Bullet(self.game, self.x, self.y)
+            self.game.enemy_bullets.append(
+                Enemy_Bullet(self.game, self.x, self.y)
+            )
         """
         # 敵A(空中)を更新する
         if self.kind == Zako1.KIND_A:
@@ -86,69 +91,3 @@ class Zako1:
             pyxel.blt(self.x, self.y, 0, 32, 40 + u, 8, 8, 0)
 #            pyxel.blt(self.x, self.y, 0, self.kind * 8 + 32, 40 + u, 8 * self.dir, 8, 0)
 
-# 爆発エフェクトクラス
-class Enemy_Blast:
-    #定数
-    START_RADIUS = 1    # 開始時の半径
-    END_RADIUS = 8      # 終了時の半径
-
-    # 初期化してゲームに登録する
-    def __init__(self, game, x, y):
-        self.game = game
-        self.x = x
-        self.y = y
-        self.radius = Enemy_Blast.START_RADIUS  # 爆発の半径
-        # ゲームの爆発エフェクトリストに登録する
-        game.enemy_blasts.append(self)
-
-    # 爆発エフェクトを更新する
-    def update(self):
-        # 半径を大きくする
-        self.radius += 1
-        # 半径が最大になったら爆発エフェクトリストから登録を削除する
-        if self.radius > Enemy_Blast.END_RADIUS:
-            self.game.enemy_blasts.remove(self)
-
-    # 爆発エフェクトを描画する
-    def draw(self):
-        pyxel.circ(self.x, self.y, self.radius, 7)
-        pyxel.circb(self.x, self.y, self.radius, 10)
-
-# 弾クラス
-class Enemy_Bullet:
-    #定数
-
-    # 弾を初期化してゲームに登録する
-    def __init__(self, game, x, y):
-        self.game = game
-        self.x = x
-        self.y = y
-        self.life_time = 0  #生存時間
-        self.hit_area = (2, 1, 5, 6)  # 当たり判定領域
-        game.enemy_bullets.append(self)
-
-     # 弾にダメージを与える
-    def add_damage(self):
-        # 弾をリストから削除する
-        if self in self.game.enemy_bullets:    # 自機の弾リストに登録されている時
-            self.game.enemy_bullets.remove(self)
-
-   # 弾を更新する
-    def update(self):
-
-        #生存時間カウント
-        self.life_time += 1
-        # 弾の座標を更新する
-        self.x += 2
-#        self.y += 2
-        # 弾が画面外に出たら弾リストから登録を削除する
-        if (self.x <= -8 or
-            self.x >= pyxel.width or
-            self.y <= -8 or
-            self.y >= pyxel.height
-        ):
-            self.game.enemy_bullets.remove(self)
-        
-    # 弾を描画する
-    def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 8, 8, 8, 0)
