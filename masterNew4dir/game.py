@@ -17,6 +17,7 @@ class Game:
         self.enemies = []           # 敵のリスト
         self.enemy_blasts = []      # 爆発エフェクトのリスト
         self.enemy_bullets = []     # 敵の弾のリスト
+        self.particles = []         # 破壊時particleのリスト
 
         self.bombs = []     # testのリスト
 
@@ -97,6 +98,15 @@ class Game:
         # 描画
         for enemy_bullet in self.enemy_bullets:
             enemy_bullet.draw()
+        # カメラ位置を戻す
+        pyxel.camera()
+    # 破壊時particleを描画する
+    def draw_particles(self):
+        # カメラ位置(描画の原点)を変更する
+        pyxel.camera(self.screen_x, 0)
+        # 描画
+        for particle in self.particles:
+            particle.draw()
         # カメラ位置を戻す
         pyxel.camera()
 

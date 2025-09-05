@@ -1,4 +1,5 @@
 import pyxel
+from .particle import Particle  # 破壊時particle
 
 # 弾クラス
 class PlayerBullet:
@@ -17,6 +18,11 @@ class PlayerBullet:
 
      # 弾にダメージを与える
     def add_damage(self):
+        # パーティクル出す
+        for i in range(10):
+            self.game.particles.append(
+                Particle(self.game, self.x, self.y)
+            )
         # 弾をリストから削除する
         if self in self.game.player_bullets:    # 自機の弾リストに登録されている時
             self.game.player_bullets.remove(self)

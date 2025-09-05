@@ -91,7 +91,8 @@ class PlayScene:
         enemies = game.enemies
         enemy_blasts = game.enemy_blasts
         enemy_bullets = game.enemy_bullets
-
+        particles = game.particles
+        count = 0
         #test
         bombs = game.bombs
 
@@ -160,6 +161,25 @@ class PlayScene:
                 game.change_scene("gameover")
                 return
 
+        # 破壊時particlesを更新する
+        for particle in particles.copy():
+            particle.update()
+            # flag onで消す処理入れたい
+            if particle.is_alive == False:
+                if particle in particles:  # リストに登録されている時
+#                    print("dead")
+#                    count = 0
+                    particles.remove(particle)
+#                print("dead")
+            """
+            count += 1
+            if count > 10:
+                if particle in particles:  # リストに登録されている時
+                    print("dead")
+                    count = 0
+                    particles.remove(particle)
+            """
+
         # [debug]キー入力をチェックする
         if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
             # プレイ画面に切り替える
@@ -191,6 +211,8 @@ class PlayScene:
         self.game.draw_enemy_blasts()
         # 敵の弾を描画する
         self.game.draw_enemy_bullets()
+        # 破壊時particleを描画する
+        self.game.draw_particles()
 
         # test爆弾を描画する
         self.game.draw_bombs()
