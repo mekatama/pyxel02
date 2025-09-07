@@ -18,7 +18,6 @@ class Particle:
         if self.count == 1:
             self.aim = pyxel.rndf(0, 2 * math.pi)
         if self.count >= 1 + pyxel.rndi(1, 20):
-            print(self.count)
             self.is_alive = False
         #座標
         self.x += self.speed * math.cos(self.aim)

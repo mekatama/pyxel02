@@ -20,6 +20,7 @@ class Zako1:
         self.hit_area = (0, 0, 7, 7)    # 当たり判定の領域
         self.armor = 2                   # 装甲
         self.is_damaged = False         # ダメージを受けたかどうか
+        self.hit_area = (1, 1, 6, 6)    # 当たり判定の領域 (x1,y1,x2,y2) 
 
     # 敵にダメージを与える
     def add_damage(self):

@@ -93,7 +93,6 @@ class PlayScene:
         enemy_bullets = game.enemy_bullets
         particles = game.particles
         particleHits = game.particleHits
-        count = 0
 
         # プレイヤーを更新する
         if player is not None: #NONE使用時は判定方法が特殊
@@ -142,10 +141,11 @@ class PlayScene:
         # 敵を更新する
         for enemy in enemies.copy():
             enemy.update()
-            # プレイヤーと敵が接触したらゲームオーバーにする
-            if abs(player.x - enemy.x) < 6 and abs(player.y - enemy.y) < 6:
-                game.change_scene("gameover")
-                return
+            # 弾(プレイヤー)と敵が接触したらゲームオーバー
+            if player is not None:
+                if check_collision(enemy, player):
+                    game.change_scene("gameover")
+                    return
 
         # 敵の爆発を更新する
         for enemy_blast in enemy_blasts.copy():
