@@ -8,11 +8,12 @@ class PlayerBullet:
     SHOT_SPEED_X = 4        # shot speed x
     SHOT_SPEED_Y = 4        # shot speed y
     # 弾を初期化してゲームに登録する
-    def __init__(self, game, x, y, dir):
+    def __init__(self, game, x, y, dir, type):
         self.game = game
         self.x = x
         self.y = y
         self.dir = dir
+        self.type = type
         self.life_time = 0  #生存時間
         self.hit_area = (2, 2, 5, 5)  # 当たり判定領域
 
@@ -35,9 +36,15 @@ class PlayerBullet:
     def update(self):
         #生存時間カウント
         self.life_time += 1
-        # 弾の座標を更新する
-        self.x += PlayerBullet.SHOT_SPEED_X * self.dir
-
+        # 弾の座標を更新する(type 0:横 1:上 2:下)
+        if self.type == 0:
+            self.x += PlayerBullet.SHOT_SPEED_X * self.dir
+        elif self.type == 1:
+            self.x += PlayerBullet.SHOT_SPEED_X * self.dir
+            self.y -= PlayerBullet.SHOT_SPEED_Y
+        elif self.type == 2:
+            self.x += PlayerBullet.SHOT_SPEED_X * self.dir
+            self.y += PlayerBullet.SHOT_SPEED_Y
         """
         # 弾が画面外に出たら弾リストから登録を削除する
         if (self.x <= -8 or

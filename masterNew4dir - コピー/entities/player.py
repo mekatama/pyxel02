@@ -20,8 +20,12 @@ class Player:
         self.x = x              # X座標
         self.y = y              # Y座標
         self.dir = 1            # 1:right -1:left
+        self.type = 0           # 0:横 1:上 2:下
         self.isBomb = False     # Bomb所持flag
+        self.isDash = False     # Dash flag
+        self.isDashInput = False# Dash入力 flag
         self.shot_timer = 0     # 弾発射までの残り時間
+        self.dash_timer = 0     # dash時間
         self.hp = Player.HP     # HP
         self.hit_area = (0, 0, 7, 7)  # 当たり判定の領域 (x1,y1,x2,y2) 
 
@@ -29,24 +33,54 @@ class Player:
     def update(self):
         # キー入力で自機を移動させる
         if pyxel.btn(pyxel.KEY_LEFT):
-            self.x -= Player.MOVE_SPEED
+            if self.isDash == False:
+                self.x -= Player.MOVE_SPEED
+            else:
+                self.x -= Player.DASH_SPEED
             self.dir = -1
+            self.type = 0
         if pyxel.btn(pyxel.KEY_RIGHT):
-            self.x += Player.MOVE_SPEED
+            if self.isDash == False:
+                self.x += Player.MOVE_SPEED
+            else:
+                self.x += Player.DASH_SPEED
             self.dir = 1
+            self.type = 0
         if pyxel.btn(pyxel.KEY_UP):
-            self.y -= Player.MOVE_SPEED
+            if self.isDash == False:
+                self.y -= Player.MOVE_SPEED
+            else:
+                self.y -= Player.DASH_SPEED
+            self.type = 1
         if pyxel.btn(pyxel.KEY_DOWN):
-            self.y += Player.MOVE_SPEED
+            if self.isDash == False:
+                self.y += Player.MOVE_SPEED
+            else:
+                self.y += Player.DASH_SPEED
+            self.type = 2
+        if pyxel.btnr(pyxel.KEY_UP) or pyxel.btnr(pyxel.KEY_DOWN):
+            self.type = 0
 
         # 弾の発射間隔timer制御
         if self.shot_timer > 0:  # 弾発射までの残り時間を減らす
             self.shot_timer -= 1
         
+        # dash時間の制御
+        if self.dash_timer > 0:
+            self.dash_timer -= 1
+        else:
+            self.isDash = False
+        
+        # dash入力の制御
+        if self.dash_timer > -15:
+            self.dash_timer -= 1
+        else:
+            self.isDashInput = False
+
         # auto攻撃
         if self.shot_timer == 0:
             self.game.player_bullets.append(
-                PlayerBullet(self.game, self.x, self.y, self.dir)
+                PlayerBullet(self.game, self.x, self.y, self.dir, self.type)
             )
             # 次の弾発射までの残り時間を設定する
             self.shot_timer = Player.SHOT_INTERVAL
@@ -59,7 +93,17 @@ class Player:
             self.isBomb = False
         # 爆弾未所持で、Sキー入力で特殊移動
         if pyxel.btnp(pyxel.KEY_S) and self.isBomb == False:
-            pass
+            if self.isDashInput == False:
+                self.isDash = True
+                self.isDashInput = True
+                self.dash_timer = Player.DASH_INTERVAL
+
+        # test、Dキー入力で爆弾発射
+        if pyxel.btnp(pyxel.KEY_D):
+            print("d push")
+            self.game.player_bullets.append(
+                PlayerBullet(self.game, self.x, self.y, self.dir, self.type)
+            )
 
         """
         # 自機が画面外に出ないようにする(一画面用)

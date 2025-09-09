@@ -52,6 +52,8 @@ class PlayScene:
         game = self.game        # ゲームクラス
         game.score = 0          # スコア
         game.player = Player(game, 64, 16)  # プレイヤー
+        #仮の敵を生成する
+#        self.spawn_enemy(64, 64)
         # 敵を出現させる
         self.spawn_enemy(0, 127)    #画面x座標0～127が表示されたら
 
@@ -132,6 +134,9 @@ class PlayScene:
         # 爆弾を更新する
         for player_bomb in player_bombs.copy():
             player_bomb.update()
+            # 爆弾とplayerが接触したら消去
+#            if player is not None and check_collision(player, bomb):
+#                bomb.bomb_get()
 
         # 敵を更新する
         for enemy in enemies.copy():
